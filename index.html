@@ -9,32 +9,76 @@
 *{ box-sizing:border-box; }
 
 :root{
-  --bg1:#eef7f1;
-  --bg2:#f8fbf9;
-  --bg3:#eef3ff;
-  --bg4:#fff6fb;
-  --card:rgba(255,255,255,0.88);
-  --line:#dceee3;
-  --line2:#cfe8d8;
-  --text:#1f2d26;
-  --sub:#6f8577;
-  --green:#2f7d4e;
-  --green-dark:#21593a;
-  --mint:#eef8f2;
-  --shadow:0 8px 24px rgba(0,0,0,0.05);
-  --shadow-soft:0 20px 44px rgba(23,48,35,0.10);
+  --bg1:#dceee3;
+  --bg2:#e7eefc;
+  --bg3:#dce4ff;
+  --bg4:#f2dfee;
+  --bg-deep:#c8ded1;
+  --card:rgba(255,255,255,0.80);
+  --line:#c5ded0;
+  --line2:#b7d7c5;
+  --text:#16231d;
+  --sub:#5c7167;
+  --green:#276a43;
+  --green-dark:#18472d;
+  --mint:#e6f4ec;
+  --shadow:0 10px 28px rgba(11,22,17,0.08);
+  --shadow-soft:0 24px 54px rgba(20,39,29,0.18);
 }
 
 body{
   margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
   background:
-    radial-gradient(circle at 0% 0%, rgba(63,160,109,0.18), transparent 28%),
-    radial-gradient(circle at 100% 0%, rgba(113,135,255,0.16), transparent 24%),
-    radial-gradient(circle at 100% 100%, rgba(47,125,78,0.13), transparent 28%),
-    radial-gradient(circle at 20% 100%, rgba(255,141,197,0.10), transparent 24%),
-    linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 78%, var(--bg4) 100%);
+    radial-gradient(circle at 12% 14%, rgba(20,118,77,0.32), transparent 26%),
+    radial-gradient(circle at 88% 16%, rgba(74,107,255,0.26), transparent 22%),
+    radial-gradient(circle at 78% 80%, rgba(166,79,146,0.22), transparent 24%),
+    radial-gradient(circle at 18% 88%, rgba(33,122,87,0.20), transparent 26%),
+    linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 36%, var(--bg3) 70%, var(--bg4) 100%);
   color:var(--text);
+  position:relative;
+}
+
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  pointer-events:none;
+  z-index:0;
+  filter:blur(2px);
+}
+
+body::before{
+  width:420px;
+  height:420px;
+  top:-120px;
+  right:-90px;
+  border-radius:38% 62% 58% 42% / 41% 40% 60% 59%;
+  background:linear-gradient(135deg, rgba(46,117,185,0.24), rgba(49,164,111,0.18));
+  transform:rotate(16deg);
+}
+
+body::after{
+  width:360px;
+  height:360px;
+  left:-100px;
+  bottom:-120px;
+  border-radius:63% 37% 41% 59% / 47% 59% 41% 53%;
+  background:linear-gradient(135deg, rgba(50,145,95,0.22), rgba(153,82,134,0.18));
+  transform:rotate(-18deg);
+}
+
+.artGlow{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    linear-gradient(125deg, transparent 0 40%, rgba(255,255,255,0.12) 48%, transparent 56%),
+    linear-gradient(300deg, transparent 0 46%, rgba(255,255,255,0.09) 52%, transparent 58%);
+  opacity:0.85;
 }
 
 /* LOGIN */
@@ -44,21 +88,22 @@ body{
   align-items:center;
   justify-content:center;
   padding:24px;
+  position:relative;
+  z-index:1;
   background:
-    radial-gradient(circle at top left, rgba(63,160,109,0.14), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(47,125,78,0.12), transparent 30%),
-    radial-gradient(circle at top right, rgba(113,135,255,0.10), transparent 22%),
-    linear-gradient(180deg,#eef8f2 0%, #f9fcfa 100%);
+    radial-gradient(circle at top left, rgba(47,125,78,0.20), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(66,88,190,0.16), transparent 24%),
+    linear-gradient(180deg,rgba(237,247,241,0.86) 0%, rgba(247,251,249,0.90) 100%);
 }
 
 .loginCard{
   width:100%;
   max-width:430px;
-  background:rgba(255,255,255,0.94);
-  backdrop-filter:blur(14px);
-  border:1px solid rgba(220,238,227,0.95);
-  box-shadow:0 16px 40px rgba(23,48,35,0.10);
-  border-radius:28px;
+  background:rgba(255,255,255,0.82);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(213,229,220,0.96);
+  box-shadow:0 18px 48px rgba(17,36,28,0.16);
+  border-radius:30px;
   padding:34px 28px 28px;
 }
 
@@ -72,7 +117,7 @@ body{
   font-weight:900;
   letter-spacing:2px;
   line-height:1;
-  background:linear-gradient(90deg,#184f32,#3fa06d);
+  background:linear-gradient(90deg,#113a25,#329265 55%, #4c78d3 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
@@ -80,7 +125,7 @@ body{
 .loginSub{
   margin-top:10px;
   font-size:13px;
-  color:#718678;
+  color:#60766c;
   letter-spacing:1.3px;
 }
 
@@ -92,7 +137,7 @@ body{
   display:block;
   font-size:12px;
   font-weight:800;
-  color:#5d7565;
+  color:#50675d;
   margin:0 0 7px 4px;
   letter-spacing:0.3px;
 }
@@ -100,17 +145,17 @@ body{
 .loginInput{
   width:100%;
   height:48px;
-  border:1px solid #d6eadc;
+  border:1px solid #c8dfd1;
   border-radius:14px;
   padding:0 14px;
   font-size:14px;
-  background:#fcfffd;
+  background:rgba(252,255,253,0.92);
   outline:none;
 }
 
 .loginInput:focus{
-  border-color:#85bc99;
-  box-shadow:0 0 0 4px rgba(47,125,78,0.08);
+  border-color:#73a98a;
+  box-shadow:0 0 0 4px rgba(47,125,78,0.10);
 }
 
 .loginBtn{
@@ -119,13 +164,13 @@ body{
   margin-top:6px;
   border:none;
   border-radius:15px;
-  background:linear-gradient(135deg,#2f7d4e,#3f9a67);
+  background:linear-gradient(135deg,#1f5e3a,#339764 70%, #406fc8);
   color:#fff;
   font-size:15px;
   font-weight:800;
   letter-spacing:0.3px;
   cursor:pointer;
-  box-shadow:0 10px 20px rgba(47,125,78,0.18);
+  box-shadow:0 12px 24px rgba(39,106,67,0.22);
 }
 
 #loginError{
@@ -141,22 +186,24 @@ body{
   margin-top:14px;
   text-align:center;
   font-size:12px;
-  color:#7f9387;
+  color:#73867d;
 }
 
 /* APP */
 #appScreen{
   display:none;
+  position:relative;
+  z-index:1;
 }
 
 /* HEADER */
 header{
   position:relative;
-  background:rgba(255,255,255,0.86);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid #d9ece0;
+  background:rgba(255,255,255,0.68);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(201,224,211,0.95);
   padding:24px 24px 20px;
-  box-shadow:0 4px 18px rgba(0,0,0,0.04);
+  box-shadow:0 8px 24px rgba(0,0,0,0.05);
 }
 
 .headerInner{
@@ -179,7 +226,7 @@ header{
   letter-spacing:2px;
   line-height:1;
   margin:0;
-  background:linear-gradient(90deg,#184f32,#3fa06d);
+  background:linear-gradient(90deg,#113a25,#309766 56%, #4c78d3 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
@@ -189,7 +236,7 @@ header{
   font-size:11px;
   font-weight:700;
   letter-spacing:2.4px;
-  color:#789181;
+  color:#627a6c;
   text-transform:uppercase;
 }
 
@@ -201,7 +248,7 @@ header{
   font-size:13px;
   font-weight:700;
   letter-spacing:0.8px;
-  color:#587765;
+  color:#496456;
   white-space:nowrap;
 }
 
@@ -210,9 +257,9 @@ header{
   left:0;
   top:50%;
   transform:translateY(-50%);
-  background:#eef8f2;
-  color:#2f7d4e;
-  border:1px solid #d7eadf;
+  background:rgba(238,248,242,0.92);
+  color:#246841;
+  border:1px solid #cfe4d7;
   border-radius:12px;
   padding:8px 12px;
   font-size:12px;
@@ -226,6 +273,8 @@ header{
   gap:16px;
   padding:16px;
   align-items:flex-start;
+  position:relative;
+  z-index:1;
 }
 
 .left{ flex:2; min-width:0; }
@@ -233,12 +282,24 @@ header{
 
 .box{
   background:var(--card);
-  backdrop-filter:blur(12px);
+  backdrop-filter:blur(16px);
   padding:16px;
   margin-bottom:14px;
-  border-radius:18px;
+  border-radius:22px;
   box-shadow:var(--shadow-soft);
-  border:1px solid rgba(214,234,220,0.82);
+  border:1px solid rgba(196,221,206,0.95);
+  position:relative;
+  overflow:hidden;
+}
+
+.box::before{
+  content:"";
+  position:absolute;
+  inset:0 auto auto 0;
+  width:180px;
+  height:180px;
+  background:radial-gradient(circle, rgba(84,150,123,0.12), transparent 70%);
+  pointer-events:none;
 }
 
 .box h3{
@@ -248,7 +309,7 @@ header{
 
 .subTitle{
   font-size:12px;
-  color:#688070;
+  color:#60776c;
   margin:0 0 10px 2px;
 }
 
@@ -266,9 +327,9 @@ header{
   align-items:center;
   margin-bottom:12px;
   padding:10px;
-  background:#f7fbf8;
-  border:1px solid #deeee3;
-  border-radius:12px;
+  background:rgba(242,249,245,0.94);
+  border:1px solid #d0e4d7;
+  border-radius:14px;
 }
 
 .badge{
@@ -278,48 +339,49 @@ header{
   border-radius:999px;
   font-size:12px;
   font-weight:700;
-  background:#edf8f1;
-  color:#2f7d4e;
-  border:1px solid #cfe8d8;
+  background:#e7f4ec;
+  color:#256843;
+  border:1px solid #c1decb;
 }
 
 input,select{
   padding:7px 10px;
-  height:34px;
-  border:1px solid #cfe8d8;
-  border-radius:10px;
+  height:36px;
+  border:1px solid #c5dccc;
+  border-radius:11px;
   font-size:12px;
-  background:#fff;
+  background:rgba(255,255,255,0.95);
   outline:none;
+  color:var(--text);
 }
 
 input:focus,select:focus{
-  border-color:#82b895;
+  border-color:#74aa8b;
   box-shadow:0 0 0 3px rgba(47,125,78,0.08);
 }
 
 button{
   padding:7px 11px;
-  min-height:34px;
-  background:#2f7d4e;
+  min-height:36px;
+  background:linear-gradient(135deg,#256843,#319766);
   color:#fff;
   border:none;
-  border-radius:10px;
+  border-radius:11px;
   cursor:pointer;
   font-size:12px;
   font-weight:700;
 }
 
 button:hover{
-  opacity:0.94;
+  opacity:0.95;
 }
 
 .btnSub{
-  background:#6f8f7d;
+  background:linear-gradient(135deg,#69877a,#7a9688);
 }
 
 .btnRefresh{
-  background:#245f3b;
+  background:linear-gradient(135deg,#214f37,#31694b);
 }
 
 .dateGroup{
@@ -342,9 +404,9 @@ button:hover{
 .panelCount{
   font-size:11px;
   font-weight:800;
-  color:#5f7d6d;
-  background:#eef8f2;
-  border:1px solid #d5eadc;
+  color:#4d695d;
+  background:#ebf6ef;
+  border:1px solid #cde2d5;
   border-radius:999px;
   padding:4px 9px;
 }
@@ -356,15 +418,15 @@ button:hover{
   align-items:center;
   margin-bottom:10px;
   padding:10px;
-  background:linear-gradient(135deg,#f4fbf7 0%, #f7f9ff 100%);
-  border:1px solid #deeee3;
-  border-radius:12px;
+  background:linear-gradient(135deg,rgba(239,248,244,0.95) 0%, rgba(237,241,255,0.92) 100%);
+  border:1px solid #d1e5d8;
+  border-radius:14px;
 }
 
 .lockLabel{
   font-size:12px;
   font-weight:800;
-  color:#557062;
+  color:#51695d;
 }
 
 .lockBadge{
@@ -375,68 +437,73 @@ button:hover{
   font-size:12px;
   font-weight:800;
   background:#ffffff;
-  color:#2f7d4e;
-  border:1px solid #d7eadf;
+  color:#256843;
+  border:1px solid #d1e3d8;
 }
 
 .groupHeader td{
-  background:#f4faf6 !important;
-  color:#355443;
+  background:#edf7f1 !important;
+  color:#315040;
   font-size:11px;
   font-weight:900;
   text-align:left;
-  padding:7px 12px !important;
-  border-top:1px solid #dfeee5;
-  border-bottom:1px solid #dfeee5;
+  padding:8px 12px !important;
+  border-top:1px solid #d9eade;
+  border-bottom:1px solid #d9eade;
   letter-spacing:0.2px;
 }
 
 /* TABLE */
 .tableWrap{
   overflow-x:auto;
-  border:1px solid #e2efe7;
-  border-radius:14px;
+  border:1px solid #d8e9de;
+  border-radius:16px;
+  background:rgba(255,255,255,0.88);
 }
 
 table{
   width:100%;
   border-collapse:collapse;
-  background:#fff;
-  min-width:700px;
+  background:rgba(255,255,255,0.92);
+  min-width:860px;
 }
 
 thead th{
-  background:#f6faf7;
+  background:#f0f7f3;
   font-size:10px;
   font-weight:800;
-  color:#355443;
-  border-bottom:1px solid #dfeee5;
+  color:#324f40;
+  border-bottom:1px solid #dcebe2;
 }
 
 td,th{
   border-bottom:1px solid #edf3ef;
-  padding:4px 6px;
-  line-height:1.2;
+  padding:5px 6px;
+  line-height:1.25;
   text-align:center;
   vertical-align:middle;
   font-size:11px;
 }
 
 tbody tr:hover{
-  background:#fbfefc;
+  background:#f7fcf9;
 }
 
 td input{
   width:95%;
   min-width:70px;
-  height:28px;
+  height:30px;
   padding:4px 8px;
   font-size:11px;
 }
 
+.noteInput{
+  min-width:140px;
+}
+
 .emptyRow{
   padding:16px 8px;
-  color:#7f9286;
+  color:#71857a;
   font-size:12px;
 }
 
@@ -467,6 +534,7 @@ td input{
 </head>
 
 <body>
+<div class="artGlow"></div>
 
 <section id="loginScreen">
   <div class="loginCard">
@@ -487,7 +555,7 @@ td input{
 
     <button class="loginBtn" onclick="login()">로그인</button>
     <div id="loginError"></div>
-    <div class="loginHint">접속 계정: sungsim / 8658</div>
+
   </div>
 </section>
 
@@ -621,6 +689,7 @@ td input{
           </div>
 
           <input id="lot" placeholder="LOT">
+          <input id="note" placeholder="비고">
           <button onclick="addItem()">등록</button>
         </div>
 
@@ -628,6 +697,7 @@ td input{
           <span class="badge">시약명 / LOT 자동 대문자</span>
           <span class="badge">월 / 일 자동 두자리</span>
           <span class="badge">같은 재고는 수량만 합산</span>
+          <span class="badge">비고 직접 입력 가능</span>
         </div>
       </div>
 
@@ -671,6 +741,7 @@ td input{
                 <th>수량</th>
                 <th>유효기간</th>
                 <th>LOT</th>
+                <th>비고</th>
                 <th>관리</th>
               </tr>
             </thead>
@@ -833,6 +904,10 @@ function normalizeUpper(v){
   return String(v || "").trim().toUpperCase();
 }
 
+function sanitizeNote(v){
+  return String(v || "").trim();
+}
+
 function digitsOnly(v){
   return String(v || "").replace(/\D/g, "");
 }
@@ -901,7 +976,10 @@ function save(){
 }
 
 function load(){
-  items = JSON.parse(localStorage.getItem("items") || "[]");
+  items = JSON.parse(localStorage.getItem("items") || "[]").map(item => ({
+    ...item,
+    note: item.note || ""
+  }));
   backlog = JSON.parse(localStorage.getItem("backlog") || "[]");
   prepaid = JSON.parse(localStorage.getItem("prepaid") || "[]");
   monthStartOrders = JSON.parse(localStorage.getItem("monthStartOrders") || "[]");
@@ -997,6 +1075,7 @@ function checkMonthRollover(){
 
       if(existing){
         existing.qty = Number(existing.qty || 0) + Number(prev.qty || 0);
+        if(!existing.note && prev.note) existing.note = prev.note;
       }else{
         items.push(newItem);
       }
@@ -1154,6 +1233,7 @@ function addItem(){
   const m = formatMonth(document.getElementById("month").value);
   const d = formatDay(document.getElementById("day").value);
   const l = normalizeUpper(document.getElementById("lot").value);
+  const note = sanitizeNote(document.getElementById("note").value);
 
   if(!n || isNaN(q) || q <= 0 || y.length !== 4 || !m || !d){
     alert("필수입력을 정확히 입력해주세요.");
@@ -1174,6 +1254,9 @@ function addItem(){
 
   if(target){
     target.qty = Number(target.qty || 0) + q;
+    if(note){
+      target.note = target.note ? `${target.note} / ${note}` : note;
+    }
   }else{
     items.push({
       id: makeId(),
@@ -1182,6 +1265,7 @@ function addItem(){
       qty: q,
       exp: e,
       lot: l,
+      note,
       createdAt,
       period
     });
@@ -1197,6 +1281,7 @@ function addItem(){
   document.getElementById("month").value = "";
   document.getElementById("day").value = "";
   document.getElementById("lot").value = "";
+  document.getElementById("note").value = "";
 }
 
 function update(id, key, value){
@@ -1204,6 +1289,7 @@ function update(id, key, value){
   if(!item) return;
 
   if(key === "name" || key === "lot") value = normalizeUpper(value);
+  if(key === "note") value = sanitizeNote(value);
   if(key === "qty"){
     value = Number(value);
     if(isNaN(value) || value < 0) value = 0;
@@ -1402,7 +1488,7 @@ function render(){
     });
 
   if(filtered.length === 0){
-    tbody.innerHTML = `<tr><td colspan="7" class="emptyRow">표시할 재고가 없습니다.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="emptyRow">표시할 재고가 없습니다.</td></tr>`;
     return;
   }
 
@@ -1415,6 +1501,7 @@ function render(){
         <td><input type="number" value="${i.qty || 0}" onchange="update(${i.id}, 'qty', this.value)"></td>
         <td>${i.exp || "-"}</td>
         <td><input value="${i.lot || ""}" onchange="update(${i.id}, 'lot', this.value)"></td>
+        <td><input class="noteInput" value="${(i.note || "").replace(/"/g, '&quot;')}" onchange="update(${i.id}, 'note', this.value)"></td>
         <td><button class="btnSub" onclick="del(${i.id})">삭제</button></td>
       </tr>
     `;

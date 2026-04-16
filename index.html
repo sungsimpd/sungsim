@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>SUNGSIM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{ box-sizing:border-box; }
+
+:root{
+  --bg1:#eef7f1;
+  --bg2:#f8fbf9;
+  --bg3:#eef3ff;
+  --bg4:#fff6fb;
+  --card:rgba(255,255,255,0.88);
+  --line:#dceee3;
+  --line2:#cfe8d8;
+  --text:#1f2d26;
+  --sub:#6f8577;
+  --green:#2f7d4e;
+  --green-dark:#21593a;
+  --mint:#eef8f2;
+  --shadow:0 8px 24px rgba(0,0,0,0.05);
+  --shadow-soft:0 20px 44px rgba(23,48,35,0.10);
+}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(63,160,109,0.18), transparent 28%),
+    radial-gradient(circle at 100% 0%, rgba(113,135,255,0.16), transparent 24%),
+    radial-gradient(circle at 100% 100%, rgba(47,125,78,0.13), transparent 28%),
+    radial-gradient(circle at 20% 100%, rgba(255,141,197,0.10), transparent 24%),
+    linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 78%, var(--bg4) 100%);
+  color:var(--text);
+}
+
+/* LOGIN */
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at top left, rgba(63,160,109,0.14), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(47,125,78,0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(113,135,255,0.10), transparent 22%),
+    linear-gradient(180deg,#eef8f2 0%, #f9fcfa 100%);
+}
+
+.loginCard{
+  width:100%;
+  max-width:430px;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(220,238,227,0.95);
+  box-shadow:0 16px 40px rgba(23,48,35,0.10);
+  border-radius:28px;
+  padding:34px 28px 28px;
+}
+
+.loginBrand{
+  text-align:center;
+  margin-bottom:28px;
+}
+
+.loginTitle{
+  font-size:42px;
+  font-weight:900;
+  letter-spacing:2px;
+  line-height:1;
+  background:linear-gradient(90deg,#184f32,#3fa06d);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.loginSub{
+  margin-top:10px;
+  font-size:13px;
+  color:#718678;
+  letter-spacing:1.3px;
+}
+
+.loginField{
+  margin-bottom:14px;
+}
+
+.loginLabel{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  color:#5d7565;
+  margin:0 0 7px 4px;
+  letter-spacing:0.3px;
+}
+
+.loginInput{
+  width:100%;
+  height:48px;
+  border:1px solid #d6eadc;
+  border-radius:14px;
+  padding:0 14px;
+  font-size:14px;
+  background:#fcfffd;
+  outline:none;
+}
+
+.loginInput:focus{
+  border-color:#85bc99;
+  box-shadow:0 0 0 4px rgba(47,125,78,0.08);
+}
+
+.loginBtn{
+  width:100%;
+  height:50px;
+  margin-top:6px;
+  border:none;
+  border-radius:15px;
+  background:linear-gradient(135deg,#2f7d4e,#3f9a67);
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:0.3px;
+  cursor:pointer;
+  box-shadow:0 10px 20px rgba(47,125,78,0.18);
+}
+
+#loginError{
+  margin-top:12px;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+  color:#c14a4a;
+  min-height:18px;
+}
+
+.loginHint{
+  margin-top:14px;
+  text-align:center;
+  font-size:12px;
+  color:#7f9387;
+}
+
+/* APP */
+#appScreen{
+  display:none;
+}
+
+/* HEADER */
+header{
+  position:relative;
+  background:rgba(255,255,255,0.86);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #d9ece0;
+  padding:24px 24px 20px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.04);
+}
+
+.headerInner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.logoWrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.logoTitle{
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:2px;
+  line-height:1;
+  margin:0;
+  background:linear-gradient(90deg,#184f32,#3fa06d);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.logoSub{
+  margin-top:7px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:2.4px;
+  color:#789181;
+  text-transform:uppercase;
+}
+
+#clockBox{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:0.8px;
+  color:#587765;
+  white-space:nowrap;
+}
+
+.logoutBtn{
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  background:#eef8f2;
+  color:#2f7d4e;
+  border:1px solid #d7eadf;
+  border-radius:12px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* LAYOUT */
+.wrap{
+  display:flex;
+  gap:16px;
+  padding:16px;
+  align-items:flex-start;
+}
+
+.left{ flex:2; min-width:0; }
+.right{ flex:1; min-width:340px; }
+
+.box{
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  padding:16px;
+  margin-bottom:14px;
+  border-radius:18px;
+  box-shadow:var(--shadow-soft);
+  border:1px solid rgba(214,234,220,0.82);
+}
+
+.box h3{
+  margin:0 0 10px 0;
+  font-size:18px;
+}
+
+.subTitle{
+  font-size:12px;
+  color:#688070;
+  margin:0 0 10px 2px;
+}
+
+.row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+}
+
+.filterRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-bottom:12px;
+  padding:10px;
+  background:#f7fbf8;
+  border:1px solid #deeee3;
+  border-radius:12px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  background:#edf8f1;
+  color:#2f7d4e;
+  border:1px solid #cfe8d8;
+}
+
+input,select{
+  padding:7px 10px;
+  height:34px;
+  border:1px solid #cfe8d8;
+  border-radius:10px;
+  font-size:12px;
+  background:#fff;
+  outline:none;
+}
+
+input:focus,select:focus{
+  border-color:#82b895;
+  box-shadow:0 0 0 3px rgba(47,125,78,0.08);
+}
+
+button{
+  padding:7px 11px;
+  min-height:34px;
+  background:#2f7d4e;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:700;
+}
+
+button:hover{
+  opacity:0.94;
+}
+
+.btnSub{
+  background:#6f8f7d;
+}
+
+.btnRefresh{
+  background:#245f3b;
+}
+
+.dateGroup{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.dateGroup input{
+  text-align:center;
+}
+
+.panelTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.panelCount{
+  font-size:11px;
+  font-weight:800;
+  color:#5f7d6d;
+  background:#eef8f2;
+  border:1px solid #d5eadc;
+  border-radius:999px;
+  padding:4px 9px;
+}
+
+.lockBar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-bottom:10px;
+  padding:10px;
+  background:linear-gradient(135deg,#f4fbf7 0%, #f7f9ff 100%);
+  border:1px solid #deeee3;
+  border-radius:12px;
+}
+
+.lockLabel{
+  font-size:12px;
+  font-weight:800;
+  color:#557062;
+}
+
+.lockBadge{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  background:#ffffff;
+  color:#2f7d4e;
+  border:1px solid #d7eadf;
+}
+
+.groupHeader td{
+  background:#f4faf6 !important;
+  color:#355443;
+  font-size:11px;
+  font-weight:900;
+  text-align:left;
+  padding:7px 12px !important;
+  border-top:1px solid #dfeee5;
+  border-bottom:1px solid #dfeee5;
+  letter-spacing:0.2px;
+}
+
+/* TABLE */
+.tableWrap{
+  overflow-x:auto;
+  border:1px solid #e2efe7;
+  border-radius:14px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  min-width:700px;
+}
+
+thead th{
+  background:#f6faf7;
+  font-size:10px;
+  font-weight:800;
+  color:#355443;
+  border-bottom:1px solid #dfeee5;
+}
+
+td,th{
+  border-bottom:1px solid #edf3ef;
+  padding:4px 6px;
+  line-height:1.2;
+  text-align:center;
+  vertical-align:middle;
+  font-size:11px;
+}
+
+tbody tr:hover{
+  background:#fbfefc;
+}
+
+td input{
+  width:95%;
+  min-width:70px;
+  height:28px;
+  padding:4px 8px;
+  font-size:11px;
+}
+
+.emptyRow{
+  padding:16px 8px;
+  color:#7f9286;
+  font-size:12px;
+}
+
+.infoBar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 0 0;
+}
+
+@media (max-width: 960px){
+  .wrap{
+    flex-direction:column;
+  }
+  .right{
+    min-width:0;
+  }
+  .headerInner{
+    flex-direction:column;
+    gap:10px;
+  }
+  #clockBox, .logoutBtn{
+    position:static;
+    transform:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginScreen">
+  <div class="loginCard">
+    <div class="loginBrand">
+      <div class="loginTitle">SUNGSIM</div>
+      <div class="loginSub">SMART INVENTORY WORKSPACE</div>
+    </div>
+
+    <div class="loginField">
+      <label class="loginLabel" for="loginId">아이디</label>
+      <input id="loginId" class="loginInput" placeholder="아이디 입력">
+    </div>
+
+    <div class="loginField">
+      <label class="loginLabel" for="loginPw">비밀번호</label>
+      <input id="loginPw" class="loginInput" type="password" placeholder="비밀번호 입력">
+    </div>
+
+    <button class="loginBtn" onclick="login()">로그인</button>
+    <div id="loginError"></div>
+    <div class="loginHint">접속 계정: sungsim / 8658</div>
+  </div>
+</section>
+
+<div id="appScreen">
+  <header>
+    <div class="headerInner">
+      <button class="logoutBtn" onclick="logout()">로그아웃</button>
+
+      <div class="logoWrap">
+        <div class="logoTitle">SUNGSIM</div>
+        <div class="logoSub">Inventory Dashboard</div>
+      </div>
+
+      <span id="clockBox"></span>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <div class="left">
+
+      <div class="box">
+        <div class="panelTitle">
+          <h3 style="margin:0;">🗂 월초발주 목록</h3>
+          <span class="panelCount" id="monthStartOrderCount">0건</span>
+        </div>
+        <p class="subTitle">연/월/거래처를 고정한 뒤, 해당 기준으로 품목을 계속 입력합니다.</p>
+
+        <div class="lockBar">
+          <span class="lockLabel">기준값</span>
+          <input id="ms_year" placeholder="YYYY" maxlength="4" style="width:76px;">
+          <input id="ms_month" placeholder="MM" maxlength="2" style="width:56px;">
+          <select id="ms_vendor" style="min-width:140px;">
+            <option value="">거래처 선택</option>
+            <option>구미차병원</option>
+            <option>경주동국대병원</option>
+          </select>
+          <button type="button" onclick="lockMonthStartContext()">고정</button>
+          <span class="lockBadge" id="msLockBadge">고정 안됨</span>
+          <button type="button" class="btnSub" onclick="unlockMonthStartContext()">해제</button>
+        </div>
+
+        <div class="row" style="margin-bottom:10px;">
+          <input id="ms_name" placeholder="품명">
+          <input id="ms_spec" placeholder="규격">
+          <input id="ms_qty" type="number" placeholder="발주량" min="1">
+          <button onclick="addMonthStartOrder()">등록</button>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>연도</th>
+                <th>월</th>
+                <th>거래처</th>
+                <th>품명</th>
+                <th>규격</th>
+                <th>발주량</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="monthStartOrderList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="panelTitle">
+          <h3 style="margin:0;">🗂 중간발주 목록</h3>
+          <span class="panelCount" id="midOrderCount">0건</span>
+        </div>
+        <p class="subTitle">연/월/거래처를 먼저 고정하고, 해당 기준으로 품목을 계속 누적 정리합니다.</p>
+
+        <div class="lockBar">
+          <span class="lockLabel">기준값</span>
+          <input id="mid_year" placeholder="YYYY" maxlength="4" style="width:76px;">
+          <input id="mid_month" placeholder="MM" maxlength="2" style="width:56px;">
+          <select id="mid_vendor" style="min-width:140px;">
+            <option value="">거래처 선택</option>
+            <option>구미차병원</option>
+            <option>경주동국대병원</option>
+          </select>
+          <button type="button" onclick="lockMidContext()">고정</button>
+          <span class="lockBadge" id="midLockBadge">고정 안됨</span>
+          <button type="button" class="btnSub" onclick="unlockMidContext()">해제</button>
+        </div>
+
+        <div class="row" style="margin-bottom:10px;">
+          <input id="mid_name" placeholder="품명">
+          <input id="mid_spec" placeholder="규격">
+          <input id="mid_qty" type="number" placeholder="발주량" min="1">
+          <button onclick="addMidOrder()">등록</button>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>연도</th>
+                <th>월</th>
+                <th>거래처</th>
+                <th>품명</th>
+                <th>규격</th>
+                <th>발주량</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="midOrderList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>📦 재고 등록</h3>
+        <p class="subTitle">등록용 입력값입니다. 목록 조회 연/월 필터와 별도로 동작합니다.</p>
+
+        <div class="row">
+          <select id="hospital">
+            <option>구미차병원</option>
+            <option>경주동국대병원</option>
+          </select>
+
+          <input id="reagentName" placeholder="시약명">
+          <input id="qty" type="number" placeholder="수량" min="1">
+
+          <div class="dateGroup">
+            <input id="year" placeholder="YYYY" maxlength="4" style="width:76px;">
+            <input id="month" placeholder="MM" maxlength="2" style="width:56px;">
+            <input id="day" placeholder="DD" maxlength="2" style="width:56px;">
+          </div>
+
+          <input id="lot" placeholder="LOT">
+          <button onclick="addItem()">등록</button>
+        </div>
+
+        <div class="infoBar">
+          <span class="badge">시약명 / LOT 자동 대문자</span>
+          <span class="badge">월 / 일 자동 두자리</span>
+          <span class="badge">같은 재고는 수량만 합산</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>📋 재고 목록</h3>
+        <p class="subTitle">조회용 연/월 필터입니다. 등록 날짜 입력과 별도입니다.</p>
+
+        <div class="filterRow">
+          <span class="badge">조회 기간</span>
+
+          <select id="yearFilter" onchange="applyFilter()">
+            <option value="all">전체연도</option>
+          </select>
+
+          <select id="monthFilter" onchange="applyFilter()">
+            <option value="all">전체월</option>
+            <option value="01">1월</option>
+            <option value="02">2월</option>
+            <option value="03">3월</option>
+            <option value="04">4월</option>
+            <option value="05">5월</option>
+            <option value="06">6월</option>
+            <option value="07">7월</option>
+            <option value="08">8월</option>
+            <option value="09">9월</option>
+            <option value="10">10월</option>
+            <option value="11">11월</option>
+            <option value="12">12월</option>
+          </select>
+
+          <button class="btnRefresh" onclick="refreshList()">새로고침</button>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>기준월</th>
+                <th>병원</th>
+                <th>시약</th>
+                <th>수량</th>
+                <th>유효기간</th>
+                <th>LOT</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="list"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="right">
+
+      <div class="box">
+        <div class="panelTitle">
+          <h3 style="margin:0;">💳 날짜별 선납 목록</h3>
+          <span class="panelCount" id="prepaidCount">0건</span>
+        </div>
+
+        <div class="row" style="margin-bottom:10px;">
+          <select id="p_hospital">
+            <option>구미차병원</option>
+            <option>경주동국대병원</option>
+          </select>
+
+          <input id="p_name" placeholder="시약명">
+          <input id="p_qty" type="number" placeholder="수량" min="1">
+          <input id="p_lot" placeholder="LOT">
+          <input id="p_date" placeholder="YYYY-MM-DD">
+          <button onclick="addPrepaid()">등록</button>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>날짜</th>
+                <th>병원</th>
+                <th>시약명</th>
+                <th>수량</th>
+                <th>LOT</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="prepaidList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="panelTitle">
+          <h3 style="margin:0;">⚠ 미납 / 병원 재고 관리</h3>
+          <span class="panelCount" id="backlogCount">0건</span>
+        </div>
+
+        <div class="row" style="margin-bottom:10px;">
+          <select id="b_hospital">
+            <option>구미차병원</option>
+            <option>경주동국대병원</option>
+          </select>
+
+          <input id="b_name" placeholder="시약명">
+          <input id="b_qty" type="number" placeholder="수량" min="1">
+          <input id="b_lot" placeholder="LOT">
+          <input id="b_exp" placeholder="YYYY-MM-DD">
+          <button onclick="addBacklog()">등록</button>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>병원</th>
+                <th>시약명</th>
+                <th>수량</th>
+                <th>LOT</th>
+                <th>유효기간</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="backlogList"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+const LOGIN_ID = "sungsim";
+const LOGIN_PW = "8658";
+
+let items = [];
+let backlog = [];
+let prepaid = [];
+let monthStartOrders = [];
+let midOrders = [];
+
+let yearFilter = "all";
+let monthFilter = "all";
+let monthStartLockedContext = JSON.parse(localStorage.getItem("monthStartLockedContext") || "null");
+let midLockedContext = JSON.parse(localStorage.getItem("midLockedContext") || "null");
+
+/* LOGIN */
+function checkLoginState(){
+  const isLoggedIn = localStorage.getItem("sungsimLoggedIn") === "true";
+  document.getElementById("loginScreen").style.display = isLoggedIn ? "none" : "flex";
+  document.getElementById("appScreen").style.display = isLoggedIn ? "block" : "none";
+
+  if(isLoggedIn){
+    initializeApp();
+  }
+}
+
+function login(){
+  const id = document.getElementById("loginId").value.trim();
+  const pw = document.getElementById("loginPw").value.trim();
+  const errorEl = document.getElementById("loginError");
+
+  if(id === LOGIN_ID && pw === LOGIN_PW){
+    localStorage.setItem("sungsimLoggedIn", "true");
+    errorEl.textContent = "";
+    checkLoginState();
+  }else{
+    errorEl.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
+  }
+}
+
+function logout(){
+  localStorage.removeItem("sungsimLoggedIn");
+  location.reload();
+}
+
+/* CLOCK */
+function updateClock(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  const h = String(now.getHours()).padStart(2, "0");
+  const mi = String(now.getMinutes()).padStart(2, "0");
+  const s = String(now.getSeconds()).padStart(2, "0");
+  const clock = document.getElementById("clockBox");
+  if(clock) clock.textContent = `${y}.${m}.${d}  ${h}:${mi}:${s}`;
+}
+setInterval(updateClock, 1000);
+
+/* HELPERS */
+function getCurrentPeriod(){
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function makeId(){
+  return Date.now() + Math.floor(Math.random() * 100000);
+}
+
+function normalizeUpper(v){
+  return String(v || "").trim().toUpperCase();
+}
+
+function digitsOnly(v){
+  return String(v || "").replace(/\D/g, "");
+}
+
+function formatYear(v){
+  return digitsOnly(v).slice(0, 4);
+}
+
+function formatMonth(v){
+  let s = digitsOnly(v).slice(0, 2);
+  if(!s) return "";
+  let n = Number(s);
+  if(isNaN(n) || n < 1) n = 1;
+  if(n > 12) n = 12;
+  return String(n).padStart(2, "0");
+}
+
+function formatDay(v){
+  let s = digitsOnly(v).slice(0, 2);
+  if(!s) return "";
+  let n = Number(s);
+  if(isNaN(n) || n < 1) n = 1;
+  if(n > 31) n = 31;
+  return String(n).padStart(2, "0");
+}
+
+function formatYmdString(v){
+  const parts = String(v || "").trim().split("-");
+  if(parts.length !== 3) return "";
+  const y = formatYear(parts[0]);
+  const m = formatMonth(parts[1]);
+  const d = formatDay(parts[2]);
+  if(y.length !== 4 || !m || !d) return "";
+  return `${y}-${m}-${d}`;
+}
+
+function formatDateInputParts(){
+  const yearEl = document.getElementById("year");
+  const monthEl = document.getElementById("month");
+  const dayEl = document.getElementById("day");
+
+  yearEl.value = formatYear(yearEl.value);
+  monthEl.value = formatMonth(monthEl.value);
+  dayEl.value = formatDay(dayEl.value);
+}
+
+function itemKey(obj){
+  return [
+    obj.period,
+    obj.hospital,
+    normalizeUpper(obj.name),
+    obj.exp,
+    normalizeUpper(obj.lot)
+  ].join("||");
+}
+
+/* STORAGE */
+function save(){
+  localStorage.setItem("items", JSON.stringify(items));
+  localStorage.setItem("backlog", JSON.stringify(backlog));
+  localStorage.setItem("prepaid", JSON.stringify(prepaid));
+  localStorage.setItem("monthStartOrders", JSON.stringify(monthStartOrders));
+  localStorage.setItem("midOrders", JSON.stringify(midOrders));
+  localStorage.setItem("monthStartLockedContext", JSON.stringify(monthStartLockedContext));
+  localStorage.setItem("midLockedContext", JSON.stringify(midLockedContext));
+}
+
+function load(){
+  items = JSON.parse(localStorage.getItem("items") || "[]");
+  backlog = JSON.parse(localStorage.getItem("backlog") || "[]");
+  prepaid = JSON.parse(localStorage.getItem("prepaid") || "[]");
+  monthStartOrders = JSON.parse(localStorage.getItem("monthStartOrders") || "[]");
+  midOrders = JSON.parse(localStorage.getItem("midOrders") || "[]");
+  monthStartLockedContext = JSON.parse(localStorage.getItem("monthStartLockedContext") || "null");
+  midLockedContext = JSON.parse(localStorage.getItem("midLockedContext") || "null");
+}
+
+/* FORMATTERS */
+function bindInputFormatters(){
+  const upperIds = [
+    "reagentName","lot","b_name","b_lot","p_name","p_lot",
+    "ms_name","ms_spec","mid_name","mid_spec"
+  ];
+
+  upperIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(el){
+      el.addEventListener("input", e => {
+        e.target.value = normalizeUpper(e.target.value);
+      });
+    }
+  });
+
+  const inventoryYear = document.getElementById("year");
+  const inventoryMonth = document.getElementById("month");
+  const inventoryDay = document.getElementById("day");
+
+  inventoryYear.addEventListener("input", () => {
+    inventoryYear.value = formatYear(inventoryYear.value);
+  });
+
+  inventoryMonth.addEventListener("input", () => {
+    inventoryMonth.value = digitsOnly(inventoryMonth.value).slice(0, 2);
+  });
+
+  inventoryDay.addEventListener("input", () => {
+    inventoryDay.value = digitsOnly(inventoryDay.value).slice(0, 2);
+  });
+
+  inventoryMonth.addEventListener("blur", formatDateInputParts);
+  inventoryDay.addEventListener("blur", formatDateInputParts);
+  inventoryYear.addEventListener("blur", formatDateInputParts);
+
+  ["ms_year","mid_year"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("input", () => {
+      el.value = formatYear(el.value);
+    });
+  });
+
+  ["ms_month","mid_month"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("input", () => {
+      el.value = digitsOnly(el.value).slice(0, 2);
+    });
+    el.addEventListener("blur", () => {
+      el.value = formatMonth(el.value);
+    });
+  });
+
+  document.getElementById("b_exp").addEventListener("blur", e => {
+    e.target.value = formatYmdString(e.target.value);
+  });
+
+  document.getElementById("p_date").addEventListener("blur", e => {
+    e.target.value = formatYmdString(e.target.value);
+  });
+}
+
+/* MONTH ROLLOVER */
+function checkMonthRollover(){
+  const current = getCurrentPeriod();
+  const savedPeriod = localStorage.getItem("currentPeriod");
+
+  if(savedPeriod === current) return;
+
+  const previousPeriod = savedPeriod;
+
+  if(previousPeriod){
+    const prevItems = items.filter(i => i.period === previousPeriod);
+
+    prevItems.forEach(prev => {
+      const newItem = {
+        ...prev,
+        id: makeId(),
+        period: current
+      };
+
+      const existing = items.find(i => itemKey(i) === itemKey(newItem));
+
+      if(existing){
+        existing.qty = Number(existing.qty || 0) + Number(prev.qty || 0);
+      }else{
+        items.push(newItem);
+      }
+    });
+  }
+
+  localStorage.setItem("currentPeriod", current);
+  save();
+}
+
+/* YEAR FILTER */
+function initYearFilter(){
+  const yearFilterEl = document.getElementById("yearFilter");
+  const set = new Set();
+  const nowYear = new Date().getFullYear();
+
+  for(let y = nowYear - 2; y <= nowYear + 3; y++){
+    set.add(String(y));
+  }
+
+  items.forEach(i => {
+    const py = (i.period || "").split("-")[0];
+    const ey = (i.exp || "").split("-")[0];
+    if(py) set.add(py);
+    if(ey) set.add(ey);
+  });
+
+  monthStartOrders.forEach(i => set.add(i.year));
+  midOrders.forEach(i => set.add(i.year));
+
+  const currentValue = yearFilterEl.value || "all";
+  yearFilterEl.innerHTML = `<option value="all">전체연도</option>`;
+
+  [...set].filter(Boolean).sort((a,b) => b - a).forEach(v => {
+    yearFilterEl.innerHTML += `<option value="${v}">${v}</option>`;
+  });
+
+  yearFilterEl.value = [...yearFilterEl.options].some(opt => opt.value === currentValue)
+    ? currentValue
+    : "all";
+}
+
+/* FILTER */
+function applyFilter(){
+  yearFilter = document.getElementById("yearFilter").value;
+  monthFilter = document.getElementById("monthFilter").value;
+  render();
+}
+
+/* LOCK STATE */
+function renderMonthStartLockState(){
+  const badge = document.getElementById("msLockBadge");
+  const yearEl = document.getElementById("ms_year");
+  const monthEl = document.getElementById("ms_month");
+  const vendorEl = document.getElementById("ms_vendor");
+
+  if(monthStartLockedContext){
+    badge.textContent = `${monthStartLockedContext.year}-${monthStartLockedContext.month} / ${monthStartLockedContext.vendor}`;
+    yearEl.value = monthStartLockedContext.year;
+    monthEl.value = monthStartLockedContext.month;
+    vendorEl.value = monthStartLockedContext.vendor;
+    yearEl.disabled = true;
+    monthEl.disabled = true;
+    vendorEl.disabled = true;
+  }else{
+    badge.textContent = "고정 안됨";
+    yearEl.disabled = false;
+    monthEl.disabled = false;
+    vendorEl.disabled = false;
+  }
+}
+
+function renderMidLockState(){
+  const badge = document.getElementById("midLockBadge");
+  const yearEl = document.getElementById("mid_year");
+  const monthEl = document.getElementById("mid_month");
+  const vendorEl = document.getElementById("mid_vendor");
+
+  if(midLockedContext){
+    badge.textContent = `${midLockedContext.year}-${midLockedContext.month} / ${midLockedContext.vendor}`;
+    yearEl.value = midLockedContext.year;
+    monthEl.value = midLockedContext.month;
+    vendorEl.value = midLockedContext.vendor;
+    yearEl.disabled = true;
+    monthEl.disabled = true;
+    vendorEl.disabled = true;
+  }else{
+    badge.textContent = "고정 안됨";
+    yearEl.disabled = false;
+    monthEl.disabled = false;
+    vendorEl.disabled = false;
+  }
+}
+
+function lockMonthStartContext(){
+  const year = formatYear(document.getElementById("ms_year").value);
+  const month = formatMonth(document.getElementById("ms_month").value);
+  const vendor = document.getElementById("ms_vendor").value;
+
+  document.getElementById("ms_year").value = year;
+  document.getElementById("ms_month").value = month;
+
+  if(!year || !month || !vendor){
+    alert("월초발주 기준 연도/월/거래처를 먼저 선택해주세요.");
+    return;
+  }
+
+  monthStartLockedContext = { year, month, vendor };
+  save();
+  renderMonthStartLockState();
+  renderMonthStartOrders();
+}
+
+function unlockMonthStartContext(){
+  monthStartLockedContext = null;
+  save();
+  renderMonthStartLockState();
+  renderMonthStartOrders();
+}
+
+function lockMidContext(){
+  const year = formatYear(document.getElementById("mid_year").value);
+  const month = formatMonth(document.getElementById("mid_month").value);
+  const vendor = document.getElementById("mid_vendor").value;
+
+  document.getElementById("mid_year").value = year;
+  document.getElementById("mid_month").value = month;
+
+  if(!year || !month || !vendor){
+    alert("중간발주 기준 연도/월/거래처를 먼저 선택해주세요.");
+    return;
+  }
+
+  midLockedContext = { year, month, vendor };
+  save();
+  renderMidLockState();
+  renderMidOrders();
+}
+
+function unlockMidContext(){
+  midLockedContext = null;
+  save();
+  renderMidLockState();
+  renderMidOrders();
+}
+
+/* INVENTORY */
+function addItem(){
+  formatDateInputParts();
+
+  const h = document.getElementById("hospital").value;
+  const n = normalizeUpper(document.getElementById("reagentName").value);
+  const q = Number(document.getElementById("qty").value);
+  const y = formatYear(document.getElementById("year").value);
+  const m = formatMonth(document.getElementById("month").value);
+  const d = formatDay(document.getElementById("day").value);
+  const l = normalizeUpper(document.getElementById("lot").value);
+
+  if(!n || isNaN(q) || q <= 0 || y.length !== 4 || !m || !d){
+    alert("필수입력을 정확히 입력해주세요.");
+    return;
+  }
+
+  const e = `${y}-${m}-${d}`;
+  const createdAt = new Date().toISOString().split("T")[0];
+  const period = getCurrentPeriod();
+
+  const target = items.find(i =>
+    i.period === period &&
+    i.hospital === h &&
+    normalizeUpper(i.name) === n &&
+    i.exp === e &&
+    normalizeUpper(i.lot) === l
+  );
+
+  if(target){
+    target.qty = Number(target.qty || 0) + q;
+  }else{
+    items.push({
+      id: makeId(),
+      hospital: h,
+      name: n,
+      qty: q,
+      exp: e,
+      lot: l,
+      createdAt,
+      period
+    });
+  }
+
+  save();
+  initYearFilter();
+  render();
+
+  document.getElementById("reagentName").value = "";
+  document.getElementById("qty").value = "";
+  document.getElementById("year").value = "";
+  document.getElementById("month").value = "";
+  document.getElementById("day").value = "";
+  document.getElementById("lot").value = "";
+}
+
+function update(id, key, value){
+  const item = items.find(i => i.id === id);
+  if(!item) return;
+
+  if(key === "name" || key === "lot") value = normalizeUpper(value);
+  if(key === "qty"){
+    value = Number(value);
+    if(isNaN(value) || value < 0) value = 0;
+  }
+
+  item[key] = value;
+  save();
+  render();
+}
+
+function del(id){
+  items = items.filter(i => i.id !== id);
+  save();
+  render();
+}
+
+/* ORDERS */
+function addMonthStartOrder(){
+  let year = "";
+  let month = "";
+  let vendor = "";
+
+  if(monthStartLockedContext){
+    year = monthStartLockedContext.year;
+    month = monthStartLockedContext.month;
+    vendor = monthStartLockedContext.vendor;
+  }else{
+    year = formatYear(document.getElementById("ms_year").value);
+    month = formatMonth(document.getElementById("ms_month").value);
+    vendor = document.getElementById("ms_vendor").value;
+    document.getElementById("ms_year").value = year;
+    document.getElementById("ms_month").value = month;
+  }
+
+  const name = normalizeUpper(document.getElementById("ms_name").value);
+  const spec = normalizeUpper(document.getElementById("ms_spec").value);
+  const qty = Number(document.getElementById("ms_qty").value);
+
+  if(!year || !month || !vendor || !name || !spec || isNaN(qty) || qty <= 0){
+    alert("월초발주 입력값을 확인해주세요.");
+    return;
+  }
+
+  monthStartOrders.push({
+    id: makeId(), year, month, vendor, name, spec, qty
+  });
+
+  save();
+  initYearFilter();
+  renderMonthStartOrders();
+
+  document.getElementById("ms_name").value = "";
+  document.getElementById("ms_spec").value = "";
+  document.getElementById("ms_qty").value = "";
+}
+
+function addMidOrder(){
+  let year = "";
+  let month = "";
+  let vendor = "";
+
+  if(midLockedContext){
+    year = midLockedContext.year;
+    month = midLockedContext.month;
+    vendor = midLockedContext.vendor;
+  }else{
+    year = formatYear(document.getElementById("mid_year").value);
+    month = formatMonth(document.getElementById("mid_month").value);
+    vendor = document.getElementById("mid_vendor").value;
+    document.getElementById("mid_year").value = year;
+    document.getElementById("mid_month").value = month;
+  }
+
+  const name = normalizeUpper(document.getElementById("mid_name").value);
+  const spec = normalizeUpper(document.getElementById("mid_spec").value);
+  const qty = Number(document.getElementById("mid_qty").value);
+
+  if(!year || !month || !vendor || !name || !spec || isNaN(qty) || qty <= 0){
+    alert("중간발주 입력값을 확인해주세요.");
+    return;
+  }
+
+  midOrders.push({
+    id: makeId(), year, month, vendor, name, spec, qty
+  });
+
+  save();
+  initYearFilter();
+  renderMidOrders();
+
+  document.getElementById("mid_name").value = "";
+  document.getElementById("mid_spec").value = "";
+  document.getElementById("mid_qty").value = "";
+}
+
+function delMonthStartOrder(id){
+  monthStartOrders = monthStartOrders.filter(i => i.id !== id);
+  save();
+  renderMonthStartOrders();
+}
+
+function delMidOrder(id){
+  midOrders = midOrders.filter(i => i.id !== id);
+  save();
+  renderMidOrders();
+}
+
+/* PREPAID */
+function addPrepaid(){
+  const hospital = document.getElementById("p_hospital").value;
+  const name = normalizeUpper(document.getElementById("p_name").value);
+  const qty = Number(document.getElementById("p_qty").value);
+  const lot = normalizeUpper(document.getElementById("p_lot").value);
+  const date = formatYmdString(document.getElementById("p_date").value);
+
+  if(!name || isNaN(qty) || qty <= 0 || !date){
+    alert("선납 입력값을 확인해주세요.");
+    return;
+  }
+
+  prepaid.push({ id: makeId(), hospital, name, qty, lot, date });
+  save();
+  renderPrepaid();
+
+  document.getElementById("p_name").value = "";
+  document.getElementById("p_qty").value = "";
+  document.getElementById("p_lot").value = "";
+  document.getElementById("p_date").value = "";
+}
+
+function delPrepaid(id){
+  prepaid = prepaid.filter(i => i.id !== id);
+  save();
+  renderPrepaid();
+}
+
+/* BACKLOG */
+function addBacklog(){
+  const hospital = document.getElementById("b_hospital").value;
+  const name = normalizeUpper(document.getElementById("b_name").value);
+  const qty = Number(document.getElementById("b_qty").value);
+  const lot = normalizeUpper(document.getElementById("b_lot").value);
+  const exp = formatYmdString(document.getElementById("b_exp").value);
+
+  if(!name || isNaN(qty) || qty <= 0){
+    alert("미납 입력값을 확인해주세요.");
+    return;
+  }
+
+  backlog.push({ id: makeId(), hospital, name, qty, lot, exp });
+  save();
+  renderBacklog();
+
+  document.getElementById("b_name").value = "";
+  document.getElementById("b_qty").value = "";
+  document.getElementById("b_lot").value = "";
+  document.getElementById("b_exp").value = "";
+}
+
+function delBacklog(id){
+  backlog = backlog.filter(i => i.id !== id);
+  save();
+  renderBacklog();
+}
+
+/* REFRESH */
+function refreshList(){
+  load();
+  checkMonthRollover();
+  initYearFilter();
+  renderMonthStartLockState();
+  renderMidLockState();
+  render();
+  renderMonthStartOrders();
+  renderMidOrders();
+  renderPrepaid();
+  renderBacklog();
+}
+
+/* RENDER */
+function render(){
+  const tbody = document.getElementById("list");
+  tbody.innerHTML = "";
+
+  const filtered = items
+    .filter(i => {
+      const [y, m] = (i.period || "").split("-");
+      if(yearFilter !== "all" && y !== yearFilter) return false;
+      if(monthFilter !== "all" && m !== monthFilter) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if(a.period !== b.period) return b.period.localeCompare(a.period);
+      if(a.hospital !== b.hospital) return a.hospital.localeCompare(b.hospital);
+      return a.name.localeCompare(b.name);
+    });
+
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7" class="emptyRow">표시할 재고가 없습니다.</td></tr>`;
+    return;
+  }
+
+  filtered.forEach(i => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i.period || "-"}</td>
+        <td>${i.hospital}</td>
+        <td><input value="${i.name || ""}" onchange="update(${i.id}, 'name', this.value)"></td>
+        <td><input type="number" value="${i.qty || 0}" onchange="update(${i.id}, 'qty', this.value)"></td>
+        <td>${i.exp || "-"}</td>
+        <td><input value="${i.lot || ""}" onchange="update(${i.id}, 'lot', this.value)"></td>
+        <td><button class="btnSub" onclick="del(${i.id})">삭제</button></td>
+      </tr>
+    `;
+  });
+}
+
+function renderMonthStartOrders(){
+  const tbody = document.getElementById("monthStartOrderList");
+  const countEl = document.getElementById("monthStartOrderCount");
+  tbody.innerHTML = "";
+
+  let filtered = [...monthStartOrders];
+
+  if(monthStartLockedContext){
+    filtered = filtered.filter(i =>
+      i.year === monthStartLockedContext.year &&
+      i.month === monthStartLockedContext.month &&
+      i.vendor === monthStartLockedContext.vendor
+    );
+  }
+
+  filtered.sort((a,b) => {
+    if(a.year !== b.year) return b.year.localeCompare(a.year);
+    if(a.month !== b.month) return b.month.localeCompare(a.month);
+    if(a.vendor !== b.vendor) return a.vendor.localeCompare(b.vendor);
+    return a.name.localeCompare(b.name);
+  });
+
+  countEl.textContent = `${filtered.length}건`;
+
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7" class="emptyRow">등록된 월초발주 내역이 없습니다.</td></tr>`;
+    return;
+  }
+
+  let currentGroup = "";
+
+  filtered.forEach(i => {
+    const groupKey = `${i.year}-${i.month}-${i.vendor}`;
+
+    if(currentGroup !== groupKey){
+      currentGroup = groupKey;
+      tbody.innerHTML += `
+        <tr class="groupHeader">
+          <td colspan="7">📁 ${i.year}년 ${i.month}월 / ${i.vendor}</td>
+        </tr>
+      `;
+    }
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${i.year}</td>
+        <td>${i.month}</td>
+        <td>${i.vendor}</td>
+        <td>${i.name}</td>
+        <td>${i.spec}</td>
+        <td>${i.qty}</td>
+        <td><button class="btnSub" onclick="delMonthStartOrder(${i.id})">삭제</button></td>
+      </tr>
+    `;
+  });
+}
+
+function renderMidOrders(){
+  const tbody = document.getElementById("midOrderList");
+  const countEl = document.getElementById("midOrderCount");
+  tbody.innerHTML = "";
+
+  let filtered = [...midOrders];
+
+  if(midLockedContext){
+    filtered = filtered.filter(i =>
+      i.year === midLockedContext.year &&
+      i.month === midLockedContext.month &&
+      i.vendor === midLockedContext.vendor
+    );
+  }
+
+  filtered.sort((a,b) => {
+    if(a.year !== b.year) return b.year.localeCompare(a.year);
+    if(a.month !== b.month) return b.month.localeCompare(a.month);
+    if(a.vendor !== b.vendor) return a.vendor.localeCompare(b.vendor);
+    return a.name.localeCompare(b.name);
+  });
+
+  countEl.textContent = `${filtered.length}건`;
+
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7" class="emptyRow">등록된 중간발주 내역이 없습니다.</td></tr>`;
+    return;
+  }
+
+  let currentGroup = "";
+
+  filtered.forEach(i => {
+    const groupKey = `${i.year}-${i.month}-${i.vendor}`;
+
+    if(currentGroup !== groupKey){
+      currentGroup = groupKey;
+      tbody.innerHTML += `
+        <tr class="groupHeader">
+          <td colspan="7">📁 ${i.year}년 ${i.month}월 / ${i.vendor}</td>
+        </tr>
+      `;
+    }
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${i.year}</td>
+        <td>${i.month}</td>
+        <td>${i.vendor}</td>
+        <td>${i.name}</td>
+        <td>${i.spec}</td>
+        <td>${i.qty}</td>
+        <td><button class="btnSub" onclick="delMidOrder(${i.id})">삭제</button></td>
+      </tr>
+    `;
+  });
+}
+
+function renderPrepaid(){
+  const tbody = document.getElementById("prepaidList");
+  const countEl = document.getElementById("prepaidCount");
+  tbody.innerHTML = "";
+
+  const sorted = [...prepaid].sort((a,b) => b.date.localeCompare(a.date));
+  countEl.textContent = `${sorted.length}건`;
+
+  if(sorted.length === 0){
+    tbody.innerHTML = `<tr><td colspan="6" class="emptyRow">등록된 선납 내역이 없습니다.</td></tr>`;
+    return;
+  }
+
+  sorted.forEach(i => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i.date}</td>
+        <td>${i.hospital}</td>
+        <td>${i.name}</td>
+        <td>${i.qty}</td>
+        <td>${i.lot || "-"}</td>
+        <td><button class="btnSub" onclick="delPrepaid(${i.id})">삭제</button></td>
+      </tr>
+    `;
+  });
+}
+
+function renderBacklog(){
+  const tbody = document.getElementById("backlogList");
+  const countEl = document.getElementById("backlogCount");
+  tbody.innerHTML = "";
+
+  countEl.textContent = `${backlog.length}건`;
+
+  if(backlog.length === 0){
+    tbody.innerHTML = `<tr><td colspan="6" class="emptyRow">등록된 항목이 없습니다.</td></tr>`;
+    return;
+  }
+
+  backlog.forEach(i => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i.hospital}</td>
+        <td>${i.name}</td>
+        <td>${i.qty}</td>
+        <td>${i.lot || "-"}</td>
+        <td>${i.exp || "-"}</td>
+        <td><button class="btnSub" onclick="delBacklog(${i.id})">삭제</button></td>
+      </tr>
+    `;
+  });
+}
+
+/* INIT */
+function initializeApp(){
+  updateClock();
+  load();
+  bindInputFormatters();
+  checkMonthRollover();
+  initYearFilter();
+
+  yearFilter = document.getElementById("yearFilter").value;
+  monthFilter = document.getElementById("monthFilter").value;
+
+  renderMonthStartLockState();
+  renderMidLockState();
+  render();
+  renderMonthStartOrders();
+  renderMidOrders();
+  renderPrepaid();
+  renderBacklog();
+}
+
+window.onload = () => {
+  checkLoginState();
+
+  document.getElementById("loginPw").addEventListener("keydown", e => {
+    if(e.key === "Enter") login();
+  });
+
+  document.getElementById("loginId").addEventListener("keydown", e => {
+    if(e.key === "Enter") login();
+  });
+
+  ["ms_year","ms_month","ms_vendor"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        lockMonthStartContext();
+      }
+    });
+  });
+
+  ["mid_year","mid_month","mid_vendor"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        lockMidContext();
+      }
+    });
+  });
+
+  ["ms_name","ms_spec","ms_qty"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        addMonthStartOrder();
+      }
+    });
+  });
+
+  ["mid_name","mid_spec","mid_qty"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        addMidOrder();
+      }
+    });
+  });
+};
+</script>
+
+</body>
+</html>

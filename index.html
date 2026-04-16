@@ -13,7 +13,6 @@
   --bg2:#e7eefc;
   --bg3:#dce4ff;
   --bg4:#f2dfee;
-  --bg-deep:#c8ded1;
   --card:rgba(255,255,255,0.80);
   --line:#c5ded0;
   --line2:#b7d7c5;
@@ -22,7 +21,6 @@
   --green:#276a43;
   --green-dark:#18472d;
   --mint:#e6f4ec;
-  --shadow:0 10px 28px rgba(11,22,17,0.08);
   --shadow-soft:0 24px 54px rgba(20,39,29,0.18);
 }
 
@@ -180,13 +178,6 @@ body::after{
   font-weight:700;
   color:#c14a4a;
   min-height:18px;
-}
-
-.loginHint{
-  margin-top:14px;
-  text-align:center;
-  font-size:12px;
-  color:#73867d;
 }
 
 /* APP */
@@ -465,7 +456,7 @@ table{
   width:100%;
   border-collapse:collapse;
   background:rgba(255,255,255,0.92);
-  min-width:860px;
+  min-width:900px;
 }
 
 thead th{
@@ -555,7 +546,6 @@ td input{
 
     <button class="loginBtn" onclick="login()">로그인</button>
     <div id="loginError"></div>
-
   </div>
 </section>
 
@@ -599,7 +589,7 @@ td input{
         </div>
 
         <div class="row" style="margin-bottom:10px;">
-          <input id="ms_name" placeholder="품명">
+          <input id="ms_name" list="reagentMasterList" placeholder="품명">
           <input id="ms_spec" placeholder="규격">
           <input id="ms_qty" type="number" placeholder="발주량" min="1">
           <button onclick="addMonthStartOrder()">등록</button>
@@ -645,7 +635,7 @@ td input{
         </div>
 
         <div class="row" style="margin-bottom:10px;">
-          <input id="mid_name" placeholder="품명">
+          <input id="mid_name" list="reagentMasterList" placeholder="품명">
           <input id="mid_spec" placeholder="규격">
           <input id="mid_qty" type="number" placeholder="발주량" min="1">
           <button onclick="addMidOrder()">등록</button>
@@ -679,7 +669,7 @@ td input{
             <option>경주동국대병원</option>
           </select>
 
-          <input id="reagentName" placeholder="시약명">
+          <input id="reagentName" list="reagentMasterList" placeholder="시약명">
           <input id="qty" type="number" placeholder="수량" min="1">
 
           <div class="dateGroup">
@@ -698,6 +688,7 @@ td input{
           <span class="badge">월 / 일 자동 두자리</span>
           <span class="badge">같은 재고는 수량만 합산</span>
           <span class="badge">비고 직접 입력 가능</span>
+          <span class="badge">시약명 자동완성 지원</span>
         </div>
       </div>
 
@@ -766,7 +757,7 @@ td input{
             <option>경주동국대병원</option>
           </select>
 
-          <input id="p_name" placeholder="시약명">
+          <input id="p_name" list="reagentMasterList" placeholder="시약명">
           <input id="p_qty" type="number" placeholder="수량" min="1">
           <input id="p_lot" placeholder="LOT">
           <input id="p_date" placeholder="YYYY-MM-DD">
@@ -802,7 +793,7 @@ td input{
             <option>경주동국대병원</option>
           </select>
 
-          <input id="b_name" placeholder="시약명">
+          <input id="b_name" list="reagentMasterList" placeholder="시약명">
           <input id="b_qty" type="number" placeholder="수량" min="1">
           <input id="b_lot" placeholder="LOT">
           <input id="b_exp" placeholder="YYYY-MM-DD">
@@ -831,9 +822,112 @@ td input{
   </div>
 </div>
 
+<datalist id="reagentMasterList"></datalist>
+
 <script>
 const LOGIN_ID = "sungsim";
 const LOGIN_PW = "8658";
+
+const REAGENT_MASTER = [
+  "ALB",
+  "ALB-T",
+  "ALP",
+  "ALT",
+  "AMYL",
+  "START",
+  "AST",
+  "BIL-D",
+  "BIL-T",
+  "BT 1000ul TIP",
+  "CA",
+  "CELL WASH 1",
+  "CELL WASH 2",
+  "CFAS",
+  "CFAS LIPID",
+  "CFAS PROTEIN",
+  "CHOL",
+  "CK",
+  "CO2",
+  "CO2 CAL",
+  "CONTROLSET RF",
+  "CREAJ",
+  "CRP",
+  "ECO",
+  "GGT",
+  "GLUC",
+  "HDLC",
+  "IRON",
+  "ISE DILUENT",
+  "ISE INTERNAL",
+  "ISE REFERENCE ELECTRO",
+  "ISE HIGH",
+  "ISE LOW",
+  "LDLC",
+  "LDHI",
+  "LIPC",
+  "MG",
+  "NAOHD",
+  "NACL",
+  "PCCC1",
+  "PCCC2",
+  "NA",
+  "K",
+  "CL",
+  "REF",
+  "PHOS",
+  "PRECISET RF",
+  "REACTION CELL",
+  "RF",
+  "SMS",
+  "TP",
+  "TPUC",
+  "TRIGL",
+  "UA",
+  "UIBC",
+  "UREA",
+  "HBSAG",
+  "A-HBS",
+  "HBEAG",
+  "A-HBE",
+  "ESTRADIOL",
+  "PROLACTIN",
+  "TESTOSTERONE",
+  "LH",
+  "FSH",
+  "VITAMIN D",
+  "A-TSHR",
+  "A-TPO",
+  "A-TG",
+  "A-HAV",
+  "A-HAV IGM",
+  "A-HCV",
+  "FSH CS",
+  "ESTRADIOL CS",
+  "PROLACTIN CS",
+  "LH CS",
+  "TESTOSTERONE CS",
+  "VITAMIN D CS",
+  "A-TSHR CS",
+  "HBSAG PC",
+  "A-HBS PC",
+  "HBEAG PC",
+  "A-HBE PC",
+  "HAV PC",
+  "HAV IGM PC",
+  "HCV PC",
+  "PC THYROAB",
+  "PC UNIVERSAL",
+  "PC TM",
+  "DILUENT UNIVERSAL",
+  "DILUENT MULTIASSAY",
+  "CLEANCELL",
+  "PROCELL",
+  "PRECLEAN",
+  "TIPCUP TRAY",
+  "TG CS",
+  "TPO CS",
+  "VITAMIN D PC"
+];
 
 let items = [];
 let backlog = [];
@@ -986,6 +1080,16 @@ function load(){
   midOrders = JSON.parse(localStorage.getItem("midOrders") || "[]");
   monthStartLockedContext = JSON.parse(localStorage.getItem("monthStartLockedContext") || "null");
   midLockedContext = JSON.parse(localStorage.getItem("midLockedContext") || "null");
+}
+
+/* MASTER LIST */
+function renderReagentMasterList(){
+  const datalist = document.getElementById("reagentMasterList");
+  if(!datalist) return;
+
+  datalist.innerHTML = REAGENT_MASTER
+    .map(name => `<option value="${name}"></option>`)
+    .join("");
 }
 
 /* FORMATTERS */
@@ -1679,6 +1783,7 @@ function renderBacklog(){
 function initializeApp(){
   updateClock();
   load();
+  renderReagentMasterList();
   bindInputFormatters();
   checkMonthRollover();
   initYearFilter();

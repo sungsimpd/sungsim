@@ -637,6 +637,181 @@ td input, td select{
 }
 .matrixTable thead .matrixSticky{ background:#f8fafc; }
 
+
+
+/* BOARD */
+#boardPage .pageGrid{ gap:20px; }
+#boardPage .pageGrid .left{ flex:5.8; }
+#boardPage .pageGrid .right{ flex:1.25; min-width:250px; }
+
+.boardToolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:12px;
+  background:var(--panel);
+  border:1px solid #e4e7ec;
+  border-radius:16px;
+  margin-bottom:12px;
+}
+
+.boardToolbar button{
+  min-height:34px;
+  padding:7px 11px;
+  background:#fff;
+  color:#344054;
+  border:1px solid #d0d7e2;
+  box-shadow:none;
+}
+
+.boardToolbar button.activeEditorTool{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+
+.boardToolbar input[type="color"]{
+  width:42px;
+  min-height:34px;
+  padding:4px;
+  border-radius:10px;
+}
+
+.boardEditorWrap{
+  border:1px solid #d0d7e2;
+  border-radius:16px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.boardEditor{
+  min-height:360px;
+  padding:18px;
+  outline:none;
+  font-size:15px;
+  line-height:1.75;
+}
+
+.boardEditor img{
+  max-width:100%;
+  height:auto;
+  border-radius:12px;
+  margin:10px 0;
+  display:block;
+}
+
+.boardListTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.boardSearchRow{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.boardTable{ min-width:100%; }
+.boardTable td:nth-child(2){ text-align:left; }
+.boardTitleBtn{
+  background:none;
+  border:none;
+  color:#111827;
+  font-size:13px;
+  font-weight:700;
+  padding:0;
+  min-height:auto;
+  box-shadow:none;
+  text-align:left;
+}
+.boardTitleBtn:hover{ transform:none; text-decoration:underline; }
+
+.boardPostMeta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  color:#667085;
+  font-size:12px;
+  margin-bottom:16px;
+}
+
+.boardViewer{
+  min-height:280px;
+  padding:8px 2px 2px;
+  font-size:15px;
+  line-height:1.8;
+}
+
+.boardViewer img{
+  max-width:100%;
+  border-radius:12px;
+  display:block;
+  margin:14px 0;
+}
+
+.boardPagination{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.boardPagination button{
+  min-width:38px;
+  min-height:38px;
+  padding:0 10px;
+  background:#fff;
+  color:#344054;
+  border:1px solid #d0d7e2;
+  box-shadow:none;
+}
+
+.boardPagination button.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+
+.boardThumb{
+  width:58px;
+  height:58px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+}
+
+.boardSidebarList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.boardSidebarItem{
+  padding:12px;
+  border:1px solid #eaecf0;
+  border-radius:14px;
+  background:#fff;
+}
+
+.boardSidebarItemTitle{
+  font-size:13px;
+  font-weight:800;
+  color:#111827;
+  margin-bottom:5px;
+}
+
+.boardSidebarItemMeta{
+  font-size:11px;
+  color:#667085;
+}
+
+.hiddenPanel{ display:none; }
+
 @media (max-width: 960px){
   .pageGrid{
     flex-direction:column;
@@ -711,6 +886,7 @@ td input, td select{
       <button class="navBtn active" data-page="inventoryPage" onclick="switchPage('inventoryPage')">재고 관리</button>
       <button class="navBtn" data-page="compensationPage" onclick="switchPage('compensationPage')">보상, 미납 시약 관리</button>
       <button class="navBtn" data-page="deliveryPage" onclick="switchPage('deliveryPage')">납품 관리</button>
+      <button class="navBtn" data-page="boardPage" onclick="switchPage('boardPage')">게시판</button>
     </div>
   </header>
   <div class="appContainer">
@@ -1116,6 +1292,135 @@ td input, td select{
     </div>
   </section>
   </div>
+  <section id="boardPage" class="pageSection">
+    <div class="appContainer">
+      <div class="pageHero">
+        <div class="pageHeroTop">
+          <div>
+            <h1 class="pageHeroTitle">커뮤니티 게시판</h1>
+            <p class="pageHeroDesc">공지, 업무 공유, 사진 첨부 게시글을 사이트 안에서 바로 관리할 수 있는 게시판입니다. 일반 웹사이트 게시판처럼 목록, 상세보기, 페이지 번호 이동을 지원합니다.</p>
+          </div>
+          <div class="pageHeroMeta">
+            <span class="badge">글쓰기</span>
+            <span class="badge">사진 첨부</span>
+            <span class="badge">서식 편집</span>
+            <span class="badge">페이지 번호</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pageGrid">
+        <div class="left">
+          <div class="box" id="boardListPanel">
+            <div class="boardListTop">
+              <div>
+                <h3>게시글 목록</h3>
+                <p class="subTitle">제목을 누르면 상세 글을 열 수 있습니다.</p>
+              </div>
+              <div class="boardSearchRow">
+                <input id="boardSearchInput" placeholder="제목, 작성자 검색" style="min-width:220px;">
+                <button type="button" class="btnRefresh" onclick="renderBoardList(1)">검색</button>
+                <button type="button" onclick="openBoardWrite()">글쓰기</button>
+              </div>
+            </div>
+            <div class="tableWrap">
+              <table class="boardTable">
+                <thead>
+                  <tr>
+                    <th style="width:80px;">번호</th>
+                    <th>제목</th>
+                    <th style="width:120px;">작성자</th>
+                    <th style="width:140px;">작성일</th>
+                    <th style="width:90px;">사진</th>
+                  </tr>
+                </thead>
+                <tbody id="boardListBody"></tbody>
+              </table>
+            </div>
+            <div class="boardPagination" id="boardPagination"></div>
+          </div>
+
+          <div class="box hiddenPanel" id="boardWritePanel">
+            <div class="panelTitle">
+              <h3 style="margin:0;">게시글 작성</h3>
+              <div class="row">
+                <button type="button" class="btnSub" onclick="cancelBoardWrite()">목록으로</button>
+                <button type="button" onclick="saveBoardPost()">등록</button>
+              </div>
+            </div>
+
+            <div class="row" style="margin-bottom:12px;">
+              <input id="boardAuthor" placeholder="작성자" style="width:160px;">
+              <input id="boardTitle" placeholder="제목" style="flex:1 1 360px;">
+              <label class="badge" style="cursor:pointer;">
+                사진 추가
+                <input id="boardImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="insertBoardImages(this.files)">
+              </label>
+            </div>
+
+            <div class="boardToolbar">
+              <button type="button" onclick="execBoardCommand('bold')"><b>B</b></button>
+              <button type="button" onclick="execBoardCommand('italic')"><i>I</i></button>
+              <button type="button" onclick="execBoardCommand('underline')"><u>U</u></button>
+              <select onchange="setBoardFontSize(this.value)">
+                <option value="">글자 크기</option>
+                <option value="13">작게</option>
+                <option value="15">기본</option>
+                <option value="18">크게</option>
+                <option value="24">제목급</option>
+              </select>
+              <input type="color" value="#111827" onchange="execBoardCommand('foreColor', this.value)">
+              <button type="button" onclick="execBoardCommand('insertUnorderedList')">목록</button>
+              <button type="button" onclick="execBoardCommand('justifyLeft')">좌측</button>
+              <button type="button" onclick="execBoardCommand('justifyCenter')">가운데</button>
+              <button type="button" onclick="execBoardCommand('removeFormat')">서식 초기화</button>
+            </div>
+
+            <div class="boardEditorWrap">
+              <div id="boardEditor" class="boardEditor" contenteditable="true"></div>
+            </div>
+          </div>
+
+          <div class="box hiddenPanel" id="boardDetailPanel">
+            <div class="panelTitle">
+              <h3 style="margin:0;">게시글 상세</h3>
+              <div class="row">
+                <button type="button" class="btnSub" onclick="backToBoardList()">목록</button>
+                <button type="button" onclick="editBoardPost()">수정</button>
+                <button type="button" class="btnSub" onclick="deleteBoardPost()">삭제</button>
+              </div>
+            </div>
+            <h2 id="boardDetailTitle" style="margin:6px 0 10px; font-size:28px; line-height:1.35;"></h2>
+            <div class="boardPostMeta">
+              <span id="boardDetailAuthor" class="badge"></span>
+              <span id="boardDetailDate"></span>
+            </div>
+            <div class="boardViewer" id="boardDetailContent"></div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="box">
+            <h3>게시판 안내</h3>
+            <p class="subTitle">사진 첨부, 글자 크기 조정, 굵게/기울임 같은 기본 편집 기능을 넣었습니다. 글은 목록형으로 쌓이고 아래 번호로 페이지를 넘길 수 있습니다.</p>
+            <div class="infoBar">
+              <span class="badge">공지/업무공유</span>
+              <span class="badge">사진 첨부</span>
+              <span class="badge">페이지 이동</span>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="panelTitle">
+              <h3 style="margin:0;">최근 게시글</h3>
+              <span class="panelCount" id="boardTotalCount">0건</span>
+            </div>
+            <div class="boardSidebarList" id="boardRecentList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <datalist id="reagentMasterList"></datalist>
@@ -1144,6 +1449,11 @@ let prepaid = [];
 let monthStartOrders = [];
 let midOrders = [];
 let deliveryRecords = [];
+let boardPosts = [];
+let boardEditingId = null;
+let boardCurrentPage = 1;
+const BOARD_PAGE_SIZE = 10;
+let boardSelectedId = null;
 
 let yearFilter = "all";
 let monthFilter = "all";
@@ -1317,6 +1627,7 @@ function save(){
   localStorage.setItem("monthStartOrders", JSON.stringify(monthStartOrders));
   localStorage.setItem("midOrders", JSON.stringify(midOrders));
   localStorage.setItem("deliveryRecords", JSON.stringify(deliveryRecords));
+  localStorage.setItem("boardPosts", JSON.stringify(boardPosts));
   localStorage.setItem("pageHospitalFilters", JSON.stringify(pageHospitalFilters));
   localStorage.setItem("monthStartLockedContext", JSON.stringify(monthStartLockedContext));
   localStorage.setItem("midLockedContext", JSON.stringify(midLockedContext));
@@ -1334,6 +1645,14 @@ function load(){
   midOrders = JSON.parse(localStorage.getItem("midOrders") || "[]");
   deliveryRecords = JSON.parse(localStorage.getItem("deliveryRecords") || "[]").map(item => ({
     note: item.note || "",
+    ...item
+  }));
+  boardPosts = JSON.parse(localStorage.getItem("boardPosts") || "[]").map(item => ({
+    author: item.author || "관리자",
+    title: item.title || "",
+    content: item.content || "",
+    createdAt: item.createdAt || new Date().toISOString(),
+    updatedAt: item.updatedAt || item.createdAt || new Date().toISOString(),
     ...item
   }));
   pageHospitalFilters = JSON.parse(localStorage.getItem("pageHospitalFilters") || '{"inventory":"all","compensation":"all","delivery":"all"}');
@@ -1947,6 +2266,7 @@ function addDeliveryRecord(){
   initYearFilter();
   renderDeliveryList();
   renderDeliveryMatrix();
+  renderBoardList(1);
 
   document.getElementById("d_name").value = "";
   document.getElementById("d_qty").value = "";
@@ -2309,6 +2629,263 @@ function renderDeliveryMatrix(){
 }
 
 /* INIT */
+
+
+/* BOARD */
+function getBoardSearchKeyword(){
+  const el = document.getElementById("boardSearchInput");
+  return el ? String(el.value || "").trim().toLowerCase() : "";
+}
+
+function getPlainTextFromHtml(html){
+  const div = document.createElement("div");
+  div.innerHTML = html || "";
+  return (div.textContent || div.innerText || "").trim();
+}
+
+function formatBoardDate(dateString){
+  const d = new Date(dateString);
+  if(isNaN(d.getTime())) return "-";
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  return `${y}-${m}-${day} ${hh}:${mm}`;
+}
+
+function getBoardFilteredPosts(){
+  const keyword = getBoardSearchKeyword();
+  let filtered = [...boardPosts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  if(keyword){
+    filtered = filtered.filter(post =>
+      String(post.title || "").toLowerCase().includes(keyword) ||
+      String(post.author || "").toLowerCase().includes(keyword) ||
+      getPlainTextFromHtml(post.content || "").toLowerCase().includes(keyword)
+    );
+  }
+  return filtered;
+}
+
+function getBoardThumbnail(html){
+  const match = String(html || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : "";
+}
+
+function showBoardPanel(panel){
+  ["boardListPanel","boardWritePanel","boardDetailPanel"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle("hiddenPanel", id !== panel);
+  });
+}
+
+function renderBoardList(page = 1){
+  boardCurrentPage = page;
+  const tbody = document.getElementById("boardListBody");
+  const pagination = document.getElementById("boardPagination");
+  if(!tbody || !pagination) return;
+
+  const filtered = getBoardFilteredPosts();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / BOARD_PAGE_SIZE));
+  if(boardCurrentPage > totalPages) boardCurrentPage = totalPages;
+  const start = (boardCurrentPage - 1) * BOARD_PAGE_SIZE;
+  const pageItems = filtered.slice(start, start + BOARD_PAGE_SIZE);
+
+  tbody.innerHTML = "";
+  if(pageItems.length === 0){
+    tbody.innerHTML = `<tr><td colspan="5" class="emptyRow">등록된 게시글이 없습니다.</td></tr>`;
+  }else{
+    pageItems.forEach((post, idx) => {
+      const no = total - (start + idx);
+      const thumb = getBoardThumbnail(post.content);
+      tbody.innerHTML += `
+        <tr>
+          <td>${no}</td>
+          <td><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${escapeHtml(post.title)}</button></td>
+          <td>${escapeHtml(post.author || "관리자")}</td>
+          <td>${formatBoardDate(post.createdAt)}</td>
+          <td>${thumb ? `<img src="${thumb}" class="boardThumb">` : "-"}</td>
+        </tr>
+      `;
+    });
+  }
+
+  pagination.innerHTML = "";
+  for(let i=1;i<=totalPages;i++){
+    pagination.innerHTML += `<button type="button" class="${i === boardCurrentPage ? "active" : ""}" onclick="renderBoardList(${i})">${i}</button>`;
+  }
+
+  const countEl = document.getElementById("boardTotalCount");
+  if(countEl) countEl.textContent = `${total}건`;
+  renderBoardRecentList();
+  showBoardPanel("boardListPanel");
+}
+
+function renderBoardRecentList(){
+  const box = document.getElementById("boardRecentList");
+  if(!box) return;
+  const posts = [...boardPosts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0,5);
+  box.innerHTML = "";
+  if(posts.length === 0){
+    box.innerHTML = `<div class="boardSidebarItem"><div class="boardSidebarItemTitle">아직 게시글이 없습니다.</div><div class="boardSidebarItemMeta">첫 글을 등록해보세요.</div></div>`;
+    return;
+  }
+  posts.forEach(post => {
+    box.innerHTML += `
+      <div class="boardSidebarItem">
+        <div class="boardSidebarItemTitle"><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${escapeHtml(post.title)}</button></div>
+        <div class="boardSidebarItemMeta">${escapeHtml(post.author || "관리자")} · ${formatBoardDate(post.createdAt)}</div>
+      </div>
+    `;
+  });
+}
+
+function openBoardWrite(id = null){
+  boardEditingId = id;
+  const titleEl = document.getElementById("boardTitle");
+  const authorEl = document.getElementById("boardAuthor");
+  const editor = document.getElementById("boardEditor");
+  if(!titleEl || !authorEl || !editor) return;
+
+  if(id){
+    const post = boardPosts.find(item => item.id === id);
+    if(!post) return;
+    titleEl.value = post.title || "";
+    authorEl.value = post.author || "관리자";
+    editor.innerHTML = post.content || "";
+  }else{
+    titleEl.value = "";
+    authorEl.value = "관리자";
+    editor.innerHTML = "";
+  }
+
+  showBoardPanel("boardWritePanel");
+}
+
+function cancelBoardWrite(){
+  boardEditingId = null;
+  renderBoardList(boardCurrentPage);
+}
+
+function execBoardCommand(command, value = null){
+  const editor = document.getElementById("boardEditor");
+  if(!editor) return;
+  editor.focus();
+  document.execCommand("styleWithCSS", false, true);
+  document.execCommand(command, false, value);
+}
+
+function setBoardFontSize(size){
+  if(!size) return;
+  execBoardCommand("fontSize", 7);
+  const editor = document.getElementById("boardEditor");
+  if(!editor) return;
+  editor.querySelectorAll('font[size="7"]').forEach(node => {
+    const span = document.createElement("span");
+    span.style.fontSize = `${size}px`;
+    span.innerHTML = node.innerHTML;
+    node.replaceWith(span);
+  });
+}
+
+function insertBoardImages(files){
+  const editor = document.getElementById("boardEditor");
+  if(!editor || !files || !files.length) return;
+  [...files].forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      editor.focus();
+      document.execCommand("insertHTML", false, `<p><img src="${e.target.result}" alt="image"></p>`);
+    };
+    reader.readAsDataURL(file);
+  });
+  const input = document.getElementById("boardImageInput");
+  if(input) input.value = "";
+}
+
+function saveBoardPost(){
+  const titleEl = document.getElementById("boardTitle");
+  const authorEl = document.getElementById("boardAuthor");
+  const editor = document.getElementById("boardEditor");
+  if(!titleEl || !authorEl || !editor) return;
+
+  const title = String(titleEl.value || "").trim();
+  const author = String(authorEl.value || "").trim() || "관리자";
+  const content = editor.innerHTML.trim();
+  const textOnly = getPlainTextFromHtml(content);
+  const hasImage = /<img/i.test(content);
+
+  if(!title){
+    alert("제목을 입력해주세요.");
+    return;
+  }
+  if(!textOnly && !hasImage){
+    alert("내용을 입력해주세요.");
+    return;
+  }
+
+  const now = new Date().toISOString();
+  if(boardEditingId){
+    const post = boardPosts.find(item => item.id === boardEditingId);
+    if(!post) return;
+    post.title = title;
+    post.author = author;
+    post.content = content;
+    post.updatedAt = now;
+    boardSelectedId = post.id;
+  }else{
+    const post = {
+      id: makeId(),
+      title,
+      author,
+      content,
+      createdAt: now,
+      updatedAt: now
+    };
+    boardPosts.unshift(post);
+    boardSelectedId = post.id;
+  }
+
+  save();
+  boardEditingId = null;
+  renderBoardList(1);
+  viewBoardDetail(boardSelectedId);
+}
+
+function viewBoardDetail(id){
+  const post = boardPosts.find(item => item.id === id);
+  if(!post) return;
+  boardSelectedId = id;
+  const titleEl = document.getElementById("boardDetailTitle");
+  const authorEl = document.getElementById("boardDetailAuthor");
+  const dateEl = document.getElementById("boardDetailDate");
+  const contentEl = document.getElementById("boardDetailContent");
+  if(titleEl) titleEl.textContent = post.title || "";
+  if(authorEl) authorEl.textContent = post.author || "관리자";
+  if(dateEl) dateEl.textContent = `작성일 ${formatBoardDate(post.createdAt)}${post.updatedAt !== post.createdAt ? ` · 수정 ${formatBoardDate(post.updatedAt)}` : ""}`;
+  if(contentEl) contentEl.innerHTML = post.content || "";
+  showBoardPanel("boardDetailPanel");
+}
+
+function backToBoardList(){
+  renderBoardList(boardCurrentPage);
+}
+
+function editBoardPost(){
+  if(!boardSelectedId) return;
+  openBoardWrite(boardSelectedId);
+}
+
+function deleteBoardPost(){
+  if(!boardSelectedId) return;
+  if(!confirm("이 게시글을 삭제할까요?")) return;
+  boardPosts = boardPosts.filter(item => item.id !== boardSelectedId);
+  boardSelectedId = null;
+  save();
+  renderBoardList(boardCurrentPage);
+}
+
 function initializeApp(){
   updateClock();
   load();
@@ -2401,6 +2978,17 @@ window.onload = () => {
       }
     });
   });
+
+  const boardSearchInput = document.getElementById("boardSearchInput");
+  if(boardSearchInput){
+    boardSearchInput.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        renderBoardList(1);
+      }
+    });
+  }
+
 };
 </script>
 

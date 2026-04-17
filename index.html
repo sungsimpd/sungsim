@@ -642,7 +642,9 @@ td input, td select{
 /* BOARD */
 #boardPage .pageGrid{ gap:20px; }
 #boardPage .pageGrid .left{ flex:5.8; }
-#boardPage .pageGrid .right{ flex:1.25; min-width:250px; }
+#boardPage .pageGrid .right{ display:none; }
+#boardPage .pageGrid .left{ flex:1 1 auto; }
+.boardWriteActionsBottom{ display:flex; justify-content:flex-end; gap:10px; margin-top:14px; padding-top:14px; border-top:1px solid #e5e7eb; }
 
 .boardToolbar{
   display:flex;
@@ -947,12 +949,7 @@ td input, td select{
           <h2 class="pageHeroTitle">재고 관리</h2>
           <p class="pageHeroDesc">실제 운영 페이지처럼 현재 재고를 입력하고, 조회 조건에 맞춰 목록을 확인하는 메인 화면입니다.</p>
         </div>
-        <div class="pageHeroMeta">
-          <span class="badge">실시간 재고 입력</span>
-          <span class="badge">거래처별 조회</span>
-          <span class="badge">유효기간 관리</span>
-        </div>
-      </div>
+</div>
     </div>
     <div class="hospitalTabs" id="inventoryHospitalTabs"></div>
     <div class="pageGrid">
@@ -1036,16 +1033,7 @@ td input, td select{
         </div>
       </div>
 
-      <div class="right">
-        <div class="box">
-          <h3>운영 안내</h3>
-          <p class="subTitle">현재 메인 페이지는 재고 관리 전용으로 두고, 보상/미납/유효기간 임박 관리와 납품 관리 기능은 각각 상단 메뉴로 분리했습니다.</p>
-          <div class="infoBar">
-            <span class="badge">1번 메뉴: 재고 관리</span>
-            <span class="badge">2번 메뉴: 보상/미납 시약</span>
-            <span class="badge">3번 메뉴: 납품 관리</span>
-          </div>
-        </div>
+      <div class="right"></div>
       </div>
     </div>
   </section>
@@ -1057,12 +1045,7 @@ td input, td select{
           <h2 class="pageHeroTitle">보상 · 미납 시약 관리</h2>
           <p class="pageHeroDesc">선납 내역과 보상/미납 현황을 한 화면에서 정리하는 운영 페이지입니다. 거래처 단위로 바로 확인할 수 있게 구성했습니다.</p>
         </div>
-        <div class="pageHeroMeta">
-          <span class="badge">선납 목록</span>
-          <span class="badge">미납 현황</span>
-          <span class="badge">임박 색상 표시</span>
-        </div>
-      </div>
+</div>
     </div>
     <div class="hospitalTabs" id="compensationHospitalTabs"></div>
     <div class="pageGrid compensationGrid">
@@ -1146,16 +1129,7 @@ td input, td select{
         </div>
       </div>
 
-      <div class="right">
-        <div class="box">
-          <h3>상태 기준</h3>
-          <p class="subTitle">보상 / 미납 목록에서 유효기간을 기준으로 자동 강조합니다.</p>
-          <div class="infoBar">
-            <span class="badge">정상: 기본색</span>
-            <span class="badge">임박: 노란 배경</span>
-            <span class="badge">만료: 빨간 배경</span>
-          </div>
-        </div>
+      <div class="right"></div>
       </div>
     </div>
   </section>
@@ -1167,12 +1141,7 @@ td input, td select{
           <h2 class="pageHeroTitle">납품 관리</h2>
           <p class="pageHeroDesc">월별 납품, 월초발주, 중간발주를 실제 웹페이지처럼 분리해서 보되 연간 납품표에서는 한눈에 합산해 볼 수 있게 구성한 화면입니다.</p>
         </div>
-        <div class="pageHeroMeta">
-          <span class="badge">연간 납품표</span>
-          <span class="badge">월초/중간 발주</span>
-          <span class="badge">거래처별 보기</span>
-        </div>
-      </div>
+</div>
     </div>
     <div class="hospitalTabs" id="deliveryHospitalTabs"></div>
     <div class="pageGrid deliveryGrid">
@@ -1332,141 +1301,7 @@ td input, td select{
         </div>
       </div>
 
-      <div class="right">
-        <div class="box">
-          <h3>페이지 안내</h3>
-          <p class="subTitle">거래처/연도 필터로 납품을 월별 표 형태로 볼 수 있게 구성했습니다. 위 등록 상세 목록은 삭제/수정 관리용, 아래 표는 월별 보기용입니다.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  </div>
-  <section id="boardPage" class="pageSection">
-    <div class="appContainer">
-      <div class="pageHero">
-        <div class="pageHeroTop">
-          <div>
-            <h1 class="pageHeroTitle">커뮤니티 게시판</h1>
-            <p class="pageHeroDesc">공지, 업무 공유, 사진 첨부 게시글을 사이트 안에서 바로 관리할 수 있는 게시판입니다. 일반 웹사이트 게시판처럼 목록, 상세보기, 페이지 번호 이동을 지원합니다.</p>
-          </div>
-          <div class="pageHeroMeta">
-            <span class="badge">글쓰기</span>
-            <span class="badge">사진 첨부</span>
-            <span class="badge">서식 편집</span>
-            <span class="badge">페이지 번호</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="pageGrid">
-        <div class="left">
-          <div class="box" id="boardListPanel">
-            <div class="boardListTop">
-              <div>
-                <h3>게시글 목록</h3>
-                <p class="subTitle">제목을 누르면 상세 글을 열 수 있습니다.</p>
-              </div>
-              <div class="boardSearchRow">
-                <input id="boardSearchInput" placeholder="제목, 작성자 검색" style="min-width:220px;">
-                <button type="button" class="btnRefresh" onclick="renderBoardList(1)">검색</button>
-                <button type="button" onclick="openBoardWrite()">글쓰기</button>
-              </div>
-            </div>
-            <div class="tableWrap">
-              <table class="boardTable">
-                <thead>
-                  <tr>
-                    <th style="width:80px;">번호</th>
-                    <th>제목</th>
-                    <th style="width:120px;">작성자</th>
-                    <th style="width:140px;">작성일</th>
-                    <th style="width:90px;">사진</th>
-                  </tr>
-                </thead>
-                <tbody id="boardListBody"></tbody>
-              </table>
-            </div>
-            <div class="boardPagination" id="boardPagination"></div>
-          </div>
-
-          <div class="box hiddenPanel" id="boardWritePanel">
-            <div class="panelTitle">
-              <h3 style="margin:0;">게시글 작성</h3>
-              <div class="row">
-                <button type="button" class="btnSub" onclick="cancelBoardWrite()">목록으로</button>
-                <button type="button" onclick="saveBoardPost()">작성 완료</button>
-              </div>
-            </div>
-
-            <div class="row" style="margin-bottom:12px;">
-              <input id="boardAuthor" placeholder="작성자" style="width:160px;">
-              <input id="boardTitle" placeholder="제목" style="flex:1 1 360px;">
-              <label class="badge" style="cursor:pointer;">
-                사진 추가
-                <input id="boardImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="insertBoardImages(this.files)">
-              </label>
-            </div>
-
-            <div class="boardToolbar">
-              <button type="button" onclick="execBoardCommand('bold')"><b>B</b></button>
-              <button type="button" onclick="execBoardCommand('italic')"><i>I</i></button>
-              <button type="button" onclick="execBoardCommand('underline')"><u>U</u></button>
-              <select onchange="setBoardFontSize(this.value)">
-                <option value="">글자 크기</option>
-                <option value="13">작게</option>
-                <option value="15">기본</option>
-                <option value="18">크게</option>
-                <option value="24">제목급</option>
-              </select>
-              <input type="color" value="#111827" onchange="execBoardCommand('foreColor', this.value)">
-              <button type="button" onclick="execBoardCommand('insertUnorderedList')">목록</button>
-              <button type="button" onclick="execBoardCommand('justifyLeft')">좌측</button>
-              <button type="button" onclick="execBoardCommand('justifyCenter')">가운데</button>
-              <button type="button" onclick="execBoardCommand('removeFormat')">서식 초기화</button>
-            </div>
-
-            <div class="boardEditorWrap">
-              <div id="boardEditor" class="boardEditor" contenteditable="true"></div>
-            </div>
-          </div>
-
-          <div class="box hiddenPanel" id="boardDetailPanel">
-            <div class="panelTitle">
-              <h3 style="margin:0;">게시글 상세</h3>
-              <div class="row">
-                <button type="button" class="btnSub" onclick="backToBoardList()">목록</button>
-                <button type="button" onclick="editBoardPost()">수정</button>
-                <button type="button" class="btnSub" onclick="deleteBoardPost()">삭제</button>
-              </div>
-            </div>
-            <h2 id="boardDetailTitle" style="margin:6px 0 10px; font-size:28px; line-height:1.35;"></h2>
-            <div class="boardPostMeta">
-              <span id="boardDetailAuthor" class="badge"></span>
-              <span id="boardDetailDate"></span>
-            </div>
-            <div class="boardViewer" id="boardDetailContent"></div>
-          </div>
-        </div>
-
-        <div class="right">
-          <div class="box">
-            <h3>게시판 안내</h3>
-            <p class="subTitle">사진 첨부, 글자 크기 조정, 굵게/기울임 같은 기본 편집 기능을 넣었습니다. 글은 목록형으로 쌓이고 아래 번호로 페이지를 넘길 수 있습니다.</p>
-            <div class="infoBar">
-              <span class="badge">공지/업무공유</span>
-              <span class="badge">사진 첨부</span>
-              <span class="badge">페이지 이동</span>
-            </div>
-          </div>
-
-          <div class="box">
-            <div class="panelTitle">
-              <h3 style="margin:0;">최근 게시글</h3>
-              <span class="panelCount" id="boardTotalCount">0건</span>
-            </div>
-            <div class="boardSidebarList" id="boardRecentList"></div>
-          </div>
-        </div>
+      <div class="right"></div>
       </div>
     </div>
   </section>

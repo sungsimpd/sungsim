@@ -841,6 +841,55 @@ td input, td select{
     flex-direction:column;
   }
 }
+
+/* AUTH + ADMIN ENHANCEMENTS */
+.authShell{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:stretch;}
+.authIntro{padding:28px;border-radius:28px;background:linear-gradient(180deg,#0f172a 0%, #1e293b 100%);color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-height:560px;}
+.authIntroTag{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:12px;font-weight:700;letter-spacing:.3px;}
+.authIntro h1{margin:18px 0 12px;font-size:36px;line-height:1.15;letter-spacing:-.03em;}
+.authIntro p{margin:0;color:rgba(255,255,255,.78);line-height:1.7;font-size:14px;}
+.authIntroGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px;}
+.authMiniCard{padding:14px 16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.06);}
+.authMiniCard strong{display:block;font-size:13px;margin-bottom:4px;}
+.authMiniCard span{display:block;font-size:12px;color:rgba(255,255,255,.72);line-height:1.55;}
+.authPanel{background:#fff;border:1px solid #e5e7eb;border-radius:30px;padding:26px 24px 22px;box-shadow:0 28px 60px rgba(15,23,42,.08);}
+.authTabs{display:flex;gap:8px;padding:6px;background:#f3f4f6;border-radius:18px;margin-bottom:20px;}
+.authTabBtn{flex:1;background:transparent;color:#475467;border:none;box-shadow:none;min-height:44px;border-radius:14px;font-weight:800;}
+.authTabBtn.active{background:#111827;color:#fff;}
+.authSection{display:none;}
+.authSection.active{display:block;}
+.authFieldGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.authNote{margin-top:14px;padding:12px 14px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb;color:#667085;font-size:12px;line-height:1.6;}
+.authActions{display:flex;gap:10px;margin-top:8px;}
+.authActions .loginBtn{margin-top:0;}
+.headerStatus{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.userBadge{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#f8fafc;border:1px solid #e5e7eb;color:#344054;font-size:12px;font-weight:800;}
+.userBadge small{font-size:11px;color:#667085;font-weight:700;}
+.navBtn.adminOnly{display:none;}
+.navBtn.adminOnly.show{display:inline-flex;align-items:center;justify-content:center;}
+.adminStatGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.adminStatCard{padding:18px;border:1px solid #e5e7eb;border-radius:18px;background:#fff;}
+.adminStatCard strong{display:block;font-size:28px;margin-top:8px;}
+.adminMemberTable td:nth-child(1), .adminMemberTable td:nth-child(2){text-align:left;}
+.adminActionRow{display:flex;gap:8px;flex-wrap:wrap;}
+.secretMeta{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#f8fafc;border:1px solid #e5e7eb;font-size:12px;font-weight:700;color:#475467;}
+.boardSecretRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 12px;}
+.boardSecretLock{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;}
+.boardViewer.secretLocked{display:flex;align-items:center;justify-content:center;min-height:220px;background:linear-gradient(180deg,#f8fafc 0%,#eef2f6 100%);}
+.secretUnlockBox{width:min(460px,100%);text-align:center;padding:20px 18px;}
+.secretUnlockBox h4{margin:0 0 10px;font-size:24px;}
+.secretUnlockBox p{margin:0 0 16px;color:#667085;line-height:1.6;}
+.boardTitleBtn .lockMark{margin-right:6px;color:#98a2b3;}
+.applyInfo{font-size:11px;color:#667085;font-weight:700;}
+.applyPill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#eff6ff;border:1px solid #dbeafe;color:#1d4ed8;font-size:11px;font-weight:800;}
+.prepaidActions{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+@media (max-width: 1100px){
+  .authShell{grid-template-columns:1fr;}
+  .authIntro{min-height:auto;}
+  .authFieldGrid{grid-template-columns:1fr;}
+  .adminStatGrid{grid-template-columns:1fr;}
+}
+
 </style>
 </head>
 
@@ -2990,6 +3039,1106 @@ window.onload = () => {
   }
 
 };
+</script>
+
+
+<script>
+const baseSave = save;
+const baseLoad = load;
+const baseSwitchPage = switchPage;
+let users = [];
+let currentSession = null;
+let prepaidApplications = [];
+let boardUnlockedSecrets = JSON.parse(localStorage.getItem("boardUnlockedSecrets") || "[]");
+
+function ensureOwnerAccount(){
+  const ownerIndex = users.findIndex(u => u.id === "sungsim");
+  const ownerRecord = {
+    name:"운영자",
+    id:"sungsim",
+    password:"8658",
+    phone:"",
+    nickname:"운영자",
+    role:"owner",
+    createdAt:new Date().toISOString(),
+    status:"active"
+  };
+  if(ownerIndex === -1){
+    users.unshift(ownerRecord);
+  }else{
+    users[ownerIndex] = { ...ownerRecord, ...users[ownerIndex], id:"sungsim", nickname:"운영자", role:"owner", status:"active" };
+  }
+}
+
+function saveAuthAndLinks(){
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("prepaidApplications", JSON.stringify(prepaidApplications));
+  localStorage.setItem("boardUnlockedSecrets", JSON.stringify(boardUnlockedSecrets));
+  if(currentSession){
+    localStorage.setItem("currentSession", JSON.stringify(currentSession));
+  }else{
+    localStorage.removeItem("currentSession");
+  }
+}
+
+function save(){
+  baseSave();
+  saveAuthAndLinks();
+}
+
+function load(){
+  baseLoad();
+  users = JSON.parse(localStorage.getItem("users") || "[]");
+  prepaidApplications = JSON.parse(localStorage.getItem("prepaidApplications") || "[]");
+  boardUnlockedSecrets = JSON.parse(localStorage.getItem("boardUnlockedSecrets") || "[]");
+  ensureOwnerAccount();
+  saveAuthAndLinks();
+}
+
+function isAdminUser(){
+  return currentSession && (currentSession.role === "owner" || currentSession.role === "manager");
+}
+
+function getCurrentUser(){
+  return currentSession;
+}
+
+function getCurrentNickname(){
+  return currentSession?.nickname || "익명";
+}
+
+function renderAuthUI(){
+  const loginScreen = document.getElementById("loginScreen");
+  if(!loginScreen) return;
+  loginScreen.innerHTML = `
+    <div class="authShell" style="width:100%;max-width:1240px;">
+      <div class="authIntro">
+        <div>
+          <span class="authIntroTag">SUNGSIM MEMBERSHIP</span>
+          <h1>시약 재고, 납품, 게시판을<br>한 번에 관리하는 운영 포털</h1>
+          <p>실무용 운영 사이트처럼 회원제로 접속하고, 게시판과 관리 메뉴까지 포함한 형태로 구성했습니다. 현재 버전은 단일 HTML 데모 구조이므로 실제 다른 IP/다른 기기까지 완전하게 공유되는 회원제 보안은 서버 연동이 필요합니다.</p>
+          <div class="authIntroGrid">
+            <div class="authMiniCard"><strong>회원제 로그인</strong><span>성명, 휴대폰 번호, 닉네임까지 받아 회원 관리가 가능합니다.</span></div>
+            <div class="authMiniCard"><strong>운영자 관리</strong><span>sungsim 계정은 회원 상태 확인, 강등, 방출 기능을 사용할 수 있습니다.</span></div>
+            <div class="authMiniCard"><strong>선납 연동</strong><span>선납 수량을 월초발주/중간발주에 적용해 실제 납품 필요 수량을 줄입니다.</span></div>
+            <div class="authMiniCard"><strong>프리미엄 게시판</strong><span>닉네임 표기, 비밀게시글, 사진 첨부, 목록형 레이아웃을 지원합니다.</span></div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,.68);line-height:1.7;">운영자 기본 계정: <strong style="color:#fff;">sungsim</strong> / 비밀번호 <strong style="color:#fff;">8658</strong></div>
+      </div>
+
+      <div class="authPanel">
+        <div class="authTabs">
+          <button type="button" id="authLoginTab" class="authTabBtn active" onclick="switchAuthTab('login')">로그인</button>
+          <button type="button" id="authSignupTab" class="authTabBtn" onclick="switchAuthTab('signup')">회원가입</button>
+        </div>
+
+        <div id="authLoginSection" class="authSection active">
+          <div class="loginBrand" style="text-align:left;margin-bottom:18px;">
+            <div class="loginTitle" style="font-size:30px;">로그인</div>
+            <div class="loginSub" style="letter-spacing:0;text-transform:none;margin-top:8px;">가입한 아이디와 비밀번호로 사이트에 접속합니다.</div>
+          </div>
+          <div class="loginField">
+            <label class="loginLabel" for="loginId">아이디</label>
+            <input id="loginId" class="loginInput" placeholder="아이디 입력">
+          </div>
+          <div class="loginField">
+            <label class="loginLabel" for="loginPw">비밀번호</label>
+            <input id="loginPw" class="loginInput" type="password" placeholder="비밀번호 입력">
+          </div>
+          <div class="authActions">
+            <button class="loginBtn" style="flex:1;" onclick="login()">로그인</button>
+          </div>
+          <div id="loginError"></div>
+          <div class="authNote">현재 파일은 프런트 데모 버전이라 같은 브라우저 기준 회원정보가 저장됩니다. 실제로 다른 IP/다른 기기까지 강제 로그인과 회원 공유를 하려면 Supabase/Firebase 같은 서버 저장소 연동이 필수입니다.</div>
+        </div>
+
+        <div id="authSignupSection" class="authSection">
+          <div class="loginBrand" style="text-align:left;margin-bottom:18px;">
+            <div class="loginTitle" style="font-size:30px;">회원가입</div>
+            <div class="loginSub" style="letter-spacing:0;text-transform:none;margin-top:8px;">모든 항목을 입력하면 자동 승인으로 바로 가입됩니다.</div>
+          </div>
+          <div class="authFieldGrid">
+            <div class="loginField">
+              <label class="loginLabel">성명</label>
+              <input id="signupName" class="loginInput" placeholder="성명 입력">
+            </div>
+            <div class="loginField">
+              <label class="loginLabel">아이디</label>
+              <input id="signupId" class="loginInput" placeholder="아이디 입력">
+            </div>
+            <div class="loginField">
+              <label class="loginLabel">비밀번호</label>
+              <input id="signupPw" class="loginInput" type="password" placeholder="비밀번호 입력">
+            </div>
+            <div class="loginField">
+              <label class="loginLabel">비밀번호 재확인</label>
+              <input id="signupPw2" class="loginInput" type="password" placeholder="비밀번호 재입력">
+            </div>
+            <div class="loginField">
+              <label class="loginLabel">휴대폰 번호</label>
+              <input id="signupPhone" class="loginInput" placeholder="01012345678">
+            </div>
+            <div class="loginField">
+              <label class="loginLabel">닉네임</label>
+              <input id="signupNick" class="loginInput" placeholder="닉네임 입력">
+            </div>
+          </div>
+          <div class="authActions">
+            <button class="loginBtn" style="flex:1;" onclick="registerUser()">회원가입 완료</button>
+          </div>
+          <div id="signupError"></div>
+          <div class="authNote">가입 즉시 일반회원으로 승인되며, 운영자 계정은 관리 메뉴에서 회원 등급을 조정하거나 방출할 수 있습니다.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function switchAuthTab(tab){
+  const loginTab = document.getElementById("authLoginTab");
+  const signupTab = document.getElementById("authSignupTab");
+  const loginSection = document.getElementById("authLoginSection");
+  const signupSection = document.getElementById("authSignupSection");
+  if(!loginTab || !signupTab || !loginSection || !signupSection) return;
+  const isLogin = tab === "login";
+  loginTab.classList.toggle("active", isLogin);
+  signupTab.classList.toggle("active", !isLogin);
+  loginSection.classList.toggle("active", isLogin);
+  signupSection.classList.toggle("active", !isLogin);
+}
+
+function registerUser(){
+  const name = String(document.getElementById("signupName")?.value || "").trim();
+  const id = String(document.getElementById("signupId")?.value || "").trim().toLowerCase();
+  const pw = String(document.getElementById("signupPw")?.value || "").trim();
+  const pw2 = String(document.getElementById("signupPw2")?.value || "").trim();
+  const phone = digitsOnly(document.getElementById("signupPhone")?.value || "");
+  const nickname = String(document.getElementById("signupNick")?.value || "").trim();
+  const errorEl = document.getElementById("signupError");
+  if(errorEl) errorEl.textContent = "";
+
+  if(!name || !id || !pw || !pw2 || !phone || !nickname){
+    if(errorEl) errorEl.textContent = "모든 항목을 입력해주세요.";
+    return;
+  }
+  if(pw !== pw2){
+    if(errorEl) errorEl.textContent = "비밀번호가 일치하지 않습니다.";
+    return;
+  }
+  if(phone.length < 10){
+    if(errorEl) errorEl.textContent = "휴대폰 번호를 정확히 입력해주세요.";
+    return;
+  }
+  if(users.some(user => user.id === id)){
+    if(errorEl) errorEl.textContent = "이미 사용 중인 아이디입니다.";
+    return;
+  }
+  if(users.some(user => user.nickname === nickname)){
+    if(errorEl) errorEl.textContent = "이미 사용 중인 닉네임입니다.";
+    return;
+  }
+
+  users.push({
+    id,
+    password:pw,
+    name,
+    phone,
+    nickname,
+    role:"member",
+    status:"active",
+    createdAt:new Date().toISOString()
+  });
+  save();
+
+  currentSession = { id, nickname, name, role:"member" };
+  saveAuthAndLinks();
+  if(errorEl) errorEl.textContent = "";
+  checkLoginState();
+}
+
+function checkLoginState(){
+  load();
+  const sessionRaw = localStorage.getItem("currentSession");
+  currentSession = sessionRaw ? JSON.parse(sessionRaw) : null;
+  const isLoggedIn = !!currentSession;
+  const loginScreen = document.getElementById("loginScreen");
+  const appScreen = document.getElementById("appScreen");
+  if(loginScreen) loginScreen.style.display = isLoggedIn ? "none" : "flex";
+  if(appScreen) appScreen.style.display = isLoggedIn ? "block" : "none";
+  if(!isLoggedIn){
+    renderAuthUI();
+    bindAuthEvents();
+  }else{
+    initializeApp();
+  }
+}
+
+function bindAuthEvents(){
+  const idEl = document.getElementById("loginId");
+  const pwEl = document.getElementById("loginPw");
+  [idEl, pwEl].forEach(el => {
+    if(!el) return;
+    el.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        login();
+      }
+    });
+  });
+  ["signupName","signupId","signupPw","signupPw2","signupPhone","signupNick"].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("keydown", e => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        registerUser();
+      }
+    });
+  });
+}
+
+function login(){
+  load();
+  const id = String(document.getElementById("loginId")?.value || "").trim().toLowerCase();
+  const pw = String(document.getElementById("loginPw")?.value || "").trim();
+  const errorEl = document.getElementById("loginError");
+  if(errorEl) errorEl.textContent = "";
+  const user = users.find(item => item.id === id);
+  if(!user || user.password !== pw){
+    if(errorEl) errorEl.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
+    return;
+  }
+  if(user.status === "banned"){
+    if(errorEl) errorEl.textContent = "이 계정은 운영자에 의해 이용이 제한되었습니다.";
+    return;
+  }
+  currentSession = {
+    id:user.id,
+    name:user.name,
+    nickname:user.nickname,
+    role:user.role
+  };
+  saveAuthAndLinks();
+  checkLoginState();
+}
+
+function logout(){
+  currentSession = null;
+  localStorage.removeItem("currentSession");
+  location.reload();
+}
+
+function injectAdminPage(){
+  const nav = document.querySelector(".topNav");
+  if(nav && !document.getElementById("adminNavBtn")){
+    const btn = document.createElement("button");
+    btn.id = "adminNavBtn";
+    btn.className = "navBtn adminOnly";
+    btn.dataset.page = "adminPage";
+    btn.textContent = "관리";
+    btn.setAttribute("onclick","switchPage('adminPage')");
+    nav.appendChild(btn);
+  }
+
+  const appScreen = document.getElementById("appScreen");
+  if(appScreen && !document.getElementById("adminPage")){
+    const section = document.createElement("section");
+    section.id = "adminPage";
+    section.className = "pageSection";
+    section.innerHTML = `
+      <div class="pageGrid">
+        <div class="left">
+          <div class="box">
+            <div class="pageHero">
+              <div>
+                <div class="pageHeroEyebrow">ADMIN</div>
+                <h1 class="pageHeroTitle">회원 관리</h1>
+                <p class="pageHeroDesc">운영자 계정은 회원정보 확인, 회원 방출, 등급 변경을 할 수 있습니다.</p>
+              </div>
+            </div>
+          </div>
+          <div class="adminStatGrid">
+            <div class="adminStatCard"><div class="subTitle">전체 회원</div><strong id="adminTotalUsers">0</strong></div>
+            <div class="adminStatCard"><div class="subTitle">일반 회원</div><strong id="adminMembers">0</strong></div>
+            <div class="adminStatCard"><div class="subTitle">관리 등급</div><strong id="adminManagers">0</strong></div>
+          </div>
+          <div class="box">
+            <div class="panelTitle">
+              <h3 style="margin:0;">회원 목록</h3>
+              <span class="panelCount" id="adminUserCount">0명</span>
+            </div>
+            <div class="tableWrap">
+              <table class="adminMemberTable" style="min-width:1100px;">
+                <thead>
+                  <tr>
+                    <th style="width:120px;">성명</th>
+                    <th style="width:140px;">닉네임</th>
+                    <th style="width:140px;">아이디</th>
+                    <th style="width:160px;">휴대폰 번호</th>
+                    <th style="width:120px;">등급</th>
+                    <th style="width:120px;">상태</th>
+                    <th style="width:160px;">가입일</th>
+                    <th style="width:240px;">관리</th>
+                  </tr>
+                </thead>
+                <tbody id="adminUserList"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          <div class="box">
+            <h3>운영 안내</h3>
+            <p class="subTitle">이 데모 버전의 회원 데이터는 브라우저 저장소에 저장됩니다. 실제 서비스형 회원제와 강제 접속 제어는 서버 저장소 연동 후 적용해야 합니다.</p>
+            <div class="infoBar">
+              <span class="badge">운영자: sungsim / 운영자</span>
+              <span class="badge">회원 방출 가능</span>
+              <span class="badge">등급 변경 가능</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    appScreen.appendChild(section);
+  }
+}
+
+function renderHeaderStatus(){
+  const headerInner = document.querySelector(".headerInner");
+  if(!headerInner) return;
+  let box = document.getElementById("headerStatus");
+  if(!box){
+    box = document.createElement("div");
+    box.id = "headerStatus";
+    box.className = "headerStatus";
+    const clock = document.getElementById("clockBox");
+    if(clock){
+      headerInner.appendChild(box);
+      box.appendChild(clock);
+    }else{
+      headerInner.appendChild(box);
+    }
+  }
+  const badgeHtml = currentSession ? `<span class="userBadge">${escapeHtml(currentSession.nickname)} <small>${currentSession.role === "owner" ? "운영자" : currentSession.role === "manager" ? "매니저" : "일반회원"}</small></span>` : "";
+  box.innerHTML = badgeHtml + (document.getElementById("clockBox") ? document.getElementById("clockBox").outerHTML : "");
+  const newClock = box.querySelector("#clockBox");
+  if(newClock) {
+    // keep existing node in DOM
+  }
+  const adminBtn = document.getElementById("adminNavBtn");
+  if(adminBtn){
+    adminBtn.classList.toggle("show", !!isAdminUser());
+  }
+}
+
+function renderAdminPage(){
+  const listEl = document.getElementById("adminUserList");
+  if(!listEl) return;
+  const currentUser = getCurrentUser();
+  if(!currentUser || !isAdminUser()){
+    listEl.innerHTML = `<tr><td colspan="8" class="emptyRow">운영자만 접근할 수 있습니다.</td></tr>`;
+    return;
+  }
+  const sorted = [...users].sort((a,b) => {
+    if(a.role === "owner") return -1;
+    if(b.role === "owner") return 1;
+    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  });
+  listEl.innerHTML = "";
+  sorted.forEach(user => {
+    const isOwner = user.id === "sungsim";
+    listEl.innerHTML += `
+      <tr>
+        <td>${escapeHtml(user.name || "-")}</td>
+        <td>${escapeHtml(user.nickname || "-")}</td>
+        <td>${escapeHtml(user.id)}</td>
+        <td>${escapeHtml(user.phone || "-")}</td>
+        <td>${user.role === "owner" ? "운영자" : user.role === "manager" ? "매니저" : "일반회원"}</td>
+        <td>${user.status === "banned" ? "방출" : "정상"}</td>
+        <td>${formatBoardDate(user.createdAt)}</td>
+        <td>
+          <div class="adminActionRow">
+            <select onchange="changeUserRole('${user.id}', this.value)" ${isOwner ? "disabled" : ""}>
+              <option value="member" ${user.role === "member" ? "selected" : ""}>일반회원</option>
+              <option value="manager" ${user.role === "manager" ? "selected" : ""}>매니저</option>
+              <option value="owner" ${user.role === "owner" ? "selected" : ""}>운영자</option>
+            </select>
+            <button type="button" class="btnSub" onclick="toggleUserBan('${user.id}')" ${isOwner ? "disabled" : ""}>${user.status === "banned" ? "복구" : "방출"}</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+  document.getElementById("adminUserCount").textContent = `${sorted.length}명`;
+  document.getElementById("adminTotalUsers").textContent = String(sorted.length);
+  document.getElementById("adminMembers").textContent = String(sorted.filter(u => u.role === "member").length);
+  document.getElementById("adminManagers").textContent = String(sorted.filter(u => u.role === "manager" || u.role === "owner").length);
+}
+
+function changeUserRole(id, role){
+  if(!isAdminUser()) return;
+  const user = users.find(item => item.id === id);
+  if(!user || user.id === "sungsim") return;
+  user.role = role === "owner" ? "manager" : role;
+  save();
+  renderAdminPage();
+}
+
+function toggleUserBan(id){
+  if(!isAdminUser()) return;
+  const user = users.find(item => item.id === id);
+  if(!user || user.id === "sungsim") return;
+  user.status = user.status === "banned" ? "active" : "banned";
+  save();
+  renderAdminPage();
+}
+
+function updatePrepaid(id, key, value){
+  const item = prepaid.find(i => i.id === id);
+  if(!item) return;
+  if(key === "name" || key === "lot") value = normalizeUpper(value);
+  if(key === "qty"){
+    value = Number(value);
+    if(isNaN(value) || value < 0) value = 0;
+  }
+  if(key === "date"){
+    value = value ? formatYmdString(value) : "";
+  }
+  item[key] = value;
+  save();
+  renderPrepaid();
+  renderMonthStartOrders();
+  renderMidOrders();
+  renderDeliveryMatrix();
+}
+
+function getPrepaidAppliedQty(prepaidId){
+  return prepaidApplications.filter(app => app.prepaidId === prepaidId).reduce((sum, app) => sum + Number(app.qty || 0), 0);
+}
+
+function getPrepaidRemainingQty(prepaidId){
+  const item = prepaid.find(i => i.id === prepaidId);
+  if(!item) return 0;
+  return Math.max(0, Number(item.qty || 0) - getPrepaidAppliedQty(prepaidId));
+}
+
+function getAppliedQtyForOrder(orderId, type){
+  return prepaidApplications.filter(app => app.orderId === orderId && app.targetType === type).reduce((sum, app) => sum + Number(app.qty || 0), 0);
+}
+
+function applyPrepaidToTarget(prepaidId, targetType){
+  const item = prepaid.find(i => i.id === prepaidId);
+  if(!item) return;
+  const remaining = getPrepaidRemainingQty(prepaidId);
+  if(remaining <= 0){
+    alert("이 선납 건은 이미 전부 적용되었습니다.");
+    return;
+  }
+  let year = "";
+  let month = "";
+  if(item.date){
+    const parts = item.date.split("-");
+    year = parts[0] || "";
+    month = parts[1] || "";
+  }else{
+    year = prompt("적용할 연도 4자리를 입력하세요. 예: 2026", new Date().getFullYear());
+    if(year === null) return;
+    month = prompt("적용할 월을 입력하세요. 예: 04", "");
+    if(month === null) return;
+    year = formatYear(year);
+    month = formatMonth(month);
+  }
+  if(!year || !month){
+    alert("연도/월 정보가 필요합니다.");
+    return;
+  }
+
+  const targetList = targetType === "monthStart" ? monthStartOrders : midOrders;
+  const candidates = targetList.filter(order =>
+    order.vendor === item.hospital &&
+    normalizeUpper(order.name) === normalizeUpper(item.name) &&
+    order.year === year &&
+    order.month === month
+  );
+
+  if(!candidates.length){
+    alert("같은 거래처/시약/연월의 대상 발주 내역을 찾지 못했습니다.");
+    return;
+  }
+
+  let left = remaining;
+  candidates.forEach(order => {
+    if(left <= 0) return;
+    const currentApplied = getAppliedQtyForOrder(order.id, targetType);
+    const availableOnOrder = Math.max(0, Number(order.qty || 0) - currentApplied);
+    if(availableOnOrder <= 0) return;
+    const applied = Math.min(left, availableOnOrder);
+    prepaidApplications.push({
+      id: makeId(),
+      prepaidId,
+      orderId: order.id,
+      targetType,
+      hospital:item.hospital,
+      name:item.name,
+      year,
+      month,
+      qty:applied,
+      appliedAt:new Date().toISOString()
+    });
+    left -= applied;
+  });
+
+  if(left === remaining){
+    alert("적용 가능한 발주 수량이 없습니다.");
+    return;
+  }
+
+  save();
+  renderPrepaid();
+  renderMonthStartOrders();
+  renderMidOrders();
+  renderDeliveryMatrix();
+  alert(`${targetType === "monthStart" ? "월초발주" : "중간발주"}에 ${remaining - left}개 적용했습니다.`);
+}
+
+function addPrepaid(){
+  const hospital = document.getElementById("p_hospital").value;
+  const name = normalizeUpper(document.getElementById("p_name").value);
+  const qty = Number(document.getElementById("p_qty").value);
+  const lot = normalizeUpper(document.getElementById("p_lot").value);
+  const rawDate = document.getElementById("p_date").value;
+  const date = rawDate ? formatYmdString(rawDate) : "";
+  if(!name || isNaN(qty) || qty <= 0){
+    alert("선납 입력값을 확인해주세요.");
+    return;
+  }
+  if(rawDate && !date){
+    alert("날짜 형식을 확인해주세요. 예: 20260417 또는 2026-04-17");
+    return;
+  }
+  prepaid.push({ id: makeId(), hospital, name, qty, lot, date });
+  save();
+  renderPrepaid();
+  document.getElementById("p_name").value = "";
+  document.getElementById("p_qty").value = "";
+  document.getElementById("p_lot").value = "";
+  document.getElementById("p_date").value = "";
+}
+
+function delPrepaid(id){
+  prepaid = prepaid.filter(i => i.id !== id);
+  prepaidApplications = prepaidApplications.filter(app => app.prepaidId !== id);
+  save();
+  renderPrepaid();
+  renderMonthStartOrders();
+  renderMidOrders();
+  renderDeliveryMatrix();
+}
+
+function renderPrepaid(){
+  const tbody = document.getElementById("prepaidList");
+  const countEl = document.getElementById("prepaidCount");
+  if(!tbody || !countEl) return;
+  tbody.innerHTML = "";
+  const hospitalFilter = getCurrentHospitalFilter("compensation");
+  const sorted = [...prepaid]
+    .filter(i => hospitalFilter === "all" || i.hospital === hospitalFilter)
+    .sort((a,b) => String(b.date || "").localeCompare(String(a.date || "")));
+  countEl.textContent = `${sorted.length}건`;
+
+  if(sorted.length === 0){
+    tbody.innerHTML = `<tr><td colspan="8" class="emptyRow">등록된 선납 내역이 없습니다.</td></tr>`;
+    return;
+  }
+
+  sorted.forEach(i => {
+    const applied = getPrepaidAppliedQty(i.id);
+    const remain = getPrepaidRemainingQty(i.id);
+    tbody.innerHTML += `
+      <tr>
+        <td><input value="${escapeHtml(i.date || "")}" placeholder="YYYY-MM-DD" onchange="updatePrepaid(${i.id}, 'date', this.value)"></td>
+        <td>${escapeHtml(i.hospital)}</td>
+        <td><input value="${escapeHtml(i.name)}" onchange="updatePrepaid(${i.id}, 'name', this.value)"></td>
+        <td><input type="number" value="${Number(i.qty || 0)}" onchange="updatePrepaid(${i.id}, 'qty', this.value)"></td>
+        <td><input value="${escapeHtml(i.lot || "")}" onchange="updatePrepaid(${i.id}, 'lot', this.value)"></td>
+        <td>
+          <div class="applyInfo">적용 ${applied} / 잔여 ${remain}</div>
+        </td>
+        <td>
+          <div class="prepaidActions">
+            <button type="button" onclick="applyPrepaidToTarget(${i.id}, 'monthStart')">월초발주 적용</button>
+            <button type="button" onclick="applyPrepaidToTarget(${i.id}, 'mid')">중간발주 적용</button>
+          </div>
+        </td>
+        <td><button class="btnSub" onclick="delPrepaid(${i.id})">삭제</button></td>
+      </tr>
+    `;
+  });
+}
+
+function renderMonthStartOrders(){
+  const tbody = document.getElementById("monthStartOrderList");
+  const countEl = document.getElementById("monthStartOrderCount");
+  if(!tbody || !countEl) return;
+  tbody.innerHTML = "";
+  let filtered = [...monthStartOrders];
+  if(monthStartLockedContext){
+    filtered = filtered.filter(i => i.year === monthStartLockedContext.year && i.month === monthStartLockedContext.month && i.vendor === monthStartLockedContext.vendor);
+  }
+  filtered.sort((a,b) => {
+    if(a.year !== b.year) return b.year.localeCompare(a.year);
+    if(a.month !== b.month) return b.month.localeCompare(a.month);
+    if(a.vendor !== b.vendor) return a.vendor.localeCompare(b.vendor);
+    return a.name.localeCompare(b.name);
+  });
+  countEl.textContent = `${filtered.length}건`;
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="8" class="emptyRow">등록된 월초발주 내역이 없습니다.</td></tr>`;
+    return;
+  }
+  let currentGroup = "";
+  filtered.forEach(i => {
+    const groupKey = `${i.year}-${i.month}-${i.vendor}`;
+    if(currentGroup !== groupKey){
+      currentGroup = groupKey;
+      tbody.innerHTML += `<tr class="groupHeader"><td colspan="8">📁 ${i.year}년 ${i.month}월 / ${escapeHtml(i.vendor)}</td></tr>`;
+    }
+    const applied = getAppliedQtyForOrder(i.id, "monthStart");
+    const remain = Math.max(0, Number(i.qty || 0) - applied);
+    tbody.innerHTML += `
+      <tr>
+        <td>${escapeHtml(i.year)}</td>
+        <td>${escapeHtml(i.month)}</td>
+        <td>${escapeHtml(i.vendor)}</td>
+        <td>${escapeHtml(i.name)}</td>
+        <td>${escapeHtml(i.spec)}</td>
+        <td>${i.qty}</td>
+        <td>${applied ? `<span class="applyPill">선납 적용 ${applied}</span><div class="applyInfo">실납품 ${remain}</div>` : `<div class="applyInfo">실납품 ${i.qty}</div>`}</td>
+        <td><button class="btnSub" onclick="delMonthStartOrder(${i.id})">삭제</button></td>
+      </tr>`;
+  });
+}
+
+function renderMidOrders(){
+  const tbody = document.getElementById("midOrderList");
+  const countEl = document.getElementById("midOrderCount");
+  if(!tbody || !countEl) return;
+  tbody.innerHTML = "";
+  let filtered = [...midOrders];
+  if(midLockedContext){
+    filtered = filtered.filter(i => i.year === midLockedContext.year && i.month === midLockedContext.month && i.vendor === midLockedContext.vendor);
+  }
+  filtered.sort((a,b) => {
+    if(a.year !== b.year) return b.year.localeCompare(a.year);
+    if(a.month !== b.month) return b.month.localeCompare(a.month);
+    if(a.vendor !== b.vendor) return a.vendor.localeCompare(b.vendor);
+    return a.name.localeCompare(b.name);
+  });
+  countEl.textContent = `${filtered.length}건`;
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="8" class="emptyRow">등록된 중간발주 내역이 없습니다.</td></tr>`;
+    return;
+  }
+  let currentGroup = "";
+  filtered.forEach(i => {
+    const groupKey = `${i.year}-${i.month}-${i.vendor}`;
+    if(currentGroup !== groupKey){
+      currentGroup = groupKey;
+      tbody.innerHTML += `<tr class="groupHeader"><td colspan="8">📁 ${i.year}년 ${i.month}월 / ${escapeHtml(i.vendor)}</td></tr>`;
+    }
+    const applied = getAppliedQtyForOrder(i.id, "mid");
+    const remain = Math.max(0, Number(i.qty || 0) - applied);
+    tbody.innerHTML += `
+      <tr>
+        <td>${escapeHtml(i.year)}</td>
+        <td>${escapeHtml(i.month)}</td>
+        <td>${escapeHtml(i.vendor)}</td>
+        <td>${escapeHtml(i.name)}</td>
+        <td>${escapeHtml(i.spec)}</td>
+        <td>${i.qty}</td>
+        <td>${applied ? `<span class="applyPill">선납 적용 ${applied}</span><div class="applyInfo">실납품 ${remain}</div>` : `<div class="applyInfo">실납품 ${i.qty}</div>`}</td>
+        <td><button class="btnSub" onclick="delMidOrder(${i.id})">삭제</button></td>
+      </tr>`;
+  });
+}
+
+function getCombinedDeliverySource(){
+  const combined = [];
+  deliveryRecords.forEach(item => {
+    combined.push({
+      hospital:item.hospital,
+      year:item.year,
+      month:item.month,
+      name:normalizeUpper(item.name),
+      qty:Number(item.qty || 0),
+      source:"납품"
+    });
+  });
+  monthStartOrders.forEach(item => {
+    combined.push({
+      hospital:item.vendor,
+      year:item.year,
+      month:item.month,
+      name:normalizeUpper(item.name),
+      qty:Math.max(0, Number(item.qty || 0) - getAppliedQtyForOrder(item.id, "monthStart")),
+      source:"월초발주"
+    });
+  });
+  midOrders.forEach(item => {
+    combined.push({
+      hospital:item.vendor,
+      year:item.year,
+      month:item.month,
+      name:normalizeUpper(item.name),
+      qty:Math.max(0, Number(item.qty || 0) - getAppliedQtyForOrder(item.id, "mid")),
+      source:"중간발주"
+    });
+  });
+  return combined;
+}
+
+function canAccessBoardPost(post){
+  const user = getCurrentUser();
+  if(!post.secret) return true;
+  if(!user) return false;
+  if(isAdminUser()) return true;
+  if(post.authorId === user.id) return true;
+  return boardUnlockedSecrets.includes(post.id);
+}
+
+function ensureBoardWriteEnhancement(){
+  const row = document.querySelector("#boardWritePanel .row");
+  if(!row) return;
+  row.innerHTML = `
+    <div class="secretMeta">작성자 <strong>${escapeHtml(getCurrentNickname())}</strong></div>
+    <input id="boardTitle" placeholder="제목" style="flex:1 1 360px;">
+    <label class="badge" style="cursor:pointer;">사진 추가
+      <input id="boardImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="insertBoardImages(this.files)">
+    </label>
+  `;
+  const toolbar = document.querySelector("#boardWritePanel .boardToolbar");
+  if(toolbar && !document.getElementById("boardSecretToggle")){
+    const secretRow = document.createElement("div");
+    secretRow.className = "boardSecretRow";
+    secretRow.innerHTML = `
+      <label class="boardSecretLock"><input type="checkbox" id="boardSecretToggle" onchange="toggleBoardSecretInput()"> 비밀게시글</label>
+      <input id="boardSecretPassword" class="loginInput" style="max-width:220px;height:40px;display:none;" type="password" placeholder="비밀글 비밀번호">
+    `;
+    toolbar.parentNode.insertBefore(secretRow, toolbar);
+  }
+}
+
+function toggleBoardSecretInput(){
+  const chk = document.getElementById("boardSecretToggle");
+  const pw = document.getElementById("boardSecretPassword");
+  if(!chk || !pw) return;
+  pw.style.display = chk.checked ? "block" : "none";
+  if(!chk.checked) pw.value = "";
+}
+
+function getBoardFilteredPosts(){
+  const keyword = getBoardSearchKeyword();
+  let filtered = [...boardPosts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  if(keyword){
+    filtered = filtered.filter(post =>
+      String(post.title || "").toLowerCase().includes(keyword) ||
+      String(post.author || "").toLowerCase().includes(keyword) ||
+      getPlainTextFromHtml(post.content || "").toLowerCase().includes(keyword)
+    );
+  }
+  return filtered;
+}
+
+function renderBoardList(page = 1){
+  boardCurrentPage = page;
+  const tbody = document.getElementById("boardListBody");
+  const pagination = document.getElementById("boardPagination");
+  if(!tbody || !pagination) return;
+  const filtered = getBoardFilteredPosts();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / BOARD_PAGE_SIZE));
+  if(boardCurrentPage > totalPages) boardCurrentPage = totalPages;
+  const start = (boardCurrentPage - 1) * BOARD_PAGE_SIZE;
+  const pageItems = filtered.slice(start, start + BOARD_PAGE_SIZE);
+  tbody.innerHTML = "";
+  if(pageItems.length === 0){
+    tbody.innerHTML = `<tr><td colspan="5" class="emptyRow">등록된 게시글이 없습니다.</td></tr>`;
+  }else{
+    pageItems.forEach((post, idx) => {
+      const no = total - (start + idx);
+      const thumb = getBoardThumbnail(post.content);
+      const lockMark = post.secret ? `<span class="lockMark">🔒</span>` : "";
+      tbody.innerHTML += `
+        <tr>
+          <td>${no}</td>
+          <td><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${lockMark}${escapeHtml(post.title)}</button></td>
+          <td>${escapeHtml(post.author || "운영자")}</td>
+          <td>${formatBoardDate(post.createdAt)}</td>
+          <td>${thumb ? `<img src="${thumb}" class="boardThumb">` : "-"}</td>
+        </tr>
+      `;
+    });
+  }
+  pagination.innerHTML = "";
+  for(let i=1;i<=totalPages;i++){
+    pagination.innerHTML += `<button type="button" class="${i === boardCurrentPage ? "active" : ""}" onclick="renderBoardList(${i})">${i}</button>`;
+  }
+  const countEl = document.getElementById("boardTotalCount");
+  if(countEl) countEl.textContent = `${total}건`;
+  renderBoardRecentList();
+  showBoardPanel("boardListPanel");
+}
+
+function renderBoardRecentList(){
+  const box = document.getElementById("boardRecentList");
+  if(!box) return;
+  const posts = [...boardPosts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0,5);
+  box.innerHTML = "";
+  if(posts.length === 0){
+    box.innerHTML = `<div class="boardSidebarItem"><div class="boardSidebarItemTitle">아직 게시글이 없습니다.</div><div class="boardSidebarItemMeta">첫 글을 등록해보세요.</div></div>`;
+    return;
+  }
+  posts.forEach(post => {
+    box.innerHTML += `
+      <div class="boardSidebarItem">
+        <div class="boardSidebarItemTitle"><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${post.secret ? "🔒 " : ""}${escapeHtml(post.title)}</button></div>
+        <div class="boardSidebarItemMeta">${escapeHtml(post.author || "운영자")} · ${formatBoardDate(post.createdAt)}</div>
+      </div>
+    `;
+  });
+}
+
+function openBoardWrite(id = null){
+  ensureBoardWriteEnhancement();
+  boardEditingId = id;
+  const titleEl = document.getElementById("boardTitle");
+  const editor = document.getElementById("boardEditor");
+  const secretToggle = document.getElementById("boardSecretToggle");
+  const secretPw = document.getElementById("boardSecretPassword");
+  if(!titleEl || !editor) return;
+  if(id){
+    const post = boardPosts.find(item => item.id === id);
+    if(!post) return;
+    titleEl.value = post.title || "";
+    editor.innerHTML = post.content || "";
+    if(secretToggle) secretToggle.checked = !!post.secret;
+    if(secretPw){
+      secretPw.style.display = post.secret ? "block" : "none";
+      secretPw.value = post.secretPassword || "";
+    }
+  }else{
+    titleEl.value = "";
+    editor.innerHTML = "";
+    if(secretToggle) secretToggle.checked = false;
+    if(secretPw){
+      secretPw.style.display = "none";
+      secretPw.value = "";
+    }
+  }
+  showBoardPanel("boardWritePanel");
+}
+
+function saveBoardPost(){
+  const titleEl = document.getElementById("boardTitle");
+  const editor = document.getElementById("boardEditor");
+  const secretToggle = document.getElementById("boardSecretToggle");
+  const secretPw = document.getElementById("boardSecretPassword");
+  if(!titleEl || !editor) return;
+  const title = String(titleEl.value || "").trim();
+  const content = editor.innerHTML.trim();
+  const textOnly = getPlainTextFromHtml(content);
+  const hasImage = /<img/i.test(content);
+  const secret = !!(secretToggle && secretToggle.checked);
+  const secretPassword = String(secretPw?.value || "").trim();
+
+  if(!title){
+    alert("제목을 입력해주세요.");
+    return;
+  }
+  if(!textOnly && !hasImage){
+    alert("내용을 입력해주세요.");
+    return;
+  }
+  if(secret && !secretPassword){
+    alert("비밀게시글 비밀번호를 입력해주세요.");
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const author = getCurrentNickname();
+  const authorId = getCurrentUser()?.id || "";
+  if(boardEditingId){
+    const post = boardPosts.find(item => item.id === boardEditingId);
+    if(!post) return;
+    if(!(isAdminUser() || post.authorId === authorId)){
+      alert("본인 글 또는 관리자만 수정할 수 있습니다.");
+      return;
+    }
+    post.title = title;
+    post.author = author;
+    post.authorId = authorId;
+    post.content = content;
+    post.secret = secret;
+    post.secretPassword = secret ? secretPassword : "";
+    post.updatedAt = now;
+    boardSelectedId = post.id;
+  }else{
+    const post = {
+      id: makeId(),
+      title,
+      author,
+      authorId,
+      content,
+      createdAt: now,
+      updatedAt: now,
+      secret,
+      secretPassword: secret ? secretPassword : ""
+    };
+    boardPosts.unshift(post);
+    boardSelectedId = post.id;
+  }
+  save();
+  boardEditingId = null;
+  renderBoardList(1);
+  viewBoardDetail(boardSelectedId);
+}
+
+function viewBoardDetail(id){
+  const post = boardPosts.find(item => item.id === id);
+  if(!post) return;
+  boardSelectedId = id;
+  const titleEl = document.getElementById("boardDetailTitle");
+  const authorEl = document.getElementById("boardDetailAuthor");
+  const dateEl = document.getElementById("boardDetailDate");
+  const contentEl = document.getElementById("boardDetailContent");
+  if(titleEl) titleEl.textContent = `${post.secret ? "🔒 " : ""}${post.title || ""}`;
+  if(authorEl) authorEl.textContent = post.author || "운영자";
+  if(dateEl) dateEl.textContent = `작성일 ${formatBoardDate(post.createdAt)}${post.updatedAt !== post.createdAt ? ` · 수정 ${formatBoardDate(post.updatedAt)}` : ""}`;
+
+  if(post.secret && !canAccessBoardPost(post)){
+    const input = prompt("비밀게시글 비밀번호를 입력하세요.");
+    if(input === null){
+      renderBoardList(boardCurrentPage);
+      return;
+    }
+    if(input !== post.secretPassword){
+      alert("비밀번호가 올바르지 않습니다.");
+      renderBoardList(boardCurrentPage);
+      return;
+    }
+    boardUnlockedSecrets.push(post.id);
+    boardUnlockedSecrets = [...new Set(boardUnlockedSecrets)];
+    saveAuthAndLinks();
+  }
+
+  if(contentEl){
+    if(post.secret && !canAccessBoardPost(post)){
+      contentEl.className = "boardViewer secretLocked";
+      contentEl.innerHTML = `<div class="secretUnlockBox"><h4>비밀게시글</h4><p>권한이 있는 사용자 또는 비밀번호 입력 사용자만 내용을 볼 수 있습니다.</p></div>`;
+    }else{
+      contentEl.className = "boardViewer";
+      contentEl.innerHTML = post.content || "";
+    }
+  }
+
+  const editBtn = document.querySelector("#boardDetailPanel button[onclick='editBoardPost()']");
+  const deleteBtn = document.querySelector("#boardDetailPanel button[onclick='deleteBoardPost()']");
+  const canManage = isAdminUser() || post.authorId === getCurrentUser()?.id;
+  if(editBtn) editBtn.style.display = canManage ? "inline-flex" : "none";
+  if(deleteBtn) deleteBtn.style.display = canManage ? "inline-flex" : "none";
+
+  showBoardPanel("boardDetailPanel");
+}
+
+function editBoardPost(){
+  if(!boardSelectedId) return;
+  const post = boardPosts.find(item => item.id === boardSelectedId);
+  if(!post) return;
+  if(!(isAdminUser() || post.authorId === getCurrentUser()?.id)){
+    alert("본인 글 또는 관리자만 수정할 수 있습니다.");
+    return;
+  }
+  openBoardWrite(boardSelectedId);
+}
+
+function deleteBoardPost(){
+  if(!boardSelectedId) return;
+  const post = boardPosts.find(item => item.id === boardSelectedId);
+  if(!post) return;
+  if(!(isAdminUser() || post.authorId === getCurrentUser()?.id)){
+    alert("본인 글 또는 관리자만 삭제할 수 있습니다.");
+    return;
+  }
+  if(!confirm("이 게시글을 삭제할까요?")) return;
+  boardPosts = boardPosts.filter(item => item.id !== boardSelectedId);
+  boardSelectedId = null;
+  save();
+  renderBoardList(boardCurrentPage);
+}
+
+function switchPage(pageId){
+  baseSwitchPage(pageId);
+  if(pageId === "boardPage"){
+    renderBoardList(1);
+  }
+  if(pageId === "adminPage"){
+    renderAdminPage();
+  }
+}
+
+function initializeApp(){
+  updateClock();
+  load();
+  injectAdminPage();
+  renderHospitalSelects();
+  renderPageHospitalTabs();
+  renderReagentMasterList();
+  bindInputFormatters();
+  checkMonthRollover();
+  initYearFilter();
+  yearFilter = document.getElementById("yearFilter").value;
+  monthFilter = document.getElementById("monthFilter").value;
+  renderMonthStartLockState();
+  renderMidLockState();
+  render();
+  renderMonthStartOrders();
+  renderMidOrders();
+  renderPrepaid();
+  renderBacklog();
+  renderDeliveryList();
+  renderDeliveryMatrix();
+  ensureBoardWriteEnhancement();
+  renderHeaderStatus();
+  renderAdminPage();
+
+  const prepaidThead = document.querySelector("#prepaidList")?.closest("table")?.querySelector("thead tr");
+  if(prepaidThead){
+    prepaidThead.innerHTML = `<th>날짜</th><th>거래처</th><th>시약명</th><th>수량</th><th>LOT</th><th>적용현황</th><th>적용</th><th>관리</th>`;
+  }
+  const monthHead = document.querySelector("#monthStartOrderList")?.closest("table")?.querySelector("thead tr");
+  if(monthHead){
+    monthHead.innerHTML = `<th>연도</th><th>월</th><th>거래처</th><th>품명</th><th>규격</th><th>발주량</th><th>선납 반영 후</th><th>관리</th>`;
+  }
+  const midHead = document.querySelector("#midOrderList")?.closest("table")?.querySelector("thead tr");
+  if(midHead){
+    midHead.innerHTML = `<th>연도</th><th>월</th><th>거래처</th><th>품명</th><th>규격</th><th>발주량</th><th>선납 반영 후</th><th>관리</th>`;
+  }
+
+  const activePage = localStorage.getItem("activePage") || "inventoryPage";
+  if(activePage === "adminPage" && !isAdminUser()){
+    switchPage("inventoryPage");
+  }else{
+    switchPage(activePage);
+  }
+}
+
+window.addEventListener("load", () => {
+  // original onload already ran; re-run auth-aware state
+  setTimeout(() => {
+    checkLoginState();
+  }, 0);
+});
 </script>
 
 </body>

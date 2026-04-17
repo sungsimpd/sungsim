@@ -4187,5 +4187,55 @@ window.addEventListener("load", () => {
 });
 </script>
 
+
+<script>
+(function(){
+  function hardEnsureOwner(){
+    let users=[];
+    try{ users = JSON.parse(localStorage.getItem("users")||"[]"); }catch(e){ users=[]; }
+    const owner = {id:"sungsim", password:"8658", name:"운영자", phone:"01000000000", nickname:"운영자", role:"owner", status:"active", createdAt:new Date().toISOString()};
+    const idx = users.findIndex(u => String(u.id||"").toLowerCase()==="sungsim");
+    if(idx >= 0){ users[idx] = {...users[idx], ...owner}; }
+    else { users.unshift(owner); }
+    localStorage.setItem("users", JSON.stringify(users));
+    return users;
+  }
+
+  window.login = function(){
+    const id = String(document.getElementById("loginId")?.value || "").trim().toLowerCase();
+    const pw = String(document.getElementById("loginPw")?.value || "").trim();
+    const errorEl = document.getElementById("loginError");
+    if(errorEl) errorEl.textContent = "";
+    const users = hardEnsureOwner();
+    let user = users.find(u => String(u.id||"").toLowerCase() === id);
+    if(id === "sungsim" && pw === "8658"){
+      user = user || users[0];
+    }
+    if(!user || String(user.password||"") !== pw){
+      if(errorEl) errorEl.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
+      return;
+    }
+    if(user.status === "banned"){
+      if(errorEl) errorEl.textContent = "이 계정은 운영자에 의해 이용이 제한되었습니다.";
+      return;
+    }
+    const session = {id:user.id, name:user.name || "", nickname:user.nickname || user.id, role:user.role || "member"};
+    localStorage.setItem("currentSession", JSON.stringify(session));
+    localStorage.removeItem("sungsimLoggedIn");
+    if(typeof checkLoginState === 'function') checkLoginState();
+    else location.reload();
+  };
+
+  window.addEventListener('load', function(){
+    hardEnsureOwner();
+    const pw = document.getElementById('loginPw');
+    const id = document.getElementById('loginId');
+    [pw,id].forEach(function(el){
+      if(!el) return;
+      el.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); window.login(); } });
+    });
+  });
+})();
+</script>
 </body>
 </html>

@@ -190,18 +190,19 @@ header{
   position:sticky;
   top:0;
   z-index:10;
-  background:#ffffff;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(14px);
   border-bottom:1px solid #e5e7eb;
   padding:0;
   box-shadow:0 1px 0 rgba(15,23,42,0.04);
 }
 
 .headerInner{
-  max-width:1440px;
+  max-width:1480px;
   margin:0 auto;
-  display:flex;
+  display:grid;
+  grid-template-columns:minmax(240px,1fr) auto minmax(240px,1fr);
   align-items:center;
-  justify-content:space-between;
   gap:18px;
   position:relative;
   padding:16px 20px 14px;
@@ -214,25 +215,43 @@ header{
   justify-content:center;
   padding-left:76px;
   cursor:pointer;
+  min-width:260px;
 }
 .logoWrap:hover .logoTitle{ color:#0f172a; }
 .headerMeta{
   display:flex;
   align-items:center;
+  justify-content:flex-end;
   gap:14px;
-  margin-left:auto;
   padding-right:8px;
 }
 .clockChip{
-  display:inline-flex;
+  display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  min-height:42px;
-  padding:0 18px;
+  min-width:230px;
+  min-height:58px;
+  padding:8px 22px;
   border:1px solid #dbe3ef;
   background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
   border-radius:999px;
-  box-shadow:0 8px 24px rgba(15,23,42,0.06);
+  box-shadow:0 12px 30px rgba(15,23,42,0.08);
+}
+.clockDate{
+  font-size:12px;
+  font-weight:800;
+  color:#475467;
+  letter-spacing:0.4px;
+  line-height:1.2;
+}
+.clockTime{
+  margin-top:3px;
+  font-size:18px;
+  font-weight:900;
+  color:#111827;
+  letter-spacing:0.6px;
+  line-height:1.1;
 }
 
 .logoTitle{
@@ -253,17 +272,7 @@ header{
   text-transform:uppercase;
 }
 
-#clockBox{
-  position:static;
-  transform:none;
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:0.3px;
-  color:#344054;
-  white-space:nowrap;
-  display:inline-flex;
-  align-items:center;
-}
+#clockBox{display:none;}
 
 .logoutBtn{
   position:absolute;
@@ -737,6 +746,41 @@ td input, td select{
 }
 
 .boardTable{ min-width:100%; }
+.boardListTop{align-items:flex-end;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #eceff3;}
+.boardListTop h3{font-size:28px;letter-spacing:-0.4px;}
+.boardSearchRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#f8fafc;border:1px solid #e7ebf2;padding:12px 14px;border-radius:20px;}
+.boardSearchRow input{min-height:44px;border-radius:14px;background:#fff;border:1px solid #dde3ec;}
+.boardSearchRow button{min-height:44px;border-radius:14px;padding:0 18px;}
+#boardPage .box{border-radius:28px;border:1px solid #eceff4;box-shadow:0 20px 46px rgba(15,23,42,0.05);}
+#boardListPanel{background:linear-gradient(180deg,#fffdfb 0%,#ffffff 100%);}
+#boardWritePanel{background:linear-gradient(180deg,#fffaf7 0%,#ffffff 100%);}
+#boardDetailPanel{background:linear-gradient(180deg,#fffdfb 0%,#ffffff 100%);}
+.boardTable thead th{background:#fbf5f1;color:#5b4a42;font-size:11px;letter-spacing:0.1px;padding:13px 10px;border-bottom:1px solid #efe5df;}
+.boardTable tbody tr{transition:background 0.18s ease, transform 0.18s ease;}
+.boardTable tbody tr:hover{background:#fff8f3;}
+.boardTable td{padding:14px 10px;border-bottom:1px solid #f1f2f4;}
+.boardTitleBtn{font-size:15px;font-weight:800;color:#1f2937;background:none;box-shadow:none;padding:0;min-height:auto;}
+.boardTitleBtn:hover{color:#9a3412;text-decoration:none;}
+.boardPagination{margin-top:18px;gap:8px;}
+.boardPagination button{border-radius:999px;min-width:38px;height:38px;background:#fff;border:1px solid #e4e7ec;color:#344054;box-shadow:none;}
+.boardPagination button.active{background:linear-gradient(135deg,#111827,#334155);color:#fff;border-color:transparent;box-shadow:0 10px 24px rgba(15,23,42,0.12);}
+.boardEditorWrap{border-radius:22px;border:1px solid #ece3db;background:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,0.7);}
+.boardEditor{min-height:400px;padding:24px 26px;font-size:16px;line-height:1.8;}
+.boardToolbar{padding:10px 12px;border-radius:18px;background:#f8fafc;border:1px solid #e7ebf2;}
+.boardToolbar button,.boardToolbar select{border-radius:12px;}
+.boardViewer{padding:26px 28px;border:1px solid #efe7e1;border-radius:24px;background:#fff;min-height:320px;line-height:1.8;font-size:16px;}
+.boardHeroCard{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:28px 30px;border-radius:30px;background:radial-gradient(circle at top left, rgba(255,255,255,0.48), transparent 34%), linear-gradient(135deg,#fff4ed 0%,#fff8f4 40%,#ffffff 100%);border:1px solid #f3e6dc;box-shadow:0 26px 60px rgba(154,52,18,0.06);margin-bottom:18px;}
+.boardHeroCard h3{margin:0;font-size:34px;letter-spacing:-0.8px;line-height:1.18;color:#2b211d;}
+.boardHeroCard p{margin:8px 0 0;color:#7c665b;font-size:14px;}
+.boardHeroStat{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+.boardHeroStat .badge{background:rgba(255,255,255,0.82);border-color:#edd9cc;color:#7c2d12;padding:9px 14px;font-weight:800;}
+.boardFlash{display:none;margin:0 0 16px;padding:14px 16px;border-radius:18px;border:1px solid #fed7aa;background:linear-gradient(180deg,#fff7ed 0%,#fffbf7 100%);color:#9a3412;font-weight:800;box-shadow:0 10px 26px rgba(154,52,18,0.08);}
+.boardPostBadge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;font-size:11px;font-weight:800;}
+.boardWriteTopMeta{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding:14px 16px;border-radius:20px;background:#fff8f3;border:1px solid #f4e3d7;}
+.boardWriterName{font-size:14px;font-weight:800;color:#7c2d12;}
+.boardWriteActionsBottom{position:sticky;bottom:14px;padding:16px 18px;margin-top:18px;border:1px solid #eadfd7;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-radius:20px;box-shadow:0 18px 36px rgba(15,23,42,0.08);}
+.highlightNewPost{animation:newPostGlow 1.8s ease;}
+@keyframes newPostGlow{0%{background:#fff1e8;}100%{background:transparent;}}
 .boardTable td:nth-child(2){ text-align:left; }
 .boardTitleBtn{
   background:none;
@@ -951,7 +995,7 @@ td input, td select{
       </div>
 
       <div class="headerMeta">
-        <div class="clockChip"><span id="clockBox"></span></div>
+        <div class="clockChip" id="headerDateTimeWrap"><div class="clockDate" id="clockDate"></div><div class="clockTime" id="clockTime"></div><span id="clockBox"></span></div>
       </div>
     </div>
 
@@ -1376,10 +1420,17 @@ td input, td select{
             </div>
           </div>
 
+          <div class="boardWriteTopMeta">
+            <div>
+              <div class="subTitle" style="margin:0 0 4px;">작성자</div>
+              <div class="boardWriterName" id="boardWriterName">-</div>
+            </div>
+            <span class="boardPostBadge">사진 · 비밀글 · 서식 지원</span>
+          </div>
+
           <div class="row" style="margin-bottom:12px;">
-            <input id="boardAuthor" placeholder="작성자" style="width:160px;">
-            <input id="boardTitle" placeholder="제목" style="flex:1 1 360px;">
-            <label class="badge" style="cursor:pointer;">
+            <input id="boardTitle" placeholder="제목을 입력하세요" style="flex:1 1 360px; min-height:48px; font-size:15px;">
+            <label class="badge" style="cursor:pointer; min-height:48px; padding:0 16px; display:inline-flex; align-items:center;">
               사진 추가
               <input id="boardImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="insertBoardImages(this.files)">
             </label>
@@ -1516,8 +1567,12 @@ function updateClock(){
   const h = String(now.getHours()).padStart(2, "0");
   const mi = String(now.getMinutes()).padStart(2, "0");
   const s = String(now.getSeconds()).padStart(2, "0");
-  const clock = document.getElementById("clockBox");
-  if(clock) clock.textContent = `${y}.${m}.${d}  ${h}:${mi}:${s}`;
+  const dateEl = document.getElementById("clockDate");
+  const timeEl = document.getElementById("clockTime");
+  const hiddenClock = document.getElementById("clockBox");
+  if(dateEl) dateEl.textContent = `${y}.${m}.${d}`;
+  if(timeEl) timeEl.textContent = `${h}:${mi}:${s}`;
+  if(hiddenClock) hiddenClock.textContent = `${y}.${m}.${d} ${h}:${mi}:${s}`;
 }
 updateClock();
 setInterval(updateClock, 1000);
@@ -2902,6 +2957,17 @@ function saveBoardPost(){
   viewBoardDetail(boardSelectedId);
 }
 
+function showBoardFlash(message){
+  const flash = document.getElementById("boardFlash");
+  if(!flash) return;
+  flash.textContent = message || "게시글이 등록되었습니다.";
+  flash.style.display = "block";
+  clearTimeout(showBoardFlash._timer);
+  showBoardFlash._timer = setTimeout(() => {
+    if(flash) flash.style.display = "none";
+  }, 2200);
+}
+
 function viewBoardDetail(id){
   const post = boardPosts.find(item => item.id === id);
   if(!post) return;
@@ -3831,15 +3897,8 @@ function canAccessBoardPost(post){
 }
 
 function ensureBoardWriteEnhancement(){
-  const row = document.querySelector("#boardWritePanel .row");
-  if(!row) return;
-  row.innerHTML = `
-    <div class="secretMeta">작성자 <strong>${escapeHtml(getCurrentNickname())}</strong></div>
-    <input id="boardTitle" placeholder="제목" style="flex:1 1 360px;">
-    <label class="badge" style="cursor:pointer;">사진 추가
-      <input id="boardImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="insertBoardImages(this.files)">
-    </label>
-  `;
+  const writerNameEl = document.getElementById("boardWriterName");
+  if(writerNameEl) writerNameEl.textContent = getCurrentNickname();
   const toolbar = document.querySelector("#boardWritePanel .boardToolbar");
   if(toolbar && !document.getElementById("boardSecretToggle")){
     const secretRow = document.createElement("div");
@@ -3907,8 +3966,9 @@ function renderBoardList(page = 1){
       const no = total - (start + idx);
       const thumb = getBoardThumbnail(post.content);
       const lockMark = post.secret ? `<span class="lockMark">🔒</span>` : "";
+      const rowClass = post.id === boardSelectedId ? 'highlightNewPost' : '';
       tbody.innerHTML += `
-        <tr>
+        <tr class="${rowClass}" id="board-row-${post.id}">
           <td>${no}</td>
           <td><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${lockMark}${escapeHtml(post.title)}</button></td>
           <td>${escapeHtml(post.author || "운영자")}</td>
@@ -3954,6 +4014,8 @@ function openBoardWrite(id = null){
   const editor = document.getElementById("boardEditor");
   const secretToggle = document.getElementById("boardSecretToggle");
   const secretPw = document.getElementById("boardSecretPassword");
+  const writerNameEl = document.getElementById("boardWriterName");
+  if(writerNameEl) writerNameEl.textContent = getCurrentNickname();
   if(!titleEl || !editor) return;
   if(id){
     const post = boardPosts.find(item => item.id === id);
@@ -4041,7 +4103,20 @@ function saveBoardPost(){
   save();
   boardEditingId = null;
   renderBoardList(1);
-  viewBoardDetail(boardSelectedId);
+  showBoardFlash(boardSelectedId ? (boardPosts.find(item => item.id === boardSelectedId)?.title || '') + ' 게시글이 등록되었습니다.' : '게시글이 등록되었습니다.');
+  const newRow = document.getElementById(`board-row-${boardSelectedId}`);
+  if(newRow) newRow.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function showBoardFlash(message){
+  const flash = document.getElementById("boardFlash");
+  if(!flash) return;
+  flash.textContent = message || "게시글이 등록되었습니다.";
+  flash.style.display = "block";
+  clearTimeout(showBoardFlash._timer);
+  showBoardFlash._timer = setTimeout(() => {
+    if(flash) flash.style.display = "none";
+  }, 2200);
 }
 
 function viewBoardDetail(id){

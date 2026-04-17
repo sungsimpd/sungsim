@@ -201,7 +201,7 @@ header{
   margin:0 auto;
   display:flex;
   align-items:center;
-  justify-content:flex-start;
+  justify-content:space-between;
   gap:18px;
   position:relative;
   padding:16px 20px 14px;
@@ -213,6 +213,26 @@ header{
   align-items:flex-start;
   justify-content:center;
   padding-left:76px;
+  cursor:pointer;
+}
+.logoWrap:hover .logoTitle{ color:#0f172a; }
+.headerMeta{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-left:auto;
+  padding-right:8px;
+}
+.clockChip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 18px;
+  border:1px solid #dbe3ef;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+  border-radius:999px;
+  box-shadow:0 8px 24px rgba(15,23,42,0.06);
 }
 
 .logoTitle{
@@ -236,10 +256,10 @@ header{
 #clockBox{
   position:static;
   transform:none;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:0.4px;
-  color:#667085;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:0.3px;
+  color:#344054;
   white-space:nowrap;
   display:inline-flex;
   align-items:center;
@@ -925,12 +945,14 @@ td input, td select{
     <div class="headerInner">
       <button class="logoutBtn" onclick="logout()">로그아웃</button>
 
-      <div class="logoWrap">
+      <div class="logoWrap" onclick="goHome()" title="메인으로 이동">
         <div class="logoTitle">SUNGSIM</div>
         <div class="logoSub">Inventory Dashboard</div>
       </div>
 
-      <span id="clockBox"></span>
+      <div class="headerMeta">
+        <div class="clockChip"><span id="clockBox"></span></div>
+      </div>
     </div>
 
     <div class="topNav">
@@ -1305,6 +1327,113 @@ td input, td select{
       </div>
     </div>
   </section>
+
+  <section id="boardPage" class="pageSection">
+    <div class="pageHero">
+      <div class="pageHeroTop">
+        <div>
+          <h2 class="pageHeroTitle">커뮤니티 게시판</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="pageGrid">
+      <div class="left">
+        <div class="box" id="boardListPanel">
+          <div class="boardListTop">
+            <div>
+              <h3>게시글 목록</h3>
+            </div>
+            <div class="boardSearchRow">
+              <input id="boardSearchInput" placeholder="제목, 작성자 검색" style="min-width:220px;">
+              <button type="button" class="btnRefresh" onclick="renderBoardList(1)">검색</button>
+              <button type="button" onclick="openBoardWrite()">글쓰기</button>
+            </div>
+          </div>
+          <div class="tableWrap">
+            <table class="boardTable">
+              <thead>
+                <tr>
+                  <th style="width:80px;">번호</th>
+                  <th>제목</th>
+                  <th style="width:120px;">작성자</th>
+                  <th style="width:140px;">작성일</th>
+                  <th style="width:90px;">사진</th>
+                </tr>
+              </thead>
+              <tbody id="boardListBody"></tbody>
+            </table>
+          </div>
+          <div class="boardPagination" id="boardPagination"></div>
+        </div>
+
+        <div class="box hiddenPanel" id="boardWritePanel">
+          <div class="panelTitle">
+            <h3 style="margin:0;">게시글 작성</h3>
+            <div class="row">
+              <button type="button" class="btnSub" onclick="cancelBoardWrite()">목록으로</button>
+              <button type="button" onclick="saveBoardPost()">작성 완료</button>
+            </div>
+          </div>
+
+          <div class="row" style="margin-bottom:12px;">
+            <input id="boardAuthor" placeholder="작성자" style="width:160px;">
+            <input id="boardTitle" placeholder="제목" style="flex:1 1 360px;">
+            <label class="badge" style="cursor:pointer;">
+              사진 추가
+              <input id="boardImageInput" type="file" accept="image/*" multiple style="display:none;" onchange="insertBoardImages(this.files)">
+            </label>
+          </div>
+
+          <div class="boardToolbar">
+            <button type="button" onclick="execBoardCommand('bold')"><b>B</b></button>
+            <button type="button" onclick="execBoardCommand('italic')"><i>I</i></button>
+            <button type="button" onclick="execBoardCommand('underline')"><u>U</u></button>
+            <select onchange="setBoardFontSize(this.value)">
+              <option value="">글자 크기</option>
+              <option value="13">작게</option>
+              <option value="15">기본</option>
+              <option value="18">크게</option>
+              <option value="24">제목급</option>
+            </select>
+            <input type="color" value="#111827" onchange="execBoardCommand('foreColor', this.value)">
+            <button type="button" onclick="execBoardCommand('insertUnorderedList')">목록</button>
+            <button type="button" onclick="execBoardCommand('justifyLeft')">좌측</button>
+            <button type="button" onclick="execBoardCommand('justifyCenter')">가운데</button>
+            <button type="button" onclick="execBoardCommand('removeFormat')">서식 초기화</button>
+          </div>
+
+          <div class="boardEditorWrap">
+            <div id="boardEditor" class="boardEditor" contenteditable="true"></div>
+          </div>
+
+          <div class="boardWriteActionsBottom">
+            <button type="button" class="btnSub" onclick="cancelBoardWrite()">목록으로</button>
+            <button type="button" onclick="saveBoardPost()">작성 완료</button>
+          </div>
+        </div>
+
+        <div class="box hiddenPanel" id="boardDetailPanel">
+          <div class="panelTitle">
+            <h3 style="margin:0;">게시글 상세</h3>
+            <div class="row">
+              <button type="button" class="btnSub" onclick="backToBoardList()">목록</button>
+              <button type="button" onclick="editBoardPost()">수정</button>
+              <button type="button" class="btnSub" onclick="deleteBoardPost()">삭제</button>
+            </div>
+          </div>
+          <h2 id="boardDetailTitle" style="margin:6px 0 10px; font-size:28px; line-height:1.35;"></h2>
+          <div class="boardPostMeta">
+            <span id="boardDetailAuthor" class="badge"></span>
+            <span id="boardDetailDate"></span>
+          </div>
+          <div class="boardViewer" id="boardDetailContent"></div>
+        </div>
+      </div>
+
+      <div class="right"></div>
+    </div>
+  </section>
 </div>
 
 <datalist id="reagentMasterList"></datalist>
@@ -1372,6 +1501,12 @@ function logout(){
   location.reload();
 }
 
+function goHome(){
+  if(typeof safeSwitchPage === "function") safeSwitchPage("inventoryPage");
+  else if(typeof switchPage === "function") switchPage("inventoryPage");
+  else localStorage.setItem("activePage","inventoryPage");
+}
+
 /* CLOCK */
 function updateClock(){
   const now = new Date();
@@ -1384,6 +1519,7 @@ function updateClock(){
   const clock = document.getElementById("clockBox");
   if(clock) clock.textContent = `${y}.${m}.${d}  ${h}:${mi}:${s}`;
 }
+updateClock();
 setInterval(updateClock, 1000);
 
 /* HELPERS */
@@ -4147,16 +4283,6 @@ window.addEventListener("load", () => {
 
     const warning = document.getElementById('bootWarning');
     if(warning) warning.remove();
-    if(errors.length){
-      const appScreen = document.getElementById('appScreen');
-      if(appScreen){
-        const div = document.createElement('div');
-        div.id = 'bootWarning';
-        div.style.cssText = 'margin:16px;padding:12px 14px;border:1px solid #f3d4a5;background:#fff9ee;color:#8a5a00;border-radius:12px;font-size:13px;';
-        div.textContent = '일부 보조 기능 초기화는 다시 시도 중입니다. 기본 화면과 메뉴는 정상 사용 가능합니다.';
-        appScreen.prepend(div);
-      }
-    }
   }
 
   window.switchPage = safeSwitchPage;

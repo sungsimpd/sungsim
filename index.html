@@ -3144,16 +3144,13 @@ function renderAuthUI(){
       <div class="authIntro">
         <div>
           <span class="authIntroTag">SUNGSIM MEMBERSHIP</span>
-          <h1>시약 재고, 납품, 게시판을<br>한 번에 관리하는 운영 포털</h1>
-          <p>실무용 운영 사이트처럼 회원제로 접속하고, 게시판과 관리 메뉴까지 포함한 형태로 구성했습니다. 현재 버전은 단일 HTML 데모 구조이므로 실제 다른 IP/다른 기기까지 완전하게 공유되는 회원제 보안은 서버 연동이 필요합니다.</p>
-          <div class="authIntroGrid">
-            <div class="authMiniCard"><strong>회원제 로그인</strong><span>성명, 휴대폰 번호, 닉네임까지 받아 회원 관리가 가능합니다.</span></div>
-            <div class="authMiniCard"><strong>운영자 관리</strong><span>sungsim 계정은 회원 상태 확인, 강등, 방출 기능을 사용할 수 있습니다.</span></div>
-            <div class="authMiniCard"><strong>선납 연동</strong><span>선납 수량을 월초발주/중간발주에 적용해 실제 납품 필요 수량을 줄입니다.</span></div>
-            <div class="authMiniCard"><strong>프리미엄 게시판</strong><span>닉네임 표기, 비밀게시글, 사진 첨부, 목록형 레이아웃을 지원합니다.</span></div>
-          </div>
+          <h1>회원제로 접속하는<br>재고 · 납품 운영 사이트</h1>
+          <p>불필요한 소개 문구를 줄이고 바로 로그인하거나 회원가입할 수 있게 정리했습니다. 운영자 계정은 관리 메뉴에서 회원 등급 변경과 방출 처리를 할 수 있습니다.</p>
         </div>
-        <div style="font-size:12px;color:rgba(255,255,255,.68);line-height:1.7;">운영자 기본 계정: <strong style="color:#fff;">sungsim</strong> / 비밀번호 <strong style="color:#fff;">8658</strong></div>
+        <div class="authOwnerBox">
+          <div class="authOwnerLabel">운영자 기본 계정</div>
+          <div class="authOwnerValue">sungsim / 8658</div>
+        </div>
       </div>
 
       <div class="authPanel">
@@ -4190,57 +4187,7 @@ window.addEventListener("load", () => {
 
 <script>
 (function(){
-  function hardEnsureOwner(){
-    let users=[];
-    try{ users = JSON.parse(localStorage.getItem("users")||"[]"); }catch(e){ users=[]; }
-    const owner = {id:"sungsim", password:"8658", name:"운영자", phone:"01000000000", nickname:"운영자", role:"owner", status:"active", createdAt:new Date().toISOString()};
-    const idx = users.findIndex(u => String(u.id||"").toLowerCase()==="sungsim");
-    if(idx >= 0){ users[idx] = {...users[idx], ...owner}; }
-    else { users.unshift(owner); }
-    localStorage.setItem("users", JSON.stringify(users));
-    return users;
-  }
-
-  window.login = function(){
-    const id = String(document.getElementById("loginId")?.value || "").trim().toLowerCase();
-    const pw = String(document.getElementById("loginPw")?.value || "").trim();
-    const errorEl = document.getElementById("loginError");
-    if(errorEl) errorEl.textContent = "";
-    const users = hardEnsureOwner();
-    let user = users.find(u => String(u.id||"").toLowerCase() === id);
-    if(id === "sungsim" && pw === "8658"){
-      user = user || users[0];
-    }
-    if(!user || String(user.password||"") !== pw){
-      if(errorEl) errorEl.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
-      return;
-    }
-    if(user.status === "banned"){
-      if(errorEl) errorEl.textContent = "이 계정은 운영자에 의해 이용이 제한되었습니다.";
-      return;
-    }
-    const session = {id:user.id, name:user.name || "", nickname:user.nickname || user.id, role:user.role || "member"};
-    localStorage.setItem("currentSession", JSON.stringify(session));
-    localStorage.removeItem("sungsimLoggedIn");
-    if(typeof checkLoginState === 'function') checkLoginState();
-    else location.reload();
-  };
-
-  window.addEventListener('load', function(){
-    hardEnsureOwner();
-    const pw = document.getElementById('loginPw');
-    const id = document.getElementById('loginId');
-    [pw,id].forEach(function(el){
-      if(!el) return;
-      el.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); window.login(); } });
-    });
-  });
-})();
-</script>
-
-<script>
-(function(){
-  function safeParse(key, fallback){
+  function parseJSON(key, fallback){
     try{
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : fallback;
@@ -4260,118 +4207,149 @@ window.addEventListener("load", () => {
       status:"active",
       createdAt:new Date().toISOString()
     };
-    let users = safeParse("users", []);
+    let users = parseJSON("users", []);
     const idx = users.findIndex(u => String(u.id || "").toLowerCase() === "sungsim");
-    if(idx >= 0){
-      users[idx] = Object.assign({}, users[idx], owner);
-    }else{
-      users.unshift(owner);
-    }
+    if(idx >= 0) users[idx] = Object.assign({}, users[idx], owner);
+    else users.unshift(owner);
     localStorage.setItem("users", JSON.stringify(users));
     return users;
   }
 
-  function hardShowApp(){
-    const loginScreen = document.getElementById("loginScreen");
-    const appScreen = document.getElementById("appScreen");
-    if(loginScreen) loginScreen.style.display = "none";
-    if(appScreen) appScreen.style.display = "block";
-  }
-
-  function hardShowLogin(){
+  function showLogin(){
     const loginScreen = document.getElementById("loginScreen");
     const appScreen = document.getElementById("appScreen");
     if(loginScreen) loginScreen.style.display = "flex";
     if(appScreen) appScreen.style.display = "none";
   }
 
-  function hardBoot(){
-    const session = safeParse("currentSession", null);
-    if(!session){
-      hardShowLogin();
-      if(typeof renderAuthUI === "function"){ try{ renderAuthUI(); }catch(e){} }
-      if(typeof bindAuthEvents === "function"){ try{ bindAuthEvents(); }catch(e){} }
-      return;
-    }
-    try{ window.currentSession = session; }catch(e){}
-    hardShowApp();
-    try{
-      if(typeof initializeApp === "function"){
-        initializeApp();
+  function showApp(){
+    const loginScreen = document.getElementById("loginScreen");
+    const appScreen = document.getElementById("appScreen");
+    if(loginScreen) loginScreen.style.display = "none";
+    if(appScreen) appScreen.style.display = "block";
+  }
+
+  function safeSwitchPage(pageId){
+    document.querySelectorAll('.pageSection').forEach(el => el.classList.toggle('active', el.id === pageId));
+    document.querySelectorAll('.navBtn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === pageId));
+    localStorage.setItem('activePage', pageId);
+    if(pageId === 'boardPage' && typeof renderBoardList === 'function') renderBoardList(1);
+    if(pageId === 'adminPage' && typeof renderAdminPage === 'function') renderAdminPage();
+  }
+
+  function bootApp(){
+    showApp();
+    const steps = [
+      () => typeof updateClock === 'function' && updateClock(),
+      () => typeof load === 'function' && load(),
+      () => typeof injectAdminPage === 'function' && injectAdminPage(),
+      () => typeof renderHospitalSelects === 'function' && renderHospitalSelects(),
+      () => typeof renderPageHospitalTabs === 'function' && renderPageHospitalTabs(),
+      () => typeof renderReagentMasterList === 'function' && renderReagentMasterList(),
+      () => typeof bindInputFormatters === 'function' && bindInputFormatters(),
+      () => typeof checkMonthRollover === 'function' && checkMonthRollover(),
+      () => typeof initYearFilter === 'function' && initYearFilter(),
+      () => { const y = document.getElementById('yearFilter'); if(y && typeof yearFilter !== 'undefined') yearFilter = y.value; },
+      () => { const m = document.getElementById('monthFilter'); if(m && typeof monthFilter !== 'undefined') monthFilter = m.value; },
+      () => typeof renderMonthStartLockState === 'function' && renderMonthStartLockState(),
+      () => typeof renderMidLockState === 'function' && renderMidLockState(),
+      () => typeof render === 'function' && render(),
+      () => typeof renderMonthStartOrders === 'function' && renderMonthStartOrders(),
+      () => typeof renderMidOrders === 'function' && renderMidOrders(),
+      () => typeof renderPrepaid === 'function' && renderPrepaid(),
+      () => typeof renderBacklog === 'function' && renderBacklog(),
+      () => typeof renderDeliveryList === 'function' && renderDeliveryList(),
+      () => typeof renderDeliveryMatrix === 'function' && renderDeliveryMatrix(),
+      () => typeof ensureBoardWriteEnhancement === 'function' && ensureBoardWriteEnhancement(),
+      () => typeof renderHeaderStatus === 'function' && renderHeaderStatus(),
+      () => typeof renderAdminPage === 'function' && renderAdminPage(),
+      () => {
+        const prepaidThead = document.querySelector('#prepaidList')?.closest('table')?.querySelector('thead tr');
+        if(prepaidThead) prepaidThead.innerHTML = '<th>날짜</th><th>거래처</th><th>시약명</th><th>수량</th><th>LOT</th><th>적용현황</th><th>적용</th><th>관리</th>';
+      },
+      () => {
+        const monthHead = document.querySelector('#monthStartOrderList')?.closest('table')?.querySelector('thead tr');
+        if(monthHead) monthHead.innerHTML = '<th>연도</th><th>월</th><th>거래처</th><th>품명</th><th>규격</th><th>발주량</th><th>선납 반영 후</th><th>관리</th>';
+      },
+      () => {
+        const midHead = document.querySelector('#midOrderList')?.closest('table')?.querySelector('thead tr');
+        if(midHead) midHead.innerHTML = '<th>연도</th><th>월</th><th>거래처</th><th>품명</th><th>규격</th><th>발주량</th><th>선납 반영 후</th><th>관리</th>';
       }
-    }catch(err){
-      console.error("initializeApp error:", err);
-      const appScreen = document.getElementById("appScreen");
+    ];
+
+    const errors = [];
+    steps.forEach(fn => { try{ fn(); }catch(err){ errors.push(err); console.error(err); } });
+
+    const activePage = localStorage.getItem('activePage') || 'inventoryPage';
+    const finalPage = (activePage === 'adminPage' && !(typeof isAdminUser === 'function' && isAdminUser())) ? 'inventoryPage' : activePage;
+    safeSwitchPage(finalPage);
+
+    const warning = document.getElementById('bootWarning');
+    if(warning) warning.remove();
+    if(errors.length){
+      const appScreen = document.getElementById('appScreen');
       if(appScreen){
-        appScreen.style.display = "block";
-        appScreen.insertAdjacentHTML("afterbegin",
-          '<div style="margin:16px;padding:14px 16px;border:1px solid #f3c2c2;background:#fff4f4;color:#9f2222;border-radius:12px;font-size:13px;">초기화 중 오류가 발생했지만 로그인은 성공했습니다. 새로고침 후 다시 시도해주세요.</div>'
-        );
+        const div = document.createElement('div');
+        div.id = 'bootWarning';
+        div.style.cssText = 'margin:16px;padding:12px 14px;border:1px solid #f3d4a5;background:#fff9ee;color:#8a5a00;border-radius:12px;font-size:13px;';
+        div.textContent = '일부 보조 기능 초기화는 다시 시도 중입니다. 기본 화면과 메뉴는 정상 사용 가능합니다.';
+        appScreen.prepend(div);
       }
     }
   }
 
-  window.login = function(){
-    const id = String(document.getElementById("loginId")?.value || "").trim().toLowerCase();
-    const pw = String(document.getElementById("loginPw")?.value || "").trim();
-    const errorEl = document.getElementById("loginError");
-    if(errorEl) errorEl.textContent = "";
-
-    const users = ensureOwner();
-    const user = users.find(u => String(u.id || "").toLowerCase() === id);
-
-    if(!id || !pw){
-      if(errorEl) errorEl.textContent = "아이디와 비밀번호를 입력해주세요.";
-      return;
-    }
-    if(!user || String(user.password || "") !== pw){
-      if(errorEl) errorEl.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
-      return;
-    }
-    if(String(user.status || "active") === "banned"){
-      if(errorEl) errorEl.textContent = "이 계정은 운영자에 의해 이용이 제한되었습니다.";
-      return;
-    }
-
-    const session = {
-      id:user.id,
-      name:user.name || "",
-      nickname:user.nickname || user.id,
-      role:user.role || "member"
-    };
-    localStorage.setItem("currentSession", JSON.stringify(session));
-    localStorage.removeItem("sungsimLoggedIn");
-    try{ window.currentSession = session; }catch(e){}
-    hardBoot();
-  };
-
-  window.logout = function(){
-    localStorage.removeItem("currentSession");
-    localStorage.removeItem("sungsimLoggedIn");
-    hardShowLogin();
-    if(typeof renderAuthUI === "function"){ try{ renderAuthUI(); }catch(e){} }
-    if(typeof bindAuthEvents === "function"){ try{ bindAuthEvents(); }catch(e){} }
-  };
+  window.switchPage = safeSwitchPage;
 
   window.checkLoginState = function(){
     ensureOwner();
-    hardBoot();
+    const session = parseJSON('currentSession', null);
+    if(!session){
+      showLogin();
+      if(typeof renderAuthUI === 'function') renderAuthUI();
+      if(typeof bindAuthEvents === 'function') bindAuthEvents();
+      return;
+    }
+    if(typeof currentSession !== 'undefined') currentSession = session;
+    bootApp();
   };
 
-  window.addEventListener("DOMContentLoaded", function(){
+  window.login = function(){
     ensureOwner();
-    const loginId = document.getElementById("loginId");
-    const loginPw = document.getElementById("loginPw");
-    [loginId, loginPw].forEach(function(el){
-      if(!el) return;
-      el.addEventListener("keydown", function(e){
-        if(e.key === "Enter"){
-          e.preventDefault();
-          window.login();
-        }
-      });
-    });
-    hardBoot();
+    const id = String(document.getElementById('loginId')?.value || '').trim().toLowerCase();
+    const pw = String(document.getElementById('loginPw')?.value || '').trim();
+    const errorEl = document.getElementById('loginError');
+    if(errorEl) errorEl.textContent = '';
+    const users = parseJSON('users', []);
+    const user = users.find(u => String(u.id || '').toLowerCase() === id);
+    if(!id || !pw){
+      if(errorEl) errorEl.textContent = '아이디와 비밀번호를 입력해주세요.';
+      return;
+    }
+    if(!user || String(user.password || '') !== pw){
+      if(errorEl) errorEl.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+      return;
+    }
+    if(String(user.status || 'active') === 'banned'){
+      if(errorEl) errorEl.textContent = '이 계정은 운영자에 의해 이용이 제한되었습니다.';
+      return;
+    }
+    const session = {id:user.id, name:user.name || '', nickname:user.nickname || user.id, role:user.role || 'member'};
+    localStorage.setItem('currentSession', JSON.stringify(session));
+    if(typeof currentSession !== 'undefined') currentSession = session;
+    bootApp();
+  };
+
+  window.logout = function(){
+    localStorage.removeItem('currentSession');
+    if(typeof currentSession !== 'undefined') currentSession = null;
+    showLogin();
+    if(typeof renderAuthUI === 'function') renderAuthUI();
+    if(typeof bindAuthEvents === 'function') bindAuthEvents();
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureOwner();
+    checkLoginState();
   });
 })();
 </script>

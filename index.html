@@ -4237,5 +4237,144 @@ window.addEventListener("load", () => {
   });
 })();
 </script>
+
+<script>
+(function(){
+  function safeParse(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function ensureOwner(){
+    const owner = {
+      id:"sungsim",
+      password:"8658",
+      name:"운영자",
+      phone:"01000000000",
+      nickname:"운영자",
+      role:"owner",
+      status:"active",
+      createdAt:new Date().toISOString()
+    };
+    let users = safeParse("users", []);
+    const idx = users.findIndex(u => String(u.id || "").toLowerCase() === "sungsim");
+    if(idx >= 0){
+      users[idx] = Object.assign({}, users[idx], owner);
+    }else{
+      users.unshift(owner);
+    }
+    localStorage.setItem("users", JSON.stringify(users));
+    return users;
+  }
+
+  function hardShowApp(){
+    const loginScreen = document.getElementById("loginScreen");
+    const appScreen = document.getElementById("appScreen");
+    if(loginScreen) loginScreen.style.display = "none";
+    if(appScreen) appScreen.style.display = "block";
+  }
+
+  function hardShowLogin(){
+    const loginScreen = document.getElementById("loginScreen");
+    const appScreen = document.getElementById("appScreen");
+    if(loginScreen) loginScreen.style.display = "flex";
+    if(appScreen) appScreen.style.display = "none";
+  }
+
+  function hardBoot(){
+    const session = safeParse("currentSession", null);
+    if(!session){
+      hardShowLogin();
+      if(typeof renderAuthUI === "function"){ try{ renderAuthUI(); }catch(e){} }
+      if(typeof bindAuthEvents === "function"){ try{ bindAuthEvents(); }catch(e){} }
+      return;
+    }
+    try{ window.currentSession = session; }catch(e){}
+    hardShowApp();
+    try{
+      if(typeof initializeApp === "function"){
+        initializeApp();
+      }
+    }catch(err){
+      console.error("initializeApp error:", err);
+      const appScreen = document.getElementById("appScreen");
+      if(appScreen){
+        appScreen.style.display = "block";
+        appScreen.insertAdjacentHTML("afterbegin",
+          '<div style="margin:16px;padding:14px 16px;border:1px solid #f3c2c2;background:#fff4f4;color:#9f2222;border-radius:12px;font-size:13px;">초기화 중 오류가 발생했지만 로그인은 성공했습니다. 새로고침 후 다시 시도해주세요.</div>'
+        );
+      }
+    }
+  }
+
+  window.login = function(){
+    const id = String(document.getElementById("loginId")?.value || "").trim().toLowerCase();
+    const pw = String(document.getElementById("loginPw")?.value || "").trim();
+    const errorEl = document.getElementById("loginError");
+    if(errorEl) errorEl.textContent = "";
+
+    const users = ensureOwner();
+    const user = users.find(u => String(u.id || "").toLowerCase() === id);
+
+    if(!id || !pw){
+      if(errorEl) errorEl.textContent = "아이디와 비밀번호를 입력해주세요.";
+      return;
+    }
+    if(!user || String(user.password || "") !== pw){
+      if(errorEl) errorEl.textContent = "아이디 또는 비밀번호가 올바르지 않습니다.";
+      return;
+    }
+    if(String(user.status || "active") === "banned"){
+      if(errorEl) errorEl.textContent = "이 계정은 운영자에 의해 이용이 제한되었습니다.";
+      return;
+    }
+
+    const session = {
+      id:user.id,
+      name:user.name || "",
+      nickname:user.nickname || user.id,
+      role:user.role || "member"
+    };
+    localStorage.setItem("currentSession", JSON.stringify(session));
+    localStorage.removeItem("sungsimLoggedIn");
+    try{ window.currentSession = session; }catch(e){}
+    hardBoot();
+  };
+
+  window.logout = function(){
+    localStorage.removeItem("currentSession");
+    localStorage.removeItem("sungsimLoggedIn");
+    hardShowLogin();
+    if(typeof renderAuthUI === "function"){ try{ renderAuthUI(); }catch(e){} }
+    if(typeof bindAuthEvents === "function"){ try{ bindAuthEvents(); }catch(e){} }
+  };
+
+  window.checkLoginState = function(){
+    ensureOwner();
+    hardBoot();
+  };
+
+  window.addEventListener("DOMContentLoaded", function(){
+    ensureOwner();
+    const loginId = document.getElementById("loginId");
+    const loginPw = document.getElementById("loginPw");
+    [loginId, loginPw].forEach(function(el){
+      if(!el) return;
+      el.addEventListener("keydown", function(e){
+        if(e.key === "Enter"){
+          e.preventDefault();
+          window.login();
+        }
+      });
+    });
+    hardBoot();
+  });
+})();
+</script>
+
 </body>
 </html>

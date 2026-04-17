@@ -234,15 +234,15 @@ header{
 }
 
 #clockBox{
-  position:absolute;
-  right:20px;
-  top:50%;
-  transform:translateY(-50%);
+  position:static;
+  transform:none;
   font-size:12px;
   font-weight:700;
   letter-spacing:0.4px;
   color:#667085;
   white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
 }
 
 .logoutBtn{
@@ -862,7 +862,7 @@ td input, td select{
 .authNote{margin-top:14px;padding:12px 14px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb;color:#667085;font-size:12px;line-height:1.6;}
 .authActions{display:flex;gap:10px;margin-top:8px;}
 .authActions .loginBtn{margin-top:0;}
-.headerStatus{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.headerStatus{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;max-width:40%;}
 .userBadge{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#f8fafc;border:1px solid #e5e7eb;color:#344054;font-size:12px;font-weight:800;}
 .userBadge small{font-size:11px;color:#667085;font-weight:700;}
 .navBtn.adminOnly{display:none;}
@@ -1394,7 +1394,7 @@ td input, td select{
               <h3 style="margin:0;">게시글 작성</h3>
               <div class="row">
                 <button type="button" class="btnSub" onclick="cancelBoardWrite()">목록으로</button>
-                <button type="button" onclick="saveBoardPost()">등록</button>
+                <button type="button" onclick="saveBoardPost()">작성 완료</button>
               </div>
             </div>
 
@@ -2827,15 +2827,44 @@ function execBoardCommand(command, value = null){
 
 function setBoardFontSize(size){
   if(!size) return;
-  execBoardCommand("fontSize", 7);
   const editor = document.getElementById("boardEditor");
   if(!editor) return;
+  editor.focus();
+  const selection = window.getSelection();
+  if(!selection || !selection.rangeCount) return;
+  const range = selection.getRangeAt(0);
+
+  const findSizedAncestor = node => {
+    let current = node && node.nodeType === 3 ? node.parentNode : node;
+    while(current && current !== editor){
+      if(current.nodeType === 1 && current.style && current.style.fontSize) return current;
+      current = current.parentNode;
+    }
+    return null;
+  };
+
+  const existing = findSizedAncestor(range.commonAncestorContainer);
+  if(selection.isCollapsed && existing){
+    existing.style.fontSize = `${size}px`;
+    saveBoardDraft();
+    return;
+  }
+
+  if(existing && existing.textContent === range.toString()){
+    existing.style.fontSize = `${size}px`;
+    saveBoardDraft();
+    return;
+  }
+
+  document.execCommand("styleWithCSS", false, true);
+  document.execCommand("fontSize", false, 7);
   editor.querySelectorAll('font[size="7"]').forEach(node => {
     const span = document.createElement("span");
     span.style.fontSize = `${size}px`;
     span.innerHTML = node.innerHTML;
     node.replaceWith(span);
   });
+  saveBoardDraft();
 }
 
 function insertBoardImages(files){
@@ -3438,20 +3467,17 @@ function renderHeaderStatus(){
     box = document.createElement("div");
     box.id = "headerStatus";
     box.className = "headerStatus";
-    const clock = document.getElementById("clockBox");
-    if(clock){
-      headerInner.appendChild(box);
-      box.appendChild(clock);
-    }else{
-      headerInner.appendChild(box);
-    }
+    headerInner.appendChild(box);
   }
-  const badgeHtml = currentSession ? `<span class="userBadge">${escapeHtml(currentSession.nickname)} <small>${currentSession.role === "owner" ? "운영자" : currentSession.role === "manager" ? "매니저" : "일반회원"}</small></span>` : "";
-  box.innerHTML = badgeHtml + (document.getElementById("clockBox") ? document.getElementById("clockBox").outerHTML : "");
-  const newClock = box.querySelector("#clockBox");
-  if(newClock) {
-    // keep existing node in DOM
+  box.innerHTML = "";
+  if(currentSession){
+    const badge = document.createElement("span");
+    badge.className = "userBadge";
+    badge.innerHTML = `${escapeHtml(currentSession.nickname)} <small>${currentSession.role === "owner" ? "운영자" : currentSession.role === "manager" ? "매니저" : "일반회원"}</small>`;
+    box.appendChild(badge);
   }
+  const clock = document.getElementById("clockBox");
+  if(clock) box.appendChild(clock);
   const adminBtn = document.getElementById("adminNavBtn");
   if(adminBtn){
     adminBtn.classList.toggle("show", !!isAdminUser());

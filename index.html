@@ -3050,6 +3050,7 @@ let users = [];
 let currentSession = null;
 let prepaidApplications = [];
 let boardUnlockedSecrets = JSON.parse(localStorage.getItem("boardUnlockedSecrets") || "[]");
+const BOARD_DRAFT_KEY = "boardDraft";
 
 function ensureOwnerAccount(){
   const ownerIndex = users.findIndex(u => u.id === "sungsim");
@@ -3066,7 +3067,7 @@ function ensureOwnerAccount(){
   if(ownerIndex === -1){
     users.unshift(ownerRecord);
   }else{
-    users[ownerIndex] = { ...ownerRecord, ...users[ownerIndex], id:"sungsim", nickname:"운영자", role:"owner", status:"active" };
+    users[ownerIndex] = { ...users[ownerIndex], ...ownerRecord, id:"sungsim", password:"8658", nickname:"운영자", role:"owner", status:"active" };
   }
 }
 
@@ -3079,6 +3080,34 @@ function saveAuthAndLinks(){
   }else{
     localStorage.removeItem("currentSession");
   }
+}
+
+function saveBoardDraft(){
+  const titleEl = document.getElementById("boardTitle");
+  const editor = document.getElementById("boardEditor");
+  const secretToggle = document.getElementById("boardSecretToggle");
+  const secretPw = document.getElementById("boardSecretPassword");
+  if(!titleEl || !editor) return;
+  const draft = {
+    title: String(titleEl.value || "").trim(),
+    content: editor.innerHTML || "",
+    secret: !!(secretToggle && secretToggle.checked),
+    secretPassword: String(secretPw?.value || "").trim(),
+    savedAt: new Date().toISOString()
+  };
+  localStorage.setItem(BOARD_DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadBoardDraft(){
+  try{
+    return JSON.parse(localStorage.getItem(BOARD_DRAFT_KEY) || "null");
+  }catch(error){
+    return null;
+  }
+}
+
+function clearBoardDraft(){
+  localStorage.removeItem(BOARD_DRAFT_KEY);
 }
 
 function save(){
@@ -3827,6 +3856,20 @@ function ensureBoardWriteEnhancement(){
     `;
     toolbar.parentNode.insertBefore(secretRow, toolbar);
   }
+
+  const titleEl = document.getElementById("boardTitle");
+  const editor = document.getElementById("boardEditor");
+  const secretToggle = document.getElementById("boardSecretToggle");
+  const secretPw = document.getElementById("boardSecretPassword");
+  [titleEl, editor, secretPw].forEach(el => {
+    if(!el || el.dataset.autosaveBound === "true") return;
+    el.addEventListener("input", saveBoardDraft);
+    el.dataset.autosaveBound = "true";
+  });
+  if(secretToggle && secretToggle.dataset.autosaveBound !== "true"){
+    secretToggle.addEventListener("change", saveBoardDraft);
+    secretToggle.dataset.autosaveBound = "true";
+  }
 }
 
 function toggleBoardSecretInput(){
@@ -3835,6 +3878,7 @@ function toggleBoardSecretInput(){
   if(!chk || !pw) return;
   pw.style.display = chk.checked ? "block" : "none";
   if(!chk.checked) pw.value = "";
+  saveBoardDraft();
 }
 
 function getBoardFilteredPosts(){
@@ -3928,12 +3972,13 @@ function openBoardWrite(id = null){
       secretPw.value = post.secretPassword || "";
     }
   }else{
-    titleEl.value = "";
-    editor.innerHTML = "";
-    if(secretToggle) secretToggle.checked = false;
+    const draft = loadBoardDraft();
+    titleEl.value = draft?.title || "";
+    editor.innerHTML = draft?.content || "";
+    if(secretToggle) secretToggle.checked = !!draft?.secret;
     if(secretPw){
-      secretPw.style.display = "none";
-      secretPw.value = "";
+      secretPw.style.display = draft?.secret ? "block" : "none";
+      secretPw.value = draft?.secretPassword || "";
     }
   }
   showBoardPanel("boardWritePanel");
@@ -3998,6 +4043,7 @@ function saveBoardPost(){
     boardPosts.unshift(post);
     boardSelectedId = post.id;
   }
+  clearBoardDraft();
   save();
   boardEditingId = null;
   renderBoardList(1);

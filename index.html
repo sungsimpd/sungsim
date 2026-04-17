@@ -2,41 +2,42 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>SUNGSIM</title>
+<title>SUNGSIM Workspace</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 *{ box-sizing:border-box; }
 
 :root{
-  --bg1:#dceee3;
-  --bg2:#e7eefc;
-  --bg3:#dce4ff;
-  --bg4:#f2dfee;
-  --card:rgba(255,255,255,0.80);
-  --line:#c5ded0;
-  --line2:#b7d7c5;
-  --text:#16231d;
-  --sub:#5c7167;
-  --green:#276a43;
-  --green-dark:#18472d;
-  --mint:#e6f4ec;
-  --shadow-soft:0 24px 54px rgba(20,39,29,0.18);
-  --yellow-soft:#fff8cf;
-  --red-soft:#ffe0e0;
+  --bg1:#f3f5f9;
+  --bg2:#eef1f6;
+  --bg3:#f8fafc;
+  --bg4:#eef2f7;
+  --card:rgba(255,255,255,0.92);
+  --line:#dde3ec;
+  --line2:#ced6e2;
+  --text:#17202b;
+  --sub:#667085;
+  --green:#243b53;
+  --green-dark:#101828;
+  --mint:#f8fafc;
+  --shadow-soft:0 18px 40px rgba(15,23,42,0.08);
+  --yellow-soft:#fff7d6;
+  --red-soft:#ffe5e5;
+  --accent2:#667085;
+  --accent3:#cbd5e1;
+  --panel:#f8fafc;
+  --panel-strong:#eef2f6;
+  --primary:#111827;
+  --primary-soft:#344054;
 }
 
 body{
   margin:0;
   min-height:100vh;
   overflow-x:hidden;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
-  background:
-    radial-gradient(circle at 12% 14%, rgba(20,118,77,0.32), transparent 26%),
-    radial-gradient(circle at 88% 16%, rgba(74,107,255,0.26), transparent 22%),
-    radial-gradient(circle at 78% 80%, rgba(166,79,146,0.22), transparent 24%),
-    radial-gradient(circle at 18% 88%, rgba(33,122,87,0.20), transparent 26%),
-    linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 36%, var(--bg3) 70%, var(--bg4) 100%);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
+  background:#f5f6f8;
   color:var(--text);
   position:relative;
 }
@@ -53,21 +54,19 @@ body::after{
 body::before{
   width:420px;
   height:420px;
-  top:-120px;
-  right:-90px;
-  border-radius:38% 62% 58% 42% / 41% 40% 60% 59%;
-  background:linear-gradient(135deg, rgba(46,117,185,0.24), rgba(49,164,111,0.18));
-  transform:rotate(16deg);
+  top:-220px;
+  right:-140px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(15,23,42,0.045), rgba(15,23,42,0.01) 68%, transparent 72%);
 }
 
 body::after{
-  width:360px;
-  height:360px;
-  left:-100px;
-  bottom:-120px;
-  border-radius:63% 37% 41% 59% / 47% 59% 41% 53%;
-  background:linear-gradient(135deg, rgba(50,145,95,0.22), rgba(153,82,134,0.18));
-  transform:rotate(-18deg);
+  width:420px;
+  height:420px;
+  left:-180px;
+  bottom:-220px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(148,163,184,0.08), rgba(148,163,184,0.01) 68%, transparent 72%);
 }
 
 .artGlow{
@@ -76,9 +75,8 @@ body::after{
   pointer-events:none;
   z-index:0;
   background:
-    linear-gradient(125deg, transparent 0 40%, rgba(255,255,255,0.12) 48%, transparent 56%),
-    linear-gradient(300deg, transparent 0 46%, rgba(255,255,255,0.09) 52%, transparent 58%);
-  opacity:0.85;
+    linear-gradient(180deg, rgba(255,255,255,0.30), transparent 22%);
+  opacity:0.45;
 }
 
 /* LOGIN */
@@ -91,20 +89,18 @@ body::after{
   position:relative;
   z-index:1;
   background:
-    radial-gradient(circle at top left, rgba(47,125,78,0.20), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(66,88,190,0.16), transparent 24%),
-    linear-gradient(180deg,rgba(237,247,241,0.86) 0%, rgba(247,251,249,0.90) 100%);
+    linear-gradient(180deg,rgba(247,249,252,0.96) 0%, rgba(239,243,248,0.98) 100%);
 }
 
 .loginCard{
   width:100%;
-  max-width:430px;
-  background:rgba(255,255,255,0.82);
-  backdrop-filter:blur(18px);
-  border:1px solid rgba(213,229,220,0.96);
-  box-shadow:0 18px 48px rgba(17,36,28,0.16);
-  border-radius:30px;
-  padding:34px 28px 28px;
+  max-width:438px;
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(208,216,226,0.92);
+  box-shadow:0 24px 60px rgba(15,23,42,0.10);
+  border-radius:32px;
+  padding:40px 30px 30px;
 }
 
 .loginBrand{
@@ -115,18 +111,17 @@ body::after{
 .loginTitle{
   font-size:42px;
   font-weight:900;
-  letter-spacing:2px;
+  letter-spacing:1.4px;
   line-height:1;
-  background:linear-gradient(90deg,#113a25,#329265 55%, #4c78d3 100%);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  color:#101828;
 }
 
 .loginSub{
-  margin-top:10px;
-  font-size:13px;
-  color:#60766c;
-  letter-spacing:1.3px;
+  margin-top:12px;
+  font-size:12px;
+  color:#667085;
+  letter-spacing:2px;
+  text-transform:uppercase;
 }
 
 .loginField{
@@ -144,33 +139,34 @@ body::after{
 
 .loginInput{
   width:100%;
-  height:48px;
-  border:1px solid #c8dfd1;
-  border-radius:14px;
-  padding:0 14px;
+  height:50px;
+  border:1px solid #d0d7e2;
+  border-radius:16px;
+  padding:0 15px;
   font-size:14px;
-  background:rgba(252,255,253,0.92);
+  background:#f8fafc;
   outline:none;
 }
 
 .loginInput:focus{
-  border-color:#73a98a;
-  box-shadow:0 0 0 4px rgba(47,125,78,0.10);
+  border-color:#98a2b3;
+  box-shadow:0 0 0 4px rgba(15,23,42,0.06);
+  background:#fff;
 }
 
 .loginBtn{
   width:100%;
-  height:50px;
-  margin-top:6px;
+  height:52px;
+  margin-top:8px;
   border:none;
-  border-radius:15px;
-  background:linear-gradient(135deg,#1f5e3a,#339764 70%, #406fc8);
+  border-radius:16px;
+  background:linear-gradient(135deg,#111827,#344054);
   color:#fff;
-  font-size:15px;
+  font-size:14px;
   font-weight:800;
-  letter-spacing:0.3px;
+  letter-spacing:0.2px;
   cursor:pointer;
-  box-shadow:0 12px 24px rgba(39,106,67,0.22);
+  box-shadow:0 16px 30px rgba(17,24,39,0.16);
 }
 
 #loginError{
@@ -191,106 +187,153 @@ body::after{
 
 /* HEADER */
 header{
-  position:relative;
-  background:rgba(255,255,255,0.68);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(201,224,211,0.95);
-  padding:24px 24px 16px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.05);
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#ffffff;
+  border-bottom:1px solid #e5e7eb;
+  padding:0;
+  box-shadow:0 1px 0 rgba(15,23,42,0.04);
 }
 
 .headerInner{
+  max-width:1440px;
+  margin:0 auto;
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
+  gap:18px;
   position:relative;
-  margin-bottom:16px;
+  padding:16px 20px 14px;
 }
 
 .logoWrap{
   display:flex;
   flex-direction:column;
-  align-items:center;
+  align-items:flex-start;
   justify-content:center;
+  padding-left:76px;
 }
 
 .logoTitle{
-  font-size:38px;
+  font-size:28px;
   font-weight:900;
-  letter-spacing:2px;
+  letter-spacing:1.2px;
   line-height:1;
   margin:0;
-  background:linear-gradient(90deg,#113a25,#309766 56%, #4c78d3 100%);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  color:#101828;
 }
 
 .logoSub{
-  margin-top:7px;
+  margin-top:5px;
   font-size:11px;
   font-weight:700;
-  letter-spacing:2.4px;
-  color:#627a6c;
+  letter-spacing:2.2px;
+  color:#667085;
   text-transform:uppercase;
 }
 
 #clockBox{
   position:absolute;
-  right:0;
+  right:20px;
   top:50%;
   transform:translateY(-50%);
-  font-size:13px;
+  font-size:12px;
   font-weight:700;
-  letter-spacing:0.8px;
-  color:#496456;
+  letter-spacing:0.4px;
+  color:#667085;
   white-space:nowrap;
 }
 
 .logoutBtn{
   position:absolute;
-  left:0;
+  left:20px;
   top:50%;
   transform:translateY(-50%);
-  background:rgba(238,248,242,0.92);
-  color:#246841;
-  border:1px solid #cfe4d7;
+  background:#ffffff;
+  color:#344054;
+  border:1px solid #d0d7e2;
   border-radius:12px;
   padding:8px 12px;
   font-size:12px;
   font-weight:800;
   cursor:pointer;
+  box-shadow:none;
 }
 
 .topNav{
+  max-width:1440px;
+  margin:0 auto;
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:center;
+  gap:0;
+  flex-wrap:nowrap;
+  justify-content:flex-start;
+  padding:0 20px;
+  background:#ffffff;
+  border-top:1px solid #f2f4f7;
+  border-bottom:1px solid #eaecf0;
+  border-radius:0;
+  overflow-x:auto;
 }
 
 .navBtn{
-  min-width:160px;
-  padding:11px 16px;
-  border-radius:14px;
-  border:1px solid #cfe3d6;
-  background:rgba(245,250,247,0.92);
-  color:#2d5640;
-  font-size:13px;
+  min-width:auto;
+  padding:15px 20px 14px;
+  border-radius:0;
+  border:none;
+  border-bottom:3px solid transparent;
+  background:transparent;
+  color:#475467;
+  font-size:14px;
   font-weight:800;
   cursor:pointer;
+  box-shadow:none;
+  white-space:nowrap;
 }
 
 .navBtn.active{
-  background:linear-gradient(135deg,#256843,#319766);
-  color:#fff;
-  border-color:#256843;
-  box-shadow:0 10px 20px rgba(39,106,67,0.18);
+  background:transparent;
+  color:#03c75a;
+  border-bottom-color:#03c75a;
+  box-shadow:none;
+}
+
+.hospitalTabs{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:6px;
+  margin:0 0 14px;
+  padding:8px 14px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  overflow-x:auto;
+}
+
+.hospitalTab{
+  min-width:auto;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #edf0f3;
+  background:#f9fafb;
+  color:#475467;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:none;
+  white-space:nowrap;
+}
+
+.hospitalTab.active{
+  background:#eefaf3;
+  color:#03c75a;
+  border-color:#cdeed9;
+  box-shadow:none;
 }
 
 /* LAYOUT */
 .pageSection{
   display:none;
-  padding:16px;
+  padding:18px 20px 28px;
 }
 
 .pageSection.active{
@@ -299,44 +342,90 @@ header{
 
 .pageGrid{
   display:flex;
-  gap:16px;
+  gap:18px;
   align-items:flex-start;
 }
 
-.left{ flex:2; min-width:0; }
-.right{ flex:1; min-width:340px; }
+.appContainer{
+  max-width:1440px;
+  margin:0 auto;
+}
+
+.pageHero{
+  background:#ffffff;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  padding:20px 22px;
+  margin-bottom:14px;
+}
+
+.pageHeroTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.pageHeroTitle{
+  margin:0;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:-0.5px;
+  color:#111827;
+}
+
+.pageHeroDesc{
+  margin:8px 0 0;
+  font-size:13px;
+  line-height:1.6;
+  color:#667085;
+}
+
+.pageHeroMeta{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.pageHeroMeta .badge{
+  background:#f9fafb;
+  border-color:#eaecf0;
+  color:#475467;
+}
+
+.left{ flex:3.4; min-width:0; }
+.right{ flex:1.15; min-width:220px; }
+
+#compensationPage .pageGrid .left{ flex:5.4; }
+#compensationPage .pageGrid .right{ flex:0.82; min-width:180px; }
+#deliveryPage .pageGrid .left{ flex:6.3; }
+#deliveryPage .pageGrid .right{ flex:0.72; min-width:170px; }
 
 .box{
-  background:var(--card);
-  backdrop-filter:blur(16px);
-  padding:16px;
-  margin-bottom:14px;
-  border-radius:22px;
-  box-shadow:var(--shadow-soft);
-  border:1px solid rgba(196,221,206,0.95);
+  background:#ffffff;
+  padding:18px;
+  margin-bottom:16px;
+  border-radius:16px;
+  box-shadow:none;
+  border:1px solid #e5e7eb;
   position:relative;
   overflow:hidden;
 }
 
-.box::before{
-  content:"";
-  position:absolute;
-  inset:0 auto auto 0;
-  width:180px;
-  height:180px;
-  background:radial-gradient(circle, rgba(84,150,123,0.12), transparent 70%);
-  pointer-events:none;
-}
+.box::before{ display:none; }
 
 .box h3{
   margin:0 0 10px 0;
   font-size:18px;
+  letter-spacing:-0.2px;
 }
 
 .subTitle{
   font-size:12px;
-  color:#60776c;
-  margin:0 0 10px 2px;
+  color:#667085;
+  margin:0 0 12px 2px;
+  line-height:1.5;
 }
 
 .row{
@@ -351,11 +440,11 @@ header{
   flex-wrap:wrap;
   gap:8px;
   align-items:center;
-  margin-bottom:12px;
-  padding:10px;
-  background:rgba(242,249,245,0.94);
-  border:1px solid #d0e4d7;
-  border-radius:14px;
+  margin-bottom:14px;
+  padding:12px;
+  background:var(--panel);
+  border:1px solid #e4e7ec;
+  border-radius:16px;
 }
 
 .badge{
@@ -365,18 +454,18 @@ header{
   border-radius:999px;
   font-size:12px;
   font-weight:700;
-  background:#e7f4ec;
-  color:#256843;
-  border:1px solid #c1decb;
+  background:#f8fafc;
+  color:#475467;
+  border:1px solid #dfe5ec;
 }
 
 input,select,textarea{
-  padding:7px 10px;
-  min-height:36px;
-  border:1px solid #c5dccc;
-  border-radius:11px;
+  padding:8px 11px;
+  min-height:38px;
+  border:1px solid #d0d7e2;
+  border-radius:12px;
   font-size:12px;
-  background:rgba(255,255,255,0.95);
+  background:rgba(255,255,255,0.98);
   outline:none;
   color:var(--text);
   font-family:inherit;
@@ -388,26 +477,28 @@ textarea{
 }
 
 input:focus,select:focus,textarea:focus{
-  border-color:#74aa8b;
-  box-shadow:0 0 0 3px rgba(47,125,78,0.08);
+  border-color:#98a2b3;
+  box-shadow:0 0 0 4px rgba(15,23,42,0.05);
 }
 
 button{
-  padding:7px 11px;
-  min-height:36px;
-  background:linear-gradient(135deg,#256843,#319766);
+  padding:8px 12px;
+  min-height:38px;
+  background:linear-gradient(135deg,#111827,#344054);
   color:#fff;
   border:none;
-  border-radius:11px;
+  border-radius:12px;
   cursor:pointer;
   font-size:12px;
-  font-weight:700;
+  font-weight:800;
+  box-shadow:0 10px 20px rgba(17,24,39,0.12);
+  transition:transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
 }
 
-button:hover{ opacity:0.95; }
+button:hover{ opacity:0.98; transform:translateY(-1px); box-shadow:0 14px 24px rgba(17,24,39,0.15); }
 
-.btnSub{ background:linear-gradient(135deg,#69877a,#7a9688); }
-.btnRefresh{ background:linear-gradient(135deg,#214f37,#31694b); }
+.btnSub{ background:#ffffff; color:#344054; border:1px solid #d0d7e2; box-shadow:none; }
+.btnRefresh{ background:linear-gradient(135deg,#344054,#475467); box-shadow:0 10px 20px rgba(52,64,84,0.12); }
 
 .dateGroup{
   display:flex;
@@ -427,9 +518,9 @@ button:hover{ opacity:0.95; }
 .panelCount{
   font-size:11px;
   font-weight:800;
-  color:#4d695d;
-  background:#ebf6ef;
-  border:1px solid #cde2d5;
+  color:#344054;
+  background:#f8fafc;
+  border:1px solid #dfe5ec;
   border-radius:999px;
   padding:4px 9px;
 }
@@ -440,10 +531,10 @@ button:hover{ opacity:0.95; }
   gap:8px;
   align-items:center;
   margin-bottom:10px;
-  padding:10px;
-  background:linear-gradient(135deg,rgba(239,248,244,0.95) 0%, rgba(237,241,255,0.92) 100%);
-  border:1px solid #d1e5d8;
-  border-radius:14px;
+  padding:12px;
+  background:var(--panel);
+  border:1px solid #e4e7ec;
+  border-radius:16px;
 }
 
 .lockLabel{
@@ -460,55 +551,55 @@ button:hover{ opacity:0.95; }
   font-size:12px;
   font-weight:800;
   background:#ffffff;
-  color:#256843;
-  border:1px solid #d1e3d8;
+  color:#344054;
+  border:1px solid #d0d7e2;
 }
 
 .groupHeader td{
-  background:#edf7f1 !important;
-  color:#315040;
+  background:#f8fafc !important;
+  color:#344054;
   font-size:11px;
   font-weight:900;
   text-align:left;
-  padding:8px 12px !important;
-  border-top:1px solid #d9eade;
-  border-bottom:1px solid #d9eade;
+  padding:9px 12px !important;
+  border-top:1px solid #e4e7ec;
+  border-bottom:1px solid #e4e7ec;
   letter-spacing:0.2px;
 }
 
 /* TABLE */
 .tableWrap{
   overflow-x:auto;
-  border:1px solid #d8e9de;
-  border-radius:16px;
-  background:rgba(255,255,255,0.88);
+  border:1px solid #e4e7ec;
+  border-radius:18px;
+  background:rgba(255,255,255,0.96);
 }
 
 table{
   width:100%;
   border-collapse:collapse;
-  background:rgba(255,255,255,0.92);
+  background:rgba(255,255,255,0.98);
   min-width:900px;
 }
 
 thead th{
-  background:#f0f7f3;
+  background:#f8fafc;
   font-size:10px;
   font-weight:800;
-  color:#324f40;
-  border-bottom:1px solid #dcebe2;
+  color:#475467;
+  border-bottom:1px solid #e4e7ec;
 }
 
 td,th{
-  border-bottom:1px solid #edf3ef;
-  padding:5px 6px;
-  line-height:1.25;
+  border-bottom:1px solid #eef2f6;
+  padding:6px 7px;
+  line-height:1.3;
   text-align:center;
   vertical-align:middle;
   font-size:11px;
 }
 
-tbody tr:hover{ background:#f7fcf9; }
+tbody tr:hover{ background:#f8fafc; }
 
 td input, td select{
   width:95%;
@@ -544,7 +635,7 @@ td input, td select{
   z-index:2;
   min-width:170px;
 }
-.matrixTable thead .matrixSticky{ background:#f0f7f3; }
+.matrixTable thead .matrixSticky{ background:#f8fafc; }
 
 @media (max-width: 960px){
   .pageGrid{
@@ -552,20 +643,27 @@ td input, td select{
   }
   .right{
     min-width:0;
+    width:100%;
   }
   .headerInner{
-    flex-direction:column;
-    gap:10px;
+    padding:14px 16px 12px;
+    min-height:86px;
+  }
+  .logoWrap{
+    padding-left:64px;
   }
   #clockBox, .logoutBtn{
     position:static;
     transform:none;
   }
   .topNav{
-    justify-content:stretch;
+    padding:0 12px;
   }
   .navBtn{
-    flex:1 1 100%;
+    flex:0 0 auto;
+  }
+  .pageHeroTop{
+    flex-direction:column;
   }
 }
 </style>
@@ -615,12 +713,27 @@ td input, td select{
       <button class="navBtn" data-page="deliveryPage" onclick="switchPage('deliveryPage')">납품 관리</button>
     </div>
   </header>
+  <div class="appContainer">
 
   <section id="inventoryPage" class="pageSection active">
+    <div class="pageHero">
+      <div class="pageHeroTop">
+        <div>
+          <h2 class="pageHeroTitle">재고 관리</h2>
+          <p class="pageHeroDesc">실제 운영 페이지처럼 현재 재고를 입력하고, 조회 조건에 맞춰 목록을 확인하는 메인 화면입니다.</p>
+        </div>
+        <div class="pageHeroMeta">
+          <span class="badge">실시간 재고 입력</span>
+          <span class="badge">거래처별 조회</span>
+          <span class="badge">유효기간 관리</span>
+        </div>
+      </div>
+    </div>
+    <div class="hospitalTabs" id="inventoryHospitalTabs"></div>
     <div class="pageGrid">
       <div class="left">
         <div class="box">
-          <h3>📦 재고 등록</h3>
+          <h3>재고 등록</h3>
           <p class="subTitle">재고는 거래처별 / 유효기간별로 개별 등록됩니다. 현재 월 기준 목록은 아래 재고 목록에서 확인할 수 있습니다.</p>
 
           <div class="row">
@@ -649,7 +762,7 @@ td input, td select{
         </div>
 
         <div class="box">
-          <h3>📋 재고 목록</h3>
+          <h3>재고 목록</h3>
           <p class="subTitle">조회용 연/월 필터입니다. 등록 날짜 입력과 별도입니다.</p>
 
           <div class="filterRow">
@@ -700,7 +813,7 @@ td input, td select{
 
       <div class="right">
         <div class="box">
-          <h3>📌 재고 관리 안내</h3>
+          <h3>운영 안내</h3>
           <p class="subTitle">현재 메인 페이지는 재고 관리 전용으로 두고, 보상/미납/유효기간 임박 관리와 납품 관리 기능은 각각 상단 메뉴로 분리했습니다.</p>
           <div class="infoBar">
             <span class="badge">1번 메뉴: 재고 관리</span>
@@ -713,11 +826,25 @@ td input, td select{
   </section>
 
   <section id="compensationPage" class="pageSection">
-    <div class="pageGrid">
+    <div class="pageHero">
+      <div class="pageHeroTop">
+        <div>
+          <h2 class="pageHeroTitle">보상 · 미납 시약 관리</h2>
+          <p class="pageHeroDesc">선납 내역과 보상/미납 현황을 한 화면에서 정리하는 운영 페이지입니다. 거래처 단위로 바로 확인할 수 있게 구성했습니다.</p>
+        </div>
+        <div class="pageHeroMeta">
+          <span class="badge">선납 목록</span>
+          <span class="badge">미납 현황</span>
+          <span class="badge">임박 색상 표시</span>
+        </div>
+      </div>
+    </div>
+    <div class="hospitalTabs" id="compensationHospitalTabs"></div>
+    <div class="pageGrid compensationGrid">
       <div class="left">
         <div class="box">
           <div class="panelTitle">
-            <h3 style="margin:0;">💳 날짜별 선납 목록</h3>
+            <h3 style="margin:0;">날짜별 선납 목록</h3>
             <span class="panelCount" id="prepaidCount">0건</span>
           </div>
 
@@ -749,7 +876,7 @@ td input, td select{
 
         <div class="box">
           <div class="panelTitle">
-            <h3 style="margin:0;">⚠ 보상 / 미납 시약 관리</h3>
+            <h3 style="margin:0;">보상 / 미납 시약 관리</h3>
             <span class="panelCount" id="backlogCount">0건</span>
           </div>
           <p class="subTitle">거래처별로 보상 또는 미납 상태를 관리하고, 유효기간 임박 / 만료는 자동으로 색상 표시됩니다.</p>
@@ -796,7 +923,7 @@ td input, td select{
 
       <div class="right">
         <div class="box">
-          <h3>🧭 상태 색상 기준</h3>
+          <h3>상태 기준</h3>
           <p class="subTitle">보상 / 미납 목록에서 유효기간을 기준으로 자동 강조합니다.</p>
           <div class="infoBar">
             <span class="badge">정상: 기본색</span>
@@ -809,11 +936,25 @@ td input, td select{
   </section>
 
   <section id="deliveryPage" class="pageSection">
-    <div class="pageGrid">
+    <div class="pageHero">
+      <div class="pageHeroTop">
+        <div>
+          <h2 class="pageHeroTitle">납품 관리</h2>
+          <p class="pageHeroDesc">월별 납품, 월초발주, 중간발주를 실제 웹페이지처럼 분리해서 보되 연간 납품표에서는 한눈에 합산해 볼 수 있게 구성한 화면입니다.</p>
+        </div>
+        <div class="pageHeroMeta">
+          <span class="badge">연간 납품표</span>
+          <span class="badge">월초/중간 발주</span>
+          <span class="badge">거래처별 보기</span>
+        </div>
+      </div>
+    </div>
+    <div class="hospitalTabs" id="deliveryHospitalTabs"></div>
+    <div class="pageGrid deliveryGrid">
       <div class="left">
         <div class="box">
           <div class="panelTitle">
-            <h3 style="margin:0;">🚚 납품 내역 등록</h3>
+            <h3 style="margin:0;">납품 내역 등록</h3>
             <span class="panelCount" id="deliveryCount">0건</span>
           </div>
           <p class="subTitle">거래처 / 연도 / 월 / 시약명 기준으로 납품 내역을 누적 등록합니다.</p>
@@ -836,7 +977,7 @@ td input, td select{
         </div>
 
         <div class="box">
-          <h3>📊 거래처별 연간 납품표</h3>
+          <h3>거래처별 연간 납품표</h3>
           <p class="subTitle">오른쪽으로 1~12월, 아래로 시약명 순으로 정리됩니다.</p>
 
           <div class="filterRow">
@@ -860,7 +1001,7 @@ td input, td select{
 
         <div class="box">
           <div class="panelTitle">
-            <h3 style="margin:0;">🗂 납품 등록 상세 목록</h3>
+            <h3 style="margin:0;">납품 등록 상세 목록</h3>
             <span class="panelCount" id="deliveryDetailCount">0건</span>
           </div>
           <div class="tableWrap">
@@ -883,7 +1024,7 @@ td input, td select{
 
         <div class="box">
           <div class="panelTitle">
-            <h3 style="margin:0;">🗂 월초발주 목록</h3>
+            <h3 style="margin:0;">월초발주 목록</h3>
             <span class="panelCount" id="monthStartOrderCount">0건</span>
           </div>
           <p class="subTitle">기존 기능은 유지했습니다. 연/월/거래처를 고정한 뒤 품목을 계속 입력합니다.</p>
@@ -925,7 +1066,7 @@ td input, td select{
 
         <div class="box">
           <div class="panelTitle">
-            <h3 style="margin:0;">🗂 중간발주 목록</h3>
+            <h3 style="margin:0;">중간발주 목록</h3>
             <span class="panelCount" id="midOrderCount">0건</span>
           </div>
           <p class="subTitle">기존 기능은 유지했습니다. 연/월/거래처를 먼저 고정하고 누적 정리합니다.</p>
@@ -968,12 +1109,13 @@ td input, td select{
 
       <div class="right">
         <div class="box">
-          <h3>📎 납품 관리 안내</h3>
+          <h3>페이지 안내</h3>
           <p class="subTitle">거래처/연도 필터로 납품을 월별 표 형태로 볼 수 있게 구성했습니다. 위 등록 상세 목록은 삭제/수정 관리용, 아래 표는 월별 보기용입니다.</p>
         </div>
       </div>
     </div>
   </section>
+  </div>
 </div>
 
 <datalist id="reagentMasterList"></datalist>
@@ -1005,6 +1147,7 @@ let deliveryRecords = [];
 
 let yearFilter = "all";
 let monthFilter = "all";
+let pageHospitalFilters = JSON.parse(localStorage.getItem("pageHospitalFilters") || '{"inventory":"all","compensation":"all","delivery":"all"}');
 let monthStartLockedContext = JSON.parse(localStorage.getItem("monthStartLockedContext") || "null");
 let midLockedContext = JSON.parse(localStorage.getItem("midLockedContext") || "null");
 
@@ -1103,13 +1246,28 @@ function formatDay(v){
 }
 
 function formatYmdString(v){
-  const parts = String(v || "").trim().split("-");
-  if(parts.length !== 3) return "";
-  const y = formatYear(parts[0]);
-  const m = formatMonth(parts[1]);
-  const d = formatDay(parts[2]);
-  if(y.length !== 4 || !m || !d) return "";
-  return `${y}-${m}-${d}`;
+  const raw = String(v || "").trim();
+  if(!raw) return "";
+
+  const digits = digitsOnly(raw);
+  if(digits.length === 8){
+    const y = formatYear(digits.slice(0, 4));
+    const m = formatMonth(digits.slice(4, 6));
+    const d = formatDay(digits.slice(6, 8));
+    if(y.length !== 4 || !m || !d) return "";
+    return `${y}-${m}-${d}`;
+  }
+
+  const parts = raw.split("-");
+  if(parts.length === 3){
+    const y = formatYear(parts[0]);
+    const m = formatMonth(parts[1]);
+    const d = formatDay(parts[2]);
+    if(y.length !== 4 || !m || !d) return "";
+    return `${y}-${m}-${d}`;
+  }
+
+  return "";
 }
 
 function formatDateInputParts(){
@@ -1159,6 +1317,7 @@ function save(){
   localStorage.setItem("monthStartOrders", JSON.stringify(monthStartOrders));
   localStorage.setItem("midOrders", JSON.stringify(midOrders));
   localStorage.setItem("deliveryRecords", JSON.stringify(deliveryRecords));
+  localStorage.setItem("pageHospitalFilters", JSON.stringify(pageHospitalFilters));
   localStorage.setItem("monthStartLockedContext", JSON.stringify(monthStartLockedContext));
   localStorage.setItem("midLockedContext", JSON.stringify(midLockedContext));
 }
@@ -1177,6 +1336,7 @@ function load(){
     note: item.note || "",
     ...item
   }));
+  pageHospitalFilters = JSON.parse(localStorage.getItem("pageHospitalFilters") || '{"inventory":"all","compensation":"all","delivery":"all"}');
   monthStartLockedContext = JSON.parse(localStorage.getItem("monthStartLockedContext") || "null");
   midLockedContext = JSON.parse(localStorage.getItem("midLockedContext") || "null");
 }
@@ -1201,6 +1361,91 @@ function renderHospitalSelects(){
 
   const deliveryHospitalFilter = document.getElementById("deliveryHospitalFilter");
   deliveryHospitalFilter.innerHTML = '<option value="all">전체 거래처</option>' + HOSPITALS.map(h => `<option value="${h}">${h}</option>`).join("");
+}
+
+function renderPageHospitalTabs(){
+  const configs = [
+    { key:"inventory", id:"inventoryHospitalTabs", label:"재고 보기" },
+    { key:"compensation", id:"compensationHospitalTabs", label:"보상/미납 보기" },
+    { key:"delivery", id:"deliveryHospitalTabs", label:"납품 보기" }
+  ];
+
+  configs.forEach(config => {
+    const el = document.getElementById(config.id);
+    if(!el) return;
+    const current = pageHospitalFilters[config.key] || "all";
+    el.innerHTML = `
+      <span class="badge">${config.label}</span>
+      <button type="button" class="hospitalTab ${current === "all" ? "active" : ""}" onclick="setPageHospitalFilter('${config.key}','all')">전체 거래처</button>
+      ${HOSPITALS.map(h => `<button type="button" class="hospitalTab ${current === h ? "active" : ""}" onclick="setPageHospitalFilter('${config.key}','${h}')">${h}</button>`).join("")}
+    `;
+  });
+
+  const deliveryHospitalFilter = document.getElementById("deliveryHospitalFilter");
+  if(deliveryHospitalFilter){
+    const current = pageHospitalFilters.delivery || "all";
+    deliveryHospitalFilter.value = [...deliveryHospitalFilter.options].some(opt => opt.value === current) ? current : "all";
+  }
+}
+
+function setPageHospitalFilter(pageKey, hospital){
+  pageHospitalFilters[pageKey] = hospital;
+  save();
+  renderPageHospitalTabs();
+  if(pageKey === "inventory") render();
+  if(pageKey === "compensation"){
+    renderPrepaid();
+    renderBacklog();
+  }
+  if(pageKey === "delivery"){
+    const deliveryHospitalFilter = document.getElementById("deliveryHospitalFilter");
+    if(deliveryHospitalFilter) deliveryHospitalFilter.value = hospital;
+    renderDeliveryList();
+    renderDeliveryMatrix();
+  }
+}
+
+function getCurrentHospitalFilter(pageKey){
+  return pageHospitalFilters[pageKey] || "all";
+}
+
+function getCombinedDeliverySource(){
+  const combined = [];
+
+  deliveryRecords.forEach(item => {
+    combined.push({
+      hospital:item.hospital,
+      year:item.year,
+      month:item.month,
+      name:normalizeUpper(item.name),
+      qty:Number(item.qty || 0),
+      source:"납품"
+    });
+  });
+
+  monthStartOrders.forEach(item => {
+    combined.push({
+      hospital:item.vendor,
+      year:item.year,
+      month:item.month,
+      name:normalizeUpper(item.name),
+      qty:Number(item.qty || 0),
+      source:"월초발주"
+    });
+  });
+
+  midOrders.forEach(item => {
+    combined.push({
+      hospital:item.vendor,
+      year:item.year,
+      month:item.month,
+      name:normalizeUpper(item.name),
+      qty:Number(item.qty || 0),
+      source:"중간발주"
+    });
+  });
+
+  return combined;
 }
 
 /* FORMATTERS */
@@ -1244,7 +1489,15 @@ function bindInputFormatters(){
   if(bExp) bExp.addEventListener("blur", e => { e.target.value = formatYmdString(e.target.value); });
 
   const pDate = document.getElementById("p_date");
-  if(pDate) pDate.addEventListener("blur", e => { e.target.value = formatYmdString(e.target.value); });
+  if(pDate){
+    pDate.addEventListener("input", e => {
+      const digits = digitsOnly(e.target.value).slice(0, 8);
+      if(digits.length <= 4) e.target.value = digits;
+      else if(digits.length <= 6) e.target.value = `${digits.slice(0,4)}-${digits.slice(4)}`;
+      else e.target.value = `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
+    });
+    pDate.addEventListener("blur", e => { e.target.value = formatYmdString(e.target.value); });
+  }
 }
 
 /* NAV */
@@ -1584,10 +1837,16 @@ function addPrepaid(){
   const name = normalizeUpper(document.getElementById("p_name").value);
   const qty = Number(document.getElementById("p_qty").value);
   const lot = normalizeUpper(document.getElementById("p_lot").value);
-  const date = formatYmdString(document.getElementById("p_date").value);
+  const rawDate = document.getElementById("p_date").value;
+  const date = rawDate ? formatYmdString(rawDate) : "";
 
-  if(!name || isNaN(qty) || qty <= 0 || !date){
+  if(!name || isNaN(qty) || qty <= 0){
     alert("선납 입력값을 확인해주세요.");
+    return;
+  }
+
+  if(rawDate && !date){
+    alert("날짜 형식을 확인해주세요. 예: 20260417 또는 2026-04-17");
     return;
   }
 
@@ -1737,9 +1996,11 @@ function render(){
   const tbody = document.getElementById("list");
   tbody.innerHTML = "";
 
+  const hospitalFilter = getCurrentHospitalFilter("inventory");
   const filtered = items
     .filter(i => {
       const [y, m] = (i.period || "").split("-");
+      if(hospitalFilter !== "all" && i.hospital !== hospitalFilter) return false;
       if(yearFilter !== "all" && y !== yearFilter) return false;
       if(monthFilter !== "all" && m !== monthFilter) return false;
       return true;
@@ -1878,7 +2139,10 @@ function renderPrepaid(){
   const countEl = document.getElementById("prepaidCount");
   tbody.innerHTML = "";
 
-  const sorted = [...prepaid].sort((a,b) => b.date.localeCompare(a.date));
+  const hospitalFilter = getCurrentHospitalFilter("compensation");
+  const sorted = [...prepaid]
+    .filter(i => hospitalFilter === "all" || i.hospital === hospitalFilter)
+    .sort((a,b) => b.date.localeCompare(a.date));
   countEl.textContent = `${sorted.length}건`;
 
   if(sorted.length === 0){
@@ -1889,7 +2153,7 @@ function renderPrepaid(){
   sorted.forEach(i => {
     tbody.innerHTML += `
       <tr>
-        <td>${escapeHtml(i.date)}</td>
+        <td>${escapeHtml(i.date || "-")}</td>
         <td>${escapeHtml(i.hospital)}</td>
         <td>${escapeHtml(i.name)}</td>
         <td>${i.qty}</td>
@@ -1906,7 +2170,10 @@ function renderBacklog(){
   const countEl = document.getElementById("backlogCount");
   tbody.innerHTML = "";
 
-  const sorted = [...backlog].sort((a,b) => {
+  const hospitalFilter = getCurrentHospitalFilter("compensation");
+  const sorted = [...backlog]
+    .filter(i => hospitalFilter === "all" || i.hospital === hospitalFilter)
+    .sort((a,b) => {
     if(a.hospital !== b.hospital) return a.hospital.localeCompare(b.hospital);
     const rank = { expired:0, soon:1, "":2 };
     return (rank[getExpiryState(a.exp)] ?? 3) - (rank[getExpiryState(b.exp)] ?? 3);
@@ -1951,7 +2218,10 @@ function renderDeliveryList(){
   const topCountEl = document.getElementById("deliveryCount");
   tbody.innerHTML = "";
 
-  const sorted = [...deliveryRecords].sort((a,b) => {
+  const hospitalFilter = getCurrentHospitalFilter("delivery");
+  const sorted = [...deliveryRecords]
+    .filter(i => hospitalFilter === "all" || i.hospital === hospitalFilter)
+    .sort((a,b) => {
     if(a.year !== b.year) return b.year.localeCompare(a.year);
     if(a.month !== b.month) return a.month.localeCompare(b.month);
     if(a.hospital !== b.hospital) return a.hospital.localeCompare(b.hospital);
@@ -1982,7 +2252,9 @@ function renderDeliveryList(){
 }
 
 function renderDeliveryMatrix(){
-  const hospitalFilter = document.getElementById("deliveryHospitalFilter").value;
+  const deliveryHospitalFilter = document.getElementById("deliveryHospitalFilter");
+  const hospitalFilter = deliveryHospitalFilter ? deliveryHospitalFilter.value : getCurrentHospitalFilter("delivery");
+  pageHospitalFilters.delivery = hospitalFilter;
   const yearFilter = document.getElementById("deliveryYearFilter").value;
   const head = document.getElementById("deliveryMatrixHead");
   const body = document.getElementById("deliveryMatrixBody");
@@ -1997,21 +2269,24 @@ function renderDeliveryMatrix(){
   `;
   body.innerHTML = "";
 
-  let filtered = [...deliveryRecords];
+  let filtered = getCombinedDeliverySource();
   if(hospitalFilter !== "all") filtered = filtered.filter(i => i.hospital === hospitalFilter);
   if(yearFilter !== "all") filtered = filtered.filter(i => i.year === yearFilter);
 
-  if(filtered.length === 0){
+  const reagentNames = [...new Set([...REAGENT_MASTER.map(normalizeUpper), ...filtered.map(i => normalizeUpper(i.name))])].sort((a,b) => a.localeCompare(b));
+
+  if(filtered.length === 0 && reagentNames.length === 0){
     body.innerHTML = `<tr><td colspan="14" class="emptyRow">표시할 납품 내역이 없습니다.</td></tr>`;
     return;
   }
 
-  const hospitals = [...new Set(filtered.map(i => i.hospital))].sort((a,b) => a.localeCompare(b));
+  const hospitals = hospitalFilter !== "all"
+    ? [hospitalFilter]
+    : [...new Set([...HOSPITALS, ...filtered.map(i => i.hospital)].filter(Boolean))].sort((a,b) => a.localeCompare(b));
+
   hospitals.forEach(hospital => {
     const recordsByHospital = filtered.filter(i => i.hospital === hospital);
-    const reagentNames = [...new Set(recordsByHospital.map(i => i.name))].sort((a,b) => a.localeCompare(b));
-
-    body.innerHTML += `<tr class="groupHeader"><td colspan="14">📁 ${escapeHtml(hospital)}${yearFilter !== "all" ? ` / ${yearFilter}년` : ""}</td></tr>`;
+    body.innerHTML += `<tr class="groupHeader"><td colspan="14">📁 ${escapeHtml(hospital)}${yearFilter !== "all" ? ` / ${yearFilter}년` : ""} / 납품 + 월초발주 + 중간발주 자동합산</td></tr>`;
 
     reagentNames.forEach(name => {
       let total = 0;
@@ -2019,7 +2294,7 @@ function renderDeliveryMatrix(){
       for(let month = 1; month <= 12; month++){
         const mm = String(month).padStart(2, "0");
         const monthQty = recordsByHospital
-          .filter(i => i.name === name && i.month === mm)
+          .filter(i => normalizeUpper(i.name) === name && i.month === mm)
           .reduce((sum, cur) => sum + Number(cur.qty || 0), 0);
         total += monthQty;
         row += `<td>${monthQty || ""}</td>`;
@@ -2028,6 +2303,9 @@ function renderDeliveryMatrix(){
       body.innerHTML += row;
     });
   });
+
+  save();
+  renderPageHospitalTabs();
 }
 
 /* INIT */
@@ -2035,6 +2313,7 @@ function initializeApp(){
   updateClock();
   load();
   renderHospitalSelects();
+  renderPageHospitalTabs();
   renderReagentMasterList();
   bindInputFormatters();
   checkMonthRollover();

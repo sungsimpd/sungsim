@@ -6276,5 +6276,141 @@ body, button, input, select, textarea{font-family:"Pretendard Variable","Pretend
 })();
 </script>
 
+
+<style id="v16-overrides-style">
+:root{--brand:#16a34a;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--soft:#f8fafc;}
+.topNav .navBtn,.topNav .navBtn.active,.boardSearchRow button,.boardToolbar button,.boardToolbar select,.boardWriteActionsBottom button,#boardDetailPanel .row button,#boardListPanel .btnSub,#boardListPanel .btnRefresh{border-radius:10px !important;}
+#boardPage .pageHero{background:#fff !important;border:1px solid #eef2f7 !important;}
+#boardPage .pageHeroTitle{color:#111827 !important;}
+#boardListPanel,#boardWritePanel,#boardDetailPanel{background:#fff !important;border:1px solid #e8edf3 !important;box-shadow:0 12px 28px rgba(15,23,42,.04) !important;border-radius:18px !important;}
+#boardListPanel .boardListTop{padding-bottom:14px;border-bottom:1px solid #eef2f7;}
+#boardPage .tableWrap{border:1px solid #eef2f7 !important;border-radius:14px !important;background:#fff !important;}
+#boardPage .boardTable thead th{background:#fafbfd !important;color:#4b5563 !important;font-size:12px !important;}
+#boardPage .boardTable tbody td{padding:16px 12px !important;border-bottom:1px solid #f1f5f9 !important;vertical-align:middle;}
+#boardPage .boardTable tbody tr:hover{background:#fbfdfb !important;}
+#boardPage .boardSearchRow{background:#fff !important;border:none !important;padding:0 !important;gap:8px !important;}
+#boardPage .boardSearchRow input{border-radius:10px !important;border:1px solid #dbe2ea !important;min-height:42px !important;}
+#boardPage .boardSearchRow button{min-height:42px !important;box-shadow:none !important;}
+#boardPage .boardTitleBtn{font-size:15px !important;font-weight:700 !important;color:#111827 !important;}
+#boardPage .boardTitleBtn:hover{color:#16a34a !important;text-decoration:none !important;}
+#boardPage .boardPostMeta .badge,#boardPage #boardDetailAuthor{border-radius:8px !important;background:#f5f7fa !important;border:1px solid #e5e7eb !important;color:#374151 !important;box-shadow:none !important;}
+#boardPage #boardDetailContent{border-radius:14px !important;border:1px solid #e5e7eb !important;background:#fff !important;padding:28px 30px !important;min-height:260px !important;line-height:1.85 !important;color:#111827 !important;}
+#boardPage .boardEditorWrap{border-radius:14px !important;border:1px solid #e5e7eb !important;box-shadow:none !important;background:#fff !important;}
+#boardPage .boardToolbar{display:flex !important;flex-wrap:wrap !important;gap:8px !important;background:#f8fafc !important;border:1px solid #e5e7eb !important;border-radius:12px !important;padding:12px !important;}
+#boardPage .boardToolbar button,#boardPage .boardToolbar select,#boardPage .boardToolbar input[type=color]{height:40px !important;border:1px solid #dbe2ea !important;background:#fff !important;color:#111827 !important;box-shadow:none !important;padding:0 12px !important;}
+#boardPage .boardToolbar input[type=color]{padding:4px !important;width:44px !important;}
+#boardPage .boardEditor{min-height:420px !important;padding:26px 28px !important;font-size:16px !important;line-height:1.8 !important;color:#111827 !important;font-family:"Noto Sans KR","Pretendard","Apple SD Gothic Neo",sans-serif !important;}
+#boardPage .boardWriteTopMeta{background:#fbfcfe !important;border:1px solid #eef2f7 !important;border-radius:12px !important;padding:14px 16px !important;}
+#boardPage .boardWriterName{font-size:16px !important;font-weight:700 !important;color:#111827 !important;}
+#boardPage .boardPostBadge{background:#f3f4f6 !important;border:1px solid #e5e7eb !important;color:#6b7280 !important;border-radius:8px !important;box-shadow:none !important;}
+#boardPage .boardWriteActionsBottom{position:sticky;bottom:10px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);padding:14px 0 0;}
+#boardPage .boardFlash{position:fixed;right:24px;top:96px;z-index:9999;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 14px 32px rgba(15,23,42,.18);font-size:14px;font-weight:700;display:none;}
+.boardManageBtn{display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 12px;border-radius:8px;border:1px solid #dbe2ea;background:#fff;color:#374151;font-size:12px;font-weight:700;cursor:pointer;box-shadow:none;}
+.boardManageBtn:hover{background:#f8fafc;}
+.reagentToast{position:fixed;right:24px;bottom:24px;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 14px 32px rgba(15,23,42,.18);z-index:9999;display:none;}
+</style>
+<script id="v16-overrides-script">
+(function(){
+  function toast(msg){
+    let el=document.getElementById('reagentToast');
+    if(!el){el=document.createElement('div');el.id='reagentToast';el.className='reagentToast';document.body.appendChild(el);} 
+    el.textContent=msg; el.style.display='block'; clearTimeout(window.__reagentToastTimer); window.__reagentToastTimer=setTimeout(()=>el.style.display='none',1800);
+  }
+  function saveBoardPostsOnly(){ try{ localStorage.setItem('boardPosts', JSON.stringify(window.boardPosts||[])); }catch(e){} }
+  function normalizeBoardData(){ if(!Array.isArray(window.boardPosts)) window.boardPosts=[]; }
+  function currentUser(){ try{return typeof getCurrentUser==='function'?getCurrentUser():null;}catch(e){return null;} }
+  function currentNick(){ try{return typeof getCurrentNickname==='function'?getCurrentNickname():'운영자';}catch(e){return '운영자';} }
+  function adminUser(){ try{return typeof isAdminUser==='function' && isAdminUser();}catch(e){return false;} }
+  function plainText(html){const d=document.createElement('div'); d.innerHTML=html||''; return (d.textContent||'').trim();}
+  function boardFiltered(){ normalizeBoardData(); const q=(document.getElementById('boardSearchInput')?.value||'').trim().toLowerCase(); let arr=[...window.boardPosts].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)); if(!q) return arr; return arr.filter(p=>String(p.title||'').toLowerCase().includes(q)||String(p.author||'').toLowerCase().includes(q)||plainText(p.content).toLowerCase().includes(q)); }
+  window.resetBoardSearch=function(){ const i=document.getElementById('boardSearchInput'); if(i) i.value=''; window.boardCurrentPage=1; window.renderBoardList(1); };
+  window.renderBoardList=function(page){
+    normalizeBoardData();
+    const tbody=document.getElementById('boardListBody'); const pagination=document.getElementById('boardPagination');
+    if(!tbody) return;
+    const table=tbody.closest('table');
+    if(table){
+      const headRow=table.querySelector('thead tr');
+      if(headRow && headRow.children.length<6){ const th=document.createElement('th'); th.style.width='120px'; th.textContent='관리'; headRow.appendChild(th); }
+    }
+    const list=boardFiltered(); const perPage=10; const total=Math.max(1, Math.ceil(list.length/perPage)); window.boardCurrentPage=Math.min(Math.max(1,page||1), total);
+    const start=(window.boardCurrentPage-1)*perPage; const rows=list.slice(start,start+perPage);
+    tbody.innerHTML='';
+    if(rows.length===0){ tbody.innerHTML=`<tr><td colspan="6" class="emptyRow">게시글이 없습니다.</td></tr>`; }
+    else rows.forEach((post,idx)=>{
+      const hasImage=/<img/i.test(post.content||'');
+      const row=document.createElement('tr'); row.id=`board-row-${post.id}`; if(window.boardSelectedId===post.id) row.style.background='#f0fdf4';
+      const canManage=adminUser() || post.authorId===currentUser()?.id;
+      row.innerHTML=`<td>${list.length-(start+idx)}</td><td><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${post.secret?'🔒 ':''}${(post.title||'').replace(/</g,'&lt;')}</button></td><td>${(post.author||'').replace(/</g,'&lt;')}</td><td>${typeof formatBoardDate==='function'?formatBoardDate(post.createdAt):String(post.createdAt||'').slice(0,16).replace('T',' ')}</td><td>${hasImage?'있음':'-'}</td><td>${canManage?`<button type="button" class="boardManageBtn" onclick="event.stopPropagation();boardSelectedId=${post.id};editBoardPost();">수정</button>`:''}</td>`;
+      tbody.appendChild(row);
+    });
+    if(pagination){ pagination.innerHTML=''; for(let i=1;i<=total;i++){ const b=document.createElement('button'); b.type='button'; b.textContent=i; b.className=i===window.boardCurrentPage?'active':''; b.onclick=()=>window.renderBoardList(i); pagination.appendChild(b);} }
+    if(typeof renderBoardSidebar==='function') try{renderBoardSidebar();}catch(e){}
+    if(typeof showBoardPanel==='function') showBoardPanel('boardListPanel');
+  };
+
+  window.setBoardFontSize=function(size){
+    if(!size) return; const editor=document.getElementById('boardEditor'); if(!editor) return; editor.focus();
+    const sel=window.getSelection(); if(!sel || !sel.rangeCount) return; const range=sel.getRangeAt(0);
+    if(!editor.contains(range.commonAncestorContainer)) return;
+    function applyToNode(node){ if(node.nodeType===3){ const span=document.createElement('span'); span.style.fontSize=size+'px'; span.textContent=node.textContent; return span;} if(node.nodeType===1){ node.style.fontSize=size+'px'; return node;} return node; }
+    try{
+      if(sel.isCollapsed){
+        let anchor=range.startContainer.nodeType===3?range.startContainer.parentNode:range.startContainer;
+        while(anchor && anchor!==editor){ if(anchor.nodeType===1 && anchor.style && anchor.style.fontSize){ anchor.style.fontSize=size+'px'; break;} anchor=anchor.parentNode; }
+        if(!anchor || anchor===editor){ const span=document.createElement('span'); span.style.fontSize=size+'px'; span.appendChild(document.createTextNode('​')); range.insertNode(span); range.setStart(span.firstChild,1); range.collapse(true); sel.removeAllRanges(); sel.addRange(range);} 
+      }else{
+        const frag=range.extractContents(); const wrapper=document.createElement('span'); wrapper.style.fontSize=size+'px'; wrapper.appendChild(frag); range.insertNode(wrapper); range.selectNodeContents(wrapper); sel.removeAllRanges(); sel.addRange(range);
+      }
+    }catch(e){ document.execCommand('styleWithCSS',false,true); document.execCommand('fontSize',false,7); editor.querySelectorAll('font[size="7"]').forEach(node=>{ const span=document.createElement('span'); span.style.fontSize=size+'px'; span.innerHTML=node.innerHTML; node.replaceWith(span);}); }
+    if(typeof saveBoardDraft==='function') try{saveBoardDraft();}catch(e){}
+  };
+
+  window.saveBoardPost=function(){
+    normalizeBoardData();
+    const titleEl=document.getElementById('boardTitle'); const editor=document.getElementById('boardEditor'); const secretToggle=document.getElementById('boardSecretToggle'); const secretPw=document.getElementById('boardSecretPassword');
+    if(!titleEl || !editor) return; const title=String(titleEl.value||'').trim(); const content=editor.innerHTML.trim();
+    if(!title){ alert('제목을 입력해주세요.'); titleEl.focus(); return; }
+    if(!plainText(content) && !/<img/i.test(content)){ alert('내용을 입력해주세요.'); editor.focus(); return; }
+    const now=new Date().toISOString(); const user=currentUser(); const authorId=user?.id||'sungsim'; const author=currentNick(); const secret=!!(secretToggle&&secretToggle.checked); const secretPassword=String(secretPw?.value||'').trim();
+    if(secret && !secretPassword){ alert('비밀게시글 비밀번호를 입력해주세요.'); return; }
+    let post;
+    if(window.boardEditingId){ post=(window.boardPosts||[]).find(p=>p.id===window.boardEditingId); if(!post){ alert('수정할 게시글을 찾지 못했습니다.'); return; } post.title=title; post.content=content; post.author=author; post.authorId=authorId; post.secret=secret; post.secretPassword=secret?secretPassword:''; post.updatedAt=now; }
+    else { post={id:Date.now()+Math.floor(Math.random()*1000), title, content, author, authorId, createdAt:now, updatedAt:now, secret, secretPassword:secret?secretPassword:''}; window.boardPosts.unshift(post); }
+    window.boardSelectedId=post.id; window.boardEditingId=null; saveBoardPostsOnly();
+    try{ if(typeof clearBoardDraft==='function') clearBoardDraft(); }catch(e){}
+    if(typeof showBoardFlash==='function') showBoardFlash(`게시글이 ${post.createdAt===post.updatedAt?'등록':'수정'}되었습니다.`);
+    viewBoardDetail(post.id);
+    setTimeout(()=>{ window.renderBoardList(1); setTimeout(()=>viewBoardDetail(post.id),50); }, 60);
+  };
+
+  window.editBoardPost=function(){
+    const post=(window.boardPosts||[]).find(p=>p.id===window.boardSelectedId); if(!post) return; if(!(adminUser()|| post.authorId===currentUser()?.id)){ alert('본인 글 또는 관리자만 수정할 수 있습니다.'); return; }
+    window.boardEditingId=post.id; const titleEl=document.getElementById('boardTitle'); const editor=document.getElementById('boardEditor'); const writer=document.getElementById('boardWriterName'); const secretToggle=document.getElementById('boardSecretToggle'); const secretPw=document.getElementById('boardSecretPassword'); const panelTitle=document.querySelector('#boardWritePanel .panelTitle h3');
+    if(titleEl) titleEl.value=post.title||''; if(editor) editor.innerHTML=post.content||''; if(writer) writer.textContent=currentNick(); if(secretToggle) secretToggle.checked=!!post.secret; if(secretPw) secretPw.value=post.secretPassword||''; if(panelTitle) panelTitle.textContent='게시글 수정'; if(typeof showBoardPanel==='function') showBoardPanel('boardWritePanel');
+  };
+
+  function addRowItem(kind, payload){
+    if(kind==='prepaid'){ if(!Array.isArray(window.prepaid)) window.prepaid=[]; window.prepaid.push(payload); try{localStorage.setItem('prepaid', JSON.stringify(window.prepaid));}catch(e){} if(typeof renderPrepaid==='function') renderPrepaid(); }
+    if(kind==='backlog'){ if(!Array.isArray(window.backlog)) window.backlog=[]; window.backlog.push(payload); try{localStorage.setItem('backlog', JSON.stringify(window.backlog));}catch(e){} if(typeof renderBacklog==='function') renderBacklog(); }
+    if(kind==='inventory'){ if(!Array.isArray(window.items)) window.items=[]; window.items.push(payload); try{localStorage.setItem('items', JSON.stringify(window.items));}catch(e){} if(typeof render==='function') render(); }
+    if(kind==='delivery'){ if(!Array.isArray(window.deliveryRecords)) window.deliveryRecords=[]; window.deliveryRecords.push(payload); try{localStorage.setItem('deliveryRecords', JSON.stringify(window.deliveryRecords));}catch(e){} if(typeof renderDeliveryList==='function') renderDeliveryList(); if(typeof renderDeliveryMatrix==='function') renderDeliveryMatrix(); }
+    if(kind==='monthStart'){ if(!Array.isArray(window.monthStartOrders)) window.monthStartOrders=[]; window.monthStartOrders.push(payload); try{localStorage.setItem('monthStartOrders', JSON.stringify(window.monthStartOrders));}catch(e){} if(typeof renderMonthStartOrders==='function') renderMonthStartOrders(); }
+    if(kind==='mid'){ if(!Array.isArray(window.midOrders)) window.midOrders=[]; window.midOrders.push(payload); try{localStorage.setItem('midOrders', JSON.stringify(window.midOrders));}catch(e){} if(typeof renderMidOrders==='function') renderMidOrders(); }
+  }
+  window.addPrepaid=function(){ const hospital=(document.getElementById('p_hospital')?.value)||((window.HOSPITALS||[])[0]||''); const name=String(document.getElementById('p_name')?.value||'').trim().toUpperCase(); const qty=Number(document.getElementById('p_qty')?.value); const lot=String(document.getElementById('p_lot')?.value||'').trim().toUpperCase(); const raw=String(document.getElementById('p_date')?.value||'').trim(); const date=raw?(typeof formatYmdString==='function'?formatYmdString(raw):raw):''; if(!name||!(qty>0)){ alert('선납 시약명과 수량을 확인해주세요.'); return; } if(raw && !date){ alert('선납 날짜 형식을 확인해주세요.'); return; } addRowItem('prepaid',{id:Date.now()+Math.floor(Math.random()*1000),hospital,name,qty,lot,date}); ['p_name','p_qty','p_lot','p_date'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); toast('선납 내역이 등록되었습니다.'); };
+  window.addBacklog=function(){ const hospital=(document.getElementById('b_hospital')?.value)||((window.HOSPITALS||[])[0]||''); const type=(document.getElementById('b_type')?.value)||'보상'; const name=String(document.getElementById('b_name')?.value||'').trim().toUpperCase(); const qty=Number(document.getElementById('b_qty')?.value); const lot=String(document.getElementById('b_lot')?.value||'').trim().toUpperCase(); const raw=String(document.getElementById('b_exp')?.value||'').trim(); const exp=raw?(typeof formatYmdString==='function'?formatYmdString(raw):raw):''; const note=String(document.getElementById('b_note')?.value||'').trim(); if(!name||!(qty>0)){ alert('보상 · 미납 시약명과 수량을 확인해주세요.'); return; } if(raw && !exp){ alert('유효기간 형식을 확인해주세요.'); return; } addRowItem('backlog',{id:Date.now()+Math.floor(Math.random()*1000),hospital,type,name,qty,lot,exp,note}); ['b_name','b_qty','b_lot','b_exp','b_note'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); toast('보상 · 미납 내역이 등록되었습니다.'); };
+  window.addItem=function(){ const hospital=(document.getElementById('hospital')?.value)||((window.HOSPITALS||[])[0]||''); const name=String(document.getElementById('reagentName')?.value||'').trim().toUpperCase(); const qty=Number(document.getElementById('qty')?.value); const y=String(document.getElementById('year')?.value||'').replace(/\D/g,'').slice(0,4); const m=String(document.getElementById('month')?.value||'').replace(/\D/g,'').slice(0,2).padStart(2,'0'); const d=String(document.getElementById('day')?.value||'').replace(/\D/g,'').slice(0,2).padStart(2,'0'); const lot=String(document.getElementById('lot')?.value||'').trim().toUpperCase(); const note=String(document.getElementById('note')?.value||'').trim(); if(!name||!(qty>0)||y.length!==4||!m||!d){ alert('재고 등록값을 확인해주세요.'); return; } const exp=`${y}-${m}-${d}`; const period=(typeof getCurrentPeriod==='function'?getCurrentPeriod():`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`); addRowItem('inventory',{id:Date.now()+Math.floor(Math.random()*1000),hospital,name,qty,exp,lot,note,createdAt:new Date().toISOString().slice(0,10),period}); ['reagentName','qty','year','month','day','lot','note'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); toast('재고가 등록되었습니다.'); };
+  window.addDeliveryRecord=function(){ const hospital=(document.getElementById('d_hospital')?.value)||((window.HOSPITALS||[])[0]||''); const now=new Date(); const year=(String(document.getElementById('d_year')?.value||'').replace(/\D/g,'').slice(0,4))||String(now.getFullYear()); const month=(document.getElementById('d_month')?.value)||String(now.getMonth()+1).padStart(2,'0'); const name=String(document.getElementById('d_name')?.value||'').trim().toUpperCase(); const qty=Number(document.getElementById('d_qty')?.value); const note=String(document.getElementById('d_note')?.value||'').trim(); if(!name||!(qty>0)){ alert('납품 시약명과 수량을 확인해주세요.'); return; } addRowItem('delivery',{id:Date.now()+Math.floor(Math.random()*1000),hospital,year,month,name,qty,note}); ['d_name','d_qty','d_note'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); toast('납품 내역이 등록되었습니다.'); };
+  window.addMonthStartOrder=function(){ const now=new Date(); const year=(window.monthStartLockedContext?.year)||String(document.getElementById('ms_year')?.value||'').replace(/\D/g,'').slice(0,4)||String(now.getFullYear()); const month=(window.monthStartLockedContext?.month)||((document.getElementById('ms_month')?.value)||String(now.getMonth()+1).padStart(2,'0')); const vendor=(window.monthStartLockedContext?.vendor)||(document.getElementById('ms_vendor')?.value)||((window.HOSPITALS||[])[0]||''); const name=String(document.getElementById('ms_name')?.value||'').trim().toUpperCase(); const spec=String(document.getElementById('ms_spec')?.value||'').trim().toUpperCase(); const qty=Number(document.getElementById('ms_qty')?.value); if(!name||!(qty>0)){ alert('월초발주 시약명과 수량을 확인해주세요.'); return; } addRowItem('monthStart',{id:Date.now()+Math.floor(Math.random()*1000),year,month,vendor,name,spec,qty}); ['ms_name','ms_spec','ms_qty'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); toast('월초발주가 등록되었습니다.'); };
+  window.addMidOrder=function(){ const now=new Date(); const year=(window.midLockedContext?.year)||String(document.getElementById('mid_year')?.value||'').replace(/\D/g,'').slice(0,4)||String(now.getFullYear()); const month=(window.midLockedContext?.month)||((document.getElementById('mid_month')?.value)||String(now.getMonth()+1).padStart(2,'0')); const vendor=(window.midLockedContext?.vendor)||(document.getElementById('mid_vendor')?.value)||((window.HOSPITALS||[])[0]||''); const name=String(document.getElementById('mid_name')?.value||'').trim().toUpperCase(); const spec=String(document.getElementById('mid_spec')?.value||'').trim().toUpperCase(); const qty=Number(document.getElementById('mid_qty')?.value); if(!name||!(qty>0)){ alert('중간발주 시약명과 수량을 확인해주세요.'); return; } addRowItem('mid',{id:Date.now()+Math.floor(Math.random()*1000),year,month,vendor,name,spec,qty}); ['mid_name','mid_spec','mid_qty'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); toast('중간발주가 등록되었습니다.'); };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const input=document.getElementById('boardSearchInput'); if(input){ input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); window.renderBoardList(1); } }); }
+    setTimeout(()=>{ if(typeof renderBoardList==='function') renderBoardList(1); }, 100);
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -5340,5 +5340,331 @@ window.addEventListener("load", () => {
 })();
 </script>
 
+
+<style id="v12_cleanup_patch">
+body, button, input, select, textarea{font-family:"Pretendard Variable","Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;}
+#headerStatus{display:none !important;}
+.headerInner{
+  display:grid !important;
+  grid-template-columns:1fr auto 1fr !important;
+  align-items:center !important;
+  gap:18px !important;
+}
+.logoWrap{justify-self:center; cursor:pointer;}
+.headerMeta{justify-self:end !important; align-self:end !important; display:flex !important; align-items:flex-end !important;}
+.logoutBtn{
+  box-shadow:none !important;
+  background:transparent !important;
+  color:#475569 !important;
+  border:1px solid #dbe3ea !important;
+  border-radius:12px !important;
+  font-weight:700 !important;
+  letter-spacing:-0.01em !important;
+}
+.logoutBtn:hover{background:#f8fafc !important; transform:none !important; box-shadow:none !important;}
+#headerDateTimeWrap{
+  min-width:auto !important;
+  min-height:auto !important;
+  width:auto !important;
+  padding:0 !important;
+  border:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  backdrop-filter:none !important;
+}
+#headerDateTimeWrap::before,#headerDateTimeWrap::after,.clockChip::before,.clockChip::after{display:none !important; content:none !important;}
+#clockDate,#clockTime,#clockBox{display:none !important;}
+#headerClockLine{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:0 2px;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  color:#0f172a;
+  white-space:nowrap;
+}
+#headerClockLine .dot{
+  width:5px; height:5px; border-radius:50%; background:#94a3b8; display:inline-block;
+}
+@media (max-width: 960px){
+  .headerInner{grid-template-columns:1fr !important;}
+  .headerMeta{justify-self:center !important;}
+}
+.boardTable td,.boardTable th{vertical-align:middle;}
+.boardTitleBtn{font-weight:700 !important; letter-spacing:-0.02em;}
+.boardSavedRow{animation:boardSavedPulse 2.2s ease;}
+@keyframes boardSavedPulse{
+  0%{background:#fff8db;}
+  100%{background:transparent;}
+}
+.boardActionToast{
+  position:fixed; left:50%; top:98px; transform:translateX(-50%) translateY(-8px);
+  background:rgba(15,23,42,0.92); color:#fff; padding:12px 18px; border-radius:14px;
+  font-size:13px; font-weight:700; z-index:9999; opacity:0; pointer-events:none;
+  transition:opacity .22s ease, transform .22s ease; box-shadow:0 18px 40px rgba(15,23,42,.22);
+}
+.boardActionToast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+.boardSearchRow, .boardToolbar, .boardWriteActionsBottom, .boardWriteTopMeta{letter-spacing:-0.01em;}
+</style>
+<script id="v12_cleanup_script">
+(function(){
+  function toast(msg){
+    let el = document.getElementById('boardActionToast');
+    if(!el){ el = document.createElement('div'); el.id = 'boardActionToast'; el.className='boardActionToast'; document.body.appendChild(el); }
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(window.__boardToastTimer);
+    window.__boardToastTimer = setTimeout(()=>el.classList.remove('show'), 1900);
+  }
+
+  function syncBoardStore(){
+    try{
+      const stored = JSON.parse(localStorage.getItem('boardPosts') || '[]');
+      if(Array.isArray(stored)){
+        window.boardPosts = stored;
+        try{ boardPosts = stored; }catch(e){}
+      }
+    }catch(e){
+      window.boardPosts = window.boardPosts || [];
+      try{ boardPosts = window.boardPosts; }catch(e){}
+    }
+  }
+
+  function persistBoardStore(){
+    const data = Array.isArray(window.boardPosts) ? window.boardPosts : [];
+    try{ localStorage.setItem('boardPosts', JSON.stringify(data)); }catch(e){}
+    try{ boardPosts = data; }catch(e){}
+  }
+
+  function currentNickname(){
+    try{
+      const s = JSON.parse(localStorage.getItem('currentSession') || 'null');
+      if(s && s.nickname) return s.nickname;
+    }catch(e){}
+    if(typeof getCurrentNickname === 'function') return getCurrentNickname();
+    return '운영자';
+  }
+
+  function currentUserId(){
+    try{
+      const s = JSON.parse(localStorage.getItem('currentSession') || 'null');
+      if(s && s.id) return s.id;
+    }catch(e){}
+    if(typeof getCurrentUser === 'function'){
+      const u = getCurrentUser();
+      return u && u.id ? u.id : '';
+    }
+    return '';
+  }
+
+  function boardData(){
+    syncBoardStore();
+    const data = Array.isArray(window.boardPosts) ? window.boardPosts : [];
+    data.sort((a,b)=>new Date(b.createdAt||b.updatedAt||0)-new Date(a.createdAt||a.updatedAt||0));
+    return data;
+  }
+
+  function filteredPosts(){
+    const q = (document.getElementById('boardSearchInput')?.value || '').trim().toLowerCase();
+    const data = boardData();
+    if(!q) return data;
+    return data.filter(post => `${post.title||''} ${post.author||''}`.toLowerCase().includes(q));
+  }
+
+  function renderBoardListStable(page=1){
+    syncBoardStore();
+    window.boardCurrentPage = page;
+    try{ boardCurrentPage = page; }catch(e){}
+    const tbody = document.getElementById('boardListBody');
+    const pagination = document.getElementById('boardPagination');
+    if(!tbody || !pagination) return;
+    const list = filteredPosts();
+    const pageSize = (typeof BOARD_PAGE_SIZE !== 'undefined' ? BOARD_PAGE_SIZE : 10);
+    const total = list.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if(page > totalPages) page = totalPages;
+    window.boardCurrentPage = page;
+    try{ boardCurrentPage = page; }catch(e){}
+    const start = (page-1)*pageSize;
+    const items = list.slice(start, start+pageSize);
+    tbody.innerHTML = '';
+    if(items.length === 0){
+      tbody.innerHTML = '<tr><td colspan="5" class="emptyRow">등록된 게시글이 없습니다.</td></tr>';
+    }else{
+      items.forEach((post, idx) => {
+        const no = total - (start + idx);
+        const title = (window.escapeHtml ? escapeHtml(post.title || '') : (post.title || ''));
+        const author = (window.escapeHtml ? escapeHtml(post.author || '운영자') : (post.author || '운영자'));
+        const lock = (post.secret || post.isSecret) ? '<span style="margin-right:6px; font-size:12px;">🔒</span>' : '';
+        let thumb = '';
+        if(typeof getBoardThumbnail === 'function') thumb = getBoardThumbnail(post.content || '');
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr data-board-id="${post.id}" id="board-row-${post.id}">
+            <td>${no}</td>
+            <td><button type="button" class="boardTitleBtn" onclick="viewBoardDetail(${post.id})">${lock}${title}</button></td>
+            <td>${author}</td>
+            <td>${typeof formatBoardDate === 'function' ? formatBoardDate(post.createdAt || post.updatedAt) : ''}</td>
+            <td>${thumb ? `<img src="${thumb}" class="boardThumb">` : '<span style="color:#94a3b8;">-</span>'}</td>
+          </tr>`);
+      });
+    }
+    pagination.innerHTML = '';
+    for(let i=1;i<=totalPages;i++){
+      pagination.insertAdjacentHTML('beforeend', `<button type="button" class="${i===page?'active':''}" onclick="renderBoardList(${i})">${i}</button>`);
+    }
+    if(typeof showBoardPanel === 'function') showBoardPanel('boardListPanel');
+  }
+
+  window.renderBoardList = renderBoardListStable;
+
+  window.saveBoardPost = function(){
+    syncBoardStore();
+    const titleEl = document.getElementById('boardTitle');
+    const editor = document.getElementById('boardEditor');
+    const secretToggle = document.getElementById('boardSecretToggle') || document.getElementById('boardSecret');
+    const secretPw = document.getElementById('boardSecretPassword');
+    if(!titleEl || !editor){ alert('글쓰기 요소를 찾지 못했습니다.'); return; }
+    const title = String(titleEl.value || '').trim();
+    const content = String(editor.innerHTML || '').trim();
+    const plain = content.replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').trim();
+    const hasImage = /<img/i.test(content);
+    if(!title){ alert('제목을 입력해주세요.'); titleEl.focus(); return; }
+    if(!plain && !hasImage){ alert('내용을 입력해주세요.'); editor.focus(); return; }
+    const isSecret = !!(secretToggle && secretToggle.checked);
+    const secretPassword = isSecret ? String(secretPw?.value || '').trim() : '';
+    if(isSecret && !secretPassword){ alert('비밀게시글 비밀번호를 입력해주세요.'); if(secretPw) secretPw.focus(); return; }
+
+    const now = new Date().toISOString();
+    const posts = Array.isArray(window.boardPosts) ? window.boardPosts : [];
+    let savedId;
+    if(window.boardEditingId){
+      const post = posts.find(p => p.id === window.boardEditingId);
+      if(!post){ alert('수정할 게시글을 찾지 못했습니다.'); return; }
+      post.title = title;
+      post.content = content;
+      post.author = currentNickname();
+      post.authorId = currentUserId();
+      post.secret = isSecret;
+      post.isSecret = isSecret;
+      post.secretPassword = secretPassword;
+      post.updatedAt = now;
+      savedId = post.id;
+      toast('게시글이 수정되었습니다');
+    }else{
+      const post = {
+        id: (typeof makeId === 'function' ? makeId() : Date.now()),
+        title, content,
+        author: currentNickname(),
+        authorId: currentUserId(),
+        secret: isSecret, isSecret,
+        secretPassword,
+        createdAt: now, updatedAt: now
+      };
+      posts.unshift(post);
+      savedId = post.id;
+      toast('게시글이 등록되었습니다');
+    }
+    window.boardPosts = posts;
+    persistBoardStore();
+    window.boardSelectedId = savedId;
+    window.boardEditingId = null;
+    if(typeof clearBoardDraft === 'function') clearBoardDraft();
+    if(typeof showBoardPanel === 'function') showBoardPanel('boardListPanel');
+    renderBoardListStable(1);
+    setTimeout(function(){
+      const row = document.getElementById('board-row-' + savedId);
+      if(row){
+        row.classList.add('boardSavedRow');
+        row.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+      if(typeof viewBoardDetail === 'function') viewBoardDetail(savedId);
+    }, 120);
+  };
+
+  window.deleteBoardPost = function(){
+    syncBoardStore();
+    const id = window.boardSelectedId;
+    if(!id) return;
+    const posts = Array.isArray(window.boardPosts) ? window.boardPosts : [];
+    const post = posts.find(p => p.id === id);
+    if(!post) return;
+    if(!confirm('이 게시글을 삭제할까요?')) return;
+    window.boardPosts = posts.filter(p => p.id !== id);
+    persistBoardStore();
+    window.boardSelectedId = null;
+    if(typeof showBoardPanel === 'function') showBoardPanel('boardListPanel');
+    renderBoardListStable(1);
+    toast('게시글이 삭제되었습니다');
+  };
+
+  window.viewBoardDetail = function(id){
+    syncBoardStore();
+    const post = (window.boardPosts || []).find(p => p.id === id);
+    if(!post) return;
+    if(post.secret || post.isSecret){
+      const me = currentUserId();
+      const admin = (typeof isAdminUser === 'function' && isAdminUser());
+      if(!admin && post.authorId && post.authorId !== me){
+        const input = prompt('비밀게시글 비밀번호를 입력하세요.');
+        if(input === null) return;
+        if(String(input) !== String(post.secretPassword || '')){ alert('비밀번호가 올바르지 않습니다.'); return; }
+      }
+    }
+    window.boardSelectedId = id;
+    const t = document.getElementById('boardDetailTitle');
+    const a = document.getElementById('boardDetailAuthor');
+    const d = document.getElementById('boardDetailDate');
+    const c = document.getElementById('boardDetailContent');
+    if(t) t.textContent = post.title || '';
+    if(a) a.textContent = post.author || '운영자';
+    if(d) d.textContent = typeof formatBoardDate === 'function' ? formatBoardDate(post.createdAt || post.updatedAt) : '';
+    if(c) c.innerHTML = post.content || '';
+    if(typeof showBoardPanel === 'function') showBoardPanel('boardDetailPanel');
+  };
+
+  function setupClock(){
+    clearInterval(window.__v8ClockTimer);
+    clearInterval(window.__boardClockTimer);
+    const wrap = document.getElementById('headerDateTimeWrap');
+    if(!wrap) return;
+    let line = document.getElementById('headerClockLine');
+    if(!line){
+      line = document.createElement('div');
+      line.id = 'headerClockLine';
+      wrap.appendChild(line);
+    }
+    function paint(){
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth()+1).padStart(2,'0');
+      const d = String(now.getDate()).padStart(2,'0');
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      line.innerHTML = `${y}.${m}.${d}<span class="dot"></span>${hh}:${mm}`;
+    }
+    paint();
+    window.__boardClockTimer = setInterval(paint, 15000);
+  }
+
+  function cleanupHeader(){
+    const status = document.getElementById('headerStatus');
+    if(status) status.remove();
+    const writer = document.getElementById('boardWriterName');
+    if(writer) writer.textContent = currentNickname();
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    syncBoardStore();
+    cleanupHeader();
+    setupClock();
+    renderBoardListStable(1);
+  });
+  setTimeout(function(){ syncBoardStore(); cleanupHeader(); setupClock(); renderBoardListStable(1); }, 500);
+})();
+</script>
+
 </body>
 </html>

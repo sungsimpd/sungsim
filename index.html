@@ -907,6 +907,186 @@ td input, td select{
   color:#667085;
 }
 
+
+/* board page redesign v14 */
+#boardPage .pageHero{
+  padding:20px 24px;
+  border:1px solid #ebe5df;
+  background:#fbf8f5;
+  border-radius:10px;
+  margin-bottom:14px;
+}
+#boardPage .pageHeroTitle{
+  font-size:24px;
+  letter-spacing:-0.6px;
+  margin:0;
+}
+#boardPage .pageGrid{gap:16px;}
+#boardPage .box{
+  border-radius:10px;
+  border:1px solid #e7e1db;
+  box-shadow:none;
+  background:#fff;
+}
+.boardListTop{
+  align-items:center;
+  gap:14px;
+  margin-bottom:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid #ece7e2;
+}
+.boardListTop h3{font-size:22px;}
+.boardSearchRow{
+  background:#f8f6f3;
+  border:1px solid #e6e1db;
+  border-radius:8px;
+  padding:10px 12px;
+}
+.boardSearchRow input,
+.boardSearchRow button,
+.boardToolbar button,
+.boardToolbar select,
+.boardPagination button,
+.boardPostBadge,
+#boardDetailAuthor.badge,
+.boardWriteTopMeta,
+.boardWriteActionsBottom,
+.boardViewer,
+.boardEditorWrap,
+.boardThumb,
+.boardHeroStat .badge,
+#boardPage .badge,
+#boardPage .btnSub,
+#boardPage .btnRefresh,
+#boardPage button,
+#boardPage input,
+#boardPage select,
+#boardPage textarea{
+  border-radius:8px;
+}
+#boardPage button{
+  box-shadow:none;
+}
+.boardTable thead th{
+  background:#f5f2ee;
+  color:#3b342d;
+  border-bottom:1px solid #e5dfd9;
+}
+.boardTable td{
+  padding:15px 10px;
+  border-bottom:1px solid #f0ebe6;
+}
+.boardTable tbody tr:hover{background:#fcfaf7;}
+.boardTitleBtn{
+  font-size:14px;
+  font-weight:700;
+  color:#1f2937;
+}
+.boardTitleBtn:hover{color:#111827;text-decoration:underline;}
+#boardWritePanel .panelTitle,
+#boardDetailPanel .panelTitle{
+  padding-bottom:14px;
+  border-bottom:1px solid #ece7e2;
+  margin-bottom:18px;
+}
+.boardWriteTopMeta{
+  background:#faf8f5;
+  border:1px solid #e8e1da;
+  padding:14px 16px;
+}
+.boardWriterName{
+  color:#1f2937;
+  font-size:15px;
+}
+.boardPostBadge{
+  background:#fff;
+  border:1px solid #ddd6cf;
+  color:#4b5563;
+}
+.boardToolbar{
+  background:#f8f6f3;
+  border:1px solid #e7dfd8;
+  padding:10px;
+}
+.boardEditorWrap{
+  border:1px solid #e5dfd8;
+  background:#fff;
+}
+.boardEditor{
+  min-height:420px;
+  padding:28px 30px;
+  font-size:15px;
+  line-height:1.9;
+}
+.boardWriteActionsBottom{
+  position:static;
+  margin-top:16px;
+  padding:14px 0 0;
+  border:0;
+  border-top:1px solid #ece7e2;
+  background:transparent;
+}
+#boardDetailPanel{
+  background:#fff;
+}
+#boardDetailPanel h2{
+  font-size:30px !important;
+  line-height:1.34 !important;
+  margin:0 0 14px !important;
+  letter-spacing:-0.6px;
+}
+.boardPostMeta{
+  gap:10px;
+  margin-bottom:18px;
+  padding-bottom:14px;
+  border-bottom:1px solid #ece7e2;
+}
+#boardDetailAuthor.badge{
+  background:#f8f6f3;
+  color:#4b5563;
+  border:1px solid #e2dcd6;
+  padding:7px 10px;
+}
+.boardViewer.boardArticleShell{
+  min-height:300px;
+  padding:28px 32px;
+  border:1px solid #e8e2dc;
+  background:#fffdfa;
+  box-shadow:none;
+  font-size:16px;
+  line-height:1.95;
+}
+.boardViewer.boardArticleShell p:first-child,
+.boardViewer.boardArticleShell h1:first-child,
+.boardViewer.boardArticleShell h2:first-child,
+.boardViewer.boardArticleShell h3:first-child{
+  margin-top:0;
+}
+.boardViewer.boardArticleShell p,
+.boardViewer.boardArticleShell li{
+  color:#222;
+}
+.boardViewer.boardArticleShell img{
+  max-width:100%;
+  height:auto;
+  display:block;
+  margin:18px auto;
+  border-radius:6px;
+}
+.boardFlash{
+  border-radius:8px;
+  box-shadow:none;
+}
+.boardPagination button.active{
+  background:#1f2937;
+  border-color:#1f2937;
+}
+@media (max-width: 960px){
+  .boardSearchRow{width:100%;}
+  .boardViewer.boardArticleShell{padding:22px 18px;}
+  .boardEditor{padding:20px 18px;}
+}
+
 .hiddenPanel{ display:none; }
 
 @media (max-width: 960px){
@@ -1420,6 +1600,7 @@ td input, td select{
       <div class="pageHeroTop">
         <div>
           <h2 class="pageHeroTitle">커뮤니티 게시판</h2>
+          <p class="subTitle" style="margin:8px 0 0;">공지와 일반 글을 한눈에 보고, 검색과 글쓰기를 바로 사용할 수 있습니다.</p>
         </div>
       </div>
     </div>

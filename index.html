@@ -201,7 +201,7 @@ header{
   max-width:1480px;
   margin:0 auto;
   display:grid;
-  grid-template-columns:minmax(240px,1fr) auto minmax(240px,1fr);
+  grid-template-columns:minmax(220px,1fr) auto minmax(220px,1fr);
   align-items:center;
   gap:18px;
   position:relative;
@@ -213,45 +213,77 @@ header{
   flex-direction:column;
   align-items:flex-start;
   justify-content:center;
-  padding-left:76px;
+  padding-left:0;
   cursor:pointer;
-  min-width:260px;
+  min-width:220px;
 }
 .logoWrap:hover .logoTitle{ color:#0f172a; }
+.headerCenter{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 .headerMeta{
   display:flex;
-  align-items:center;
+  flex-direction:column;
+  align-items:flex-end;
   justify-content:flex-end;
-  gap:14px;
-  padding-right:8px;
+  gap:12px;
+  padding-right:0;
 }
 .clockChip{
+  position:relative;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  min-width:230px;
-  min-height:58px;
-  padding:8px 22px;
-  border:1px solid #dbe3ef;
-  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
-  border-radius:999px;
-  box-shadow:0 12px 30px rgba(15,23,42,0.08);
+  min-width:300px;
+  min-height:88px;
+  padding:14px 30px 16px;
+  border:1px solid rgba(255,255,255,0.78);
+  background:radial-gradient(circle at 50% 0%, rgba(255,255,255,0.96), rgba(255,255,255,0.72) 58%, rgba(246,241,255,0.88) 100%), linear-gradient(135deg, rgba(255,246,240,0.96), rgba(243,247,255,0.96));
+  border-radius:34px;
+  box-shadow:0 22px 58px rgba(15,23,42,0.10), inset 0 1px 0 rgba(255,255,255,0.84);
+  overflow:hidden;
+}
+.clockChip::before{
+  content:"";
+  position:absolute;
+  inset:auto auto -24px -18px;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(244,114,182,0.14), transparent 70%);
+}
+.clockChip::after{
+  content:"";
+  position:absolute;
+  inset:-28px -10px auto auto;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(59,130,246,0.14), transparent 72%);
 }
 .clockDate{
+  position:relative;
+  z-index:1;
   font-size:12px;
   font-weight:800;
-  color:#475467;
-  letter-spacing:0.4px;
+  color:#6b7280;
+  letter-spacing:1.6px;
   line-height:1.2;
+  text-transform:uppercase;
 }
 .clockTime{
-  margin-top:3px;
-  font-size:18px;
+  position:relative;
+  z-index:1;
+  margin-top:5px;
+  font-size:30px;
   font-weight:900;
   color:#111827;
-  letter-spacing:0.6px;
-  line-height:1.1;
+  letter-spacing:-0.8px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
 }
 
 .logoTitle{
@@ -275,19 +307,18 @@ header{
 #clockBox{display:none;}
 
 .logoutBtn{
-  position:absolute;
-  left:20px;
-  top:50%;
-  transform:translateY(-50%);
-  background:#ffffff;
+  position:static;
+  transform:none;
+  background:rgba(255,255,255,0.92);
   color:#344054;
-  border:1px solid #d0d7e2;
-  border-radius:12px;
-  padding:8px 12px;
+  border:1px solid #d9e0ea;
+  border-radius:999px;
+  padding:10px 16px;
   font-size:12px;
   font-weight:800;
   cursor:pointer;
-  box-shadow:none;
+  box-shadow:0 10px 22px rgba(15,23,42,0.06);
+  align-self:flex-end;
 }
 
 .topNav{
@@ -887,15 +918,25 @@ td input, td select{
     width:100%;
   }
   .headerInner{
+    grid-template-columns:1fr;
+    gap:12px;
     padding:14px 16px 12px;
-    min-height:86px;
+    min-height:auto;
+  }
+  .logoWrap,
+  .headerCenter,
+  .headerMeta{
+    align-items:center;
+    justify-content:center;
   }
   .logoWrap{
-    padding-left:64px;
+    min-width:0;
   }
-  #clockBox, .logoutBtn{
-    position:static;
-    transform:none;
+  .headerMeta{
+    align-items:center;
+  }
+  .clockChip{
+    min-width:min(100%,320px);
   }
   .topNav{
     padding:0 12px;
@@ -987,15 +1028,17 @@ td input, td select{
 <div id="appScreen">
   <header>
     <div class="headerInner">
-      <button class="logoutBtn" onclick="logout()">로그아웃</button>
-
       <div class="logoWrap" onclick="goHome()" title="메인으로 이동">
         <div class="logoTitle">SUNGSIM</div>
         <div class="logoSub">Inventory Dashboard</div>
       </div>
 
-      <div class="headerMeta">
+      <div class="headerCenter">
         <div class="clockChip" id="headerDateTimeWrap"><div class="clockDate" id="clockDate"></div><div class="clockTime" id="clockTime"></div><span id="clockBox"></span></div>
+      </div>
+
+      <div class="headerMeta">
+        <button class="logoutBtn" onclick="logout()">로그아웃</button>
       </div>
     </div>
 
@@ -2819,19 +2862,18 @@ function renderBoardRecentList(){
 function openBoardWrite(id = null){
   boardEditingId = id;
   const titleEl = document.getElementById("boardTitle");
-  const authorEl = document.getElementById("boardAuthor");
+  const writerNameEl = document.getElementById("boardWriterName");
   const editor = document.getElementById("boardEditor");
-  if(!titleEl || !authorEl || !editor) return;
+  if(!titleEl || !editor) return;
+  if(writerNameEl) writerNameEl.textContent = typeof getCurrentNickname === 'function' ? getCurrentNickname() : '운영자';
 
   if(id){
     const post = boardPosts.find(item => item.id === id);
     if(!post) return;
     titleEl.value = post.title || "";
-    authorEl.value = post.author || "관리자";
     editor.innerHTML = post.content || "";
   }else{
     titleEl.value = "";
-    authorEl.value = "관리자";
     editor.innerHTML = "";
   }
 
@@ -2910,9 +2952,10 @@ function insertBoardImages(files){
 
 function saveBoardPost(){
   const titleEl = document.getElementById("boardTitle");
-  const authorEl = document.getElementById("boardAuthor");
+  const writerNameEl = document.getElementById("boardWriterName");
   const editor = document.getElementById("boardEditor");
-  if(!titleEl || !authorEl || !editor) return;
+  if(!titleEl || !editor) return;
+  if(writerNameEl) writerNameEl.textContent = typeof getCurrentNickname === 'function' ? getCurrentNickname() : '운영자';
 
   const title = String(titleEl.value || "").trim();
   const author = String(authorEl.value || "").trim() || "관리자";
@@ -5199,14 +5242,14 @@ window.addEventListener("load", () => {
     const editor = document.getElementById('boardEditor');
     if(!titleEl || !editor) return;
     ensureWriter();
-    const secretChk = document.getElementById('boardSecret');
+    const secretChk = document.getElementById('boardSecretToggle') || document.getElementById('boardSecret');
     const pwEl = document.getElementById('boardSecretPassword');
     if(id){
       const post = (window.boardPosts || []).find(item => item.id === id);
       if(!post) return;
       titleEl.value = post.title || '';
       editor.innerHTML = post.content || '';
-      if(secretChk) secretChk.checked = !!post.isSecret;
+      if(secretChk) secretChk.checked = !!(post.secret || post.isSecret);
       if(pwEl) pwEl.value = post.secretPassword || '';
     } else {
       titleEl.value = '';
@@ -5227,10 +5270,11 @@ window.addEventListener("load", () => {
     const hasImage = /<img/i.test(content);
     if(!title){ alert('제목을 입력해주세요.'); titleEl.focus(); return; }
     if(!textOnly && !hasImage){ alert('내용을 입력해주세요.'); editor.focus(); return; }
-    const secretChk = document.getElementById('boardSecret');
+    const secretChk = document.getElementById('boardSecretToggle') || document.getElementById('boardSecret');
     const pwEl = document.getElementById('boardSecretPassword');
     const isSecret = !!(secretChk && secretChk.checked);
     const secretPassword = isSecret ? String((pwEl && pwEl.value) || '').trim() : '';
+    const currentUser = (typeof getCurrentUser === 'function' ? getCurrentUser() : null);
     if(isSecret && !secretPassword){ alert('비밀글 비밀번호를 입력해주세요.'); if(pwEl) pwEl.focus(); return; }
 
     if(!Array.isArray(window.boardPosts)) window.boardPosts = [];
@@ -5244,12 +5288,14 @@ window.addEventListener("load", () => {
       post.content = content;
       post.author = nickname;
       post.updatedAt = now;
+      post.secret = isSecret;
       post.isSecret = isSecret;
       post.secretPassword = secretPassword;
+      if(currentUser && currentUser.id) post.authorId = currentUser.id;
       savedId = post.id;
       toast('게시글이 수정되었습니다');
     } else {
-      const post = {id: (typeof makeId==='function'?makeId():Date.now()), title, content, author:nickname, createdAt:now, updatedAt:now, isSecret, secretPassword};
+      const post = {id: (typeof makeId==='function'?makeId():Date.now()), title, content, author:nickname, authorId:(currentUser && currentUser.id) || '', createdAt:now, updatedAt:now, secret:isSecret, isSecret, secretPassword};
       window.boardPosts.unshift(post);
       savedId = post.id;
       toast('게시글이 등록되었습니다');
@@ -5258,14 +5304,15 @@ window.addEventListener("load", () => {
     window.boardEditingId = null;
     try{ localStorage.setItem('boardPosts', JSON.stringify(window.boardPosts)); }catch(e){}
     if(typeof renderBoardList === 'function') renderBoardList(1);
-    if(typeof showBoardPanel === 'function') showBoardPanel('boardListPanel');
     setTimeout(function(){
       markRows();
       const row = document.querySelector(`#boardListBody tr[data-board-id="${savedId}"]`);
       if(row){
         row.classList.add('boardSavedRow');
         row.scrollIntoView({behavior:'smooth', block:'center'});
+        setTimeout(()=>row.classList.remove('boardSavedRow'), 2200);
       }
+      if(typeof viewBoardDetail === 'function') viewBoardDetail(savedId);
     },120);
   };
 

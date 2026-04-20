@@ -6539,94 +6539,90 @@ body, button, input, select, textarea{font-family:"Pretendard Variable","Pretend
 </script>
 
 
-
-<script id="final-inventory-fix">
+<script id="gpt-final-stabilizer-v3">
 (function(){
-  function arr(){ try { return items; } catch(e){ return window.items || []; } }
-  function saveSafe(){ try{ if(typeof save==='function') save(); }catch(e){ console.error(e); } }
-  function renderInventoryFixed(){
-    const tbody = document.getElementById('list');
-    if(!tbody) return;
-    tbody.innerHTML = '';
-    const hospitalFilter = (typeof getCurrentHospitalFilter==='function') ? getCurrentHospitalFilter('inventory') : 'all';
-    const rows = [...arr()].filter(i=>{
-      const parts = String(i.period || '').split('-');
-      const y = parts[0] || '';
-      const m = parts[1] || '';
-      if(hospitalFilter !== 'all' && i.hospital !== hospitalFilter) return false;
-      if(typeof yearFilter !== 'undefined' && yearFilter !== 'all' && y !== yearFilter) return false;
-      if(typeof monthFilter !== 'undefined' && monthFilter !== 'all' && m !== monthFilter) return false;
-      return true;
-    }).sort((a,b)=>{
-      if(String(a.period||'') !== String(b.period||'')) return String(b.period||'').localeCompare(String(a.period||''));
-      if(String(a.hospital||'') !== String(b.hospital||'')) return String(a.hospital||'').localeCompare(String(b.hospital||''));
-      return String(a.name||'').localeCompare(String(b.name||''));
-    });
-
-    if(!rows.length){
-      tbody.innerHTML = '<tr><td colspan="8" class="emptyRow">표시할 재고가 없습니다.</td></tr>';
-      return;
-    }
-
-    rows.forEach(i=>{
-      const hospitalOptions = (Array.isArray(HOSPITALS) ? HOSPITALS : []).map(h =>
-        `<option value="${escapeHtml(h)}" ${i.hospital===h?'selected':''}>${escapeHtml(h)}</option>`
-      ).join('');
-      tbody.insertAdjacentHTML('beforeend', `
-        <tr>
-          <td>${escapeHtml(i.period||'-')}</td>
-          <td><select onchange="updateInventoryField(${i.id}, 'hospital', this.value)">${hospitalOptions}</select></td>
-          <td><input list="reagentMasterList" value="${escapeHtml(i.name||'')}" onchange="updateInventoryField(${i.id}, 'name', this.value)"></td>
-          <td><input type="number" value="${Number(i.qty||0)}" onchange="updateInventoryField(${i.id}, 'qty', this.value)"></td>
-          <td><input value="${escapeHtml(i.exp||'')}" placeholder="YYYY-MM-DD" onchange="updateInventoryField(${i.id}, 'exp', this.value)"></td>
-          <td><input value="${escapeHtml(i.lot||'')}" onchange="updateInventoryField(${i.id}, 'lot', this.value)"></td>
-          <td><input class="noteInput" value="${escapeHtml(i.note||'')}" onchange="updateInventoryField(${i.id}, 'note', this.value)"></td>
-          <td><button class="btnSub" onclick="del(${i.id})">삭제</button></td>
-        </tr>`);
-    });
+  function syncRefs(){
+    try{ window.items = items; }catch(e){}
+    try{ window.backlog = backlog; }catch(e){}
+    try{ window.prepaid = prepaid; }catch(e){}
+    try{ window.monthStartOrders = monthStartOrders; }catch(e){}
+    try{ window.midOrders = midOrders; }catch(e){}
+    try{ window.deliveryRecords = deliveryRecords; }catch(e){}
+    try{ window.boardPosts = boardPosts; }catch(e){}
   }
 
+  function esc(v){
+    if(typeof escapeHtml === 'function') return escapeHtml(v);
+    return String(v || "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#39;");
+  }
+
+  function asUpper(v){ return (typeof normalizeUpper === 'function') ? normalizeUpper(v) : String(v||'').trim().toUpperCase(); }
+  function asNote(v){ return (typeof sanitizeNote === 'function') ? sanitizeNote(v) : String(v||'').trim(); }
+  function asYear(v){ return (typeof formatYear === 'function') ? formatYear(v) : String(v||'').replace(/\D/g,'').slice(0,4); }
+  function asMonth(v){ return (typeof formatMonth === 'function') ? formatMonth(v) : String(v||'').replace(/\D/g,'').slice(0,2).padStart(2,'0'); }
+  function asDay(v){ return (typeof formatDay === 'function') ? formatDay(v) : String(v||'').replace(/\D/g,'').slice(0,2).padStart(2,'0'); }
+  function asYmd(v){ return (typeof formatYmdString === 'function') ? formatYmdString(v) : String(v||'').trim(); }
+  function idv(){ return (typeof makeId === 'function') ? makeId() : Date.now() + Math.floor(Math.random()*100000); }
+  function firstHospitalSafe(){ return (Array.isArray(HOSPITALS) && HOSPITALS.length) ? HOSPITALS[0] : ''; }
+  function currentPeriodSafe(){ return (typeof getCurrentPeriod === 'function') ? getCurrentPeriod() : (new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0')); }
+
+  const baseSave = typeof save === 'function' ? save : null;
+  const baseLoad = typeof load === 'function' ? load : null;
+  const baseInit = typeof initializeApp === 'function' ? initializeApp : null;
+  const baseSwitchPage = typeof switchPage === 'function' ? switchPage : null;
+
+  window.save = function(){
+    syncRefs();
+    return baseSave ? baseSave.apply(this, arguments) : undefined;
+  };
+
+  window.load = function(){
+    const r = baseLoad ? baseLoad.apply(this, arguments) : undefined;
+    syncRefs();
+    return r;
+  };
+
   window.updateInventoryField = function(id, key, value){
-    const item = arr().find(i => i.id === id);
+    syncRefs();
+    const item = items.find(i => i.id === id);
     if(!item) return;
-    if(key === 'name' || key === 'lot') value = normalizeUpper(value);
-    if(key === 'note') value = sanitizeNote(value);
+    if(key === 'name' || key === 'lot') value = asUpper(value);
+    if(key === 'note') value = asNote(value);
     if(key === 'qty'){
       value = Number(value);
       if(isNaN(value) || value < 0) value = 0;
     }
-    if(key === 'exp') value = value ? formatYmdString(value) : '';
-    if(key === 'hospital' && !value) value = (Array.isArray(HOSPITALS) && HOSPITALS[0]) ? HOSPITALS[0] : '';
+    if(key === 'exp') value = value ? asYmd(value) : '';
+    if(key === 'hospital' && !value) value = firstHospitalSafe();
     item[key] = value;
-    saveSafe();
-    renderInventoryFixed();
+    save();
+    render();
   };
-
   window.update = window.updateInventoryField;
 
   window.del = function(id){
-    try {
-      items = arr().filter(i => i.id !== id);
-      window.items = items;
-    } catch(e) {
-      window.items = (window.items || []).filter(i => i.id !== id);
-    }
-    saveSafe();
-    renderInventoryFixed();
+    syncRefs();
+    items = items.filter(i => i.id !== id);
+    syncRefs();
+    save();
+    render();
   };
 
   window.addItem = function(){
-    try{ if(typeof ensureRegistrationDefaults==='function') ensureRegistrationDefaults(); }catch(e){}
-    try{ if(typeof formatDateInputParts==='function') formatDateInputParts(); }catch(e){}
+    syncRefs();
+    try{ if(typeof ensureRegistrationDefaults === 'function') ensureRegistrationDefaults(); }catch(e){}
+    try{ if(typeof formatDateInputParts === 'function') formatDateInputParts(); }catch(e){}
 
-    const hospital = document.getElementById('hospital')?.value || ((Array.isArray(HOSPITALS) && HOSPITALS[0]) ? HOSPITALS[0] : '');
-    const name = normalizeUpper(document.getElementById('reagentName')?.value);
+    const hospital = document.getElementById('hospital')?.value || firstHospitalSafe();
+    const name = asUpper(document.getElementById('reagentName')?.value);
     const qty = Number(document.getElementById('qty')?.value);
-    const year = formatYear(document.getElementById('year')?.value);
-    const month = formatMonth(document.getElementById('month')?.value);
-    const day = formatDay(document.getElementById('day')?.value);
-    const lot = normalizeUpper(document.getElementById('lot')?.value);
-    const note = sanitizeNote(document.getElementById('note')?.value);
+    const year = asYear(document.getElementById('year')?.value);
+    const month = asMonth(document.getElementById('month')?.value);
+    const day = asDay(document.getElementById('day')?.value);
+    const lot = asUpper(document.getElementById('lot')?.value);
+    const note = asNote(document.getElementById('note')?.value);
 
     if(!hospital || !name || isNaN(qty) || qty <= 0 || year.length !== 4 || !month || !day){
       alert('재고 등록값을 정확히 입력해주세요.');
@@ -6634,110 +6630,507 @@ body, button, input, select, textarea{font-family:"Pretendard Variable","Pretend
     }
 
     const exp = `${year}-${month}-${day}`;
-    const period = (typeof getCurrentPeriod === 'function') ? getCurrentPeriod() : `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
-    const list = arr();
-
-    let target = list.find(i =>
-      String(i.period||'') === String(period) &&
-      String(i.hospital||'') === String(hospital) &&
-      normalizeUpper(i.name) === name &&
+    const period = currentPeriodSafe();
+    const target = items.find(i =>
+      String(i.period||'') === period &&
+      String(i.hospital||'') === hospital &&
+      asUpper(i.name) === name &&
       String(i.exp||'') === exp &&
-      normalizeUpper(i.lot) === lot
+      asUpper(i.lot) === lot
     );
 
     if(target){
       target.qty = Number(target.qty || 0) + qty;
       if(note) target.note = target.note ? `${target.note} / ${note}` : note;
-    } else {
-      list.push({
-        id: (typeof makeId==='function') ? makeId() : Date.now()+Math.floor(Math.random()*100000),
+    }else{
+      items.push({
+        id:idv(),
         hospital, name, qty, exp, lot, note,
-        createdAt: new Date().toISOString().split('T')[0],
+        createdAt:new Date().toISOString().split('T')[0],
         period
       });
     }
 
-    try { items = list; } catch(e) {}
-    window.items = list;
-    saveSafe();
-    try{ if(typeof initYearFilter==='function') initYearFilter(); }catch(e){}
-    renderInventoryFixed();
+    syncRefs();
+    save();
+    try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+    render();
 
-    ['reagentName','qty','year','month','day','lot','note'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.value='';
+    ['reagentName','qty','year','month','day','lot','note'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+  };
+
+  window.render = function(){
+    syncRefs();
+    const tbody = document.getElementById('list');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    const hospitalFilter = (typeof getCurrentHospitalFilter === 'function') ? getCurrentHospitalFilter('inventory') : 'all';
+
+    const rows = [...items]
+      .filter(i => {
+        const parts = String(i.period || '').split('-');
+        const y = parts[0] || '';
+        const m = parts[1] || '';
+        if(hospitalFilter !== 'all' && i.hospital !== hospitalFilter) return false;
+        if(typeof yearFilter !== 'undefined' && yearFilter !== 'all' && y !== yearFilter) return false;
+        if(typeof monthFilter !== 'undefined' && monthFilter !== 'all' && m !== monthFilter) return false;
+        return true;
+      })
+      .sort((a,b) => {
+        if(String(a.period||'') !== String(b.period||'')) return String(b.period||'').localeCompare(String(a.period||''));
+        if(String(a.hospital||'') !== String(b.hospital||'')) return String(a.hospital||'').localeCompare(String(b.hospital||''));
+        return String(a.name||'').localeCompare(String(b.name||''));
+      });
+
+    if(!rows.length){
+      tbody.innerHTML = '<tr><td colspan="8" class="emptyRow">표시할 재고가 없습니다.</td></tr>';
+      return;
+    }
+
+    rows.forEach(i => {
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${esc(i.period || '-')}</td>
+          <td>${esc(i.hospital || '-')}</td>
+          <td><input list="reagentMasterList" value="${esc(i.name || '')}" onchange="updateInventoryField(${i.id}, 'name', this.value)"></td>
+          <td><input type="number" value="${Number(i.qty || 0)}" onchange="updateInventoryField(${i.id}, 'qty', this.value)"></td>
+          <td><input value="${esc(i.exp || '')}" placeholder="YYYY-MM-DD" onchange="updateInventoryField(${i.id}, 'exp', this.value)"></td>
+          <td><input value="${esc(i.lot || '')}" onchange="updateInventoryField(${i.id}, 'lot', this.value)"></td>
+          <td><input class="noteInput" value="${esc(i.note || '')}" onchange="updateInventoryField(${i.id}, 'note', this.value)"></td>
+          <td><button class="btnSub" onclick="del(${i.id})">삭제</button></td>
+        </tr>
+      `);
+    });
+  };
+
+  window.addMonthStartOrder = function(){
+    syncRefs();
+    let year = '', month = '', vendor = '';
+    if(monthStartLockedContext){
+      year = monthStartLockedContext.year;
+      month = monthStartLockedContext.month;
+      vendor = monthStartLockedContext.vendor;
+    }else{
+      year = asYear(document.getElementById('ms_year')?.value);
+      month = asMonth(document.getElementById('ms_month')?.value);
+      vendor = document.getElementById('ms_vendor')?.value || '';
+      const yEl = document.getElementById('ms_year');
+      const mEl = document.getElementById('ms_month');
+      if(yEl) yEl.value = year;
+      if(mEl) mEl.value = month;
+    }
+    const name = asUpper(document.getElementById('ms_name')?.value);
+    const spec = asUpper(document.getElementById('ms_spec')?.value);
+    const qty = Number(document.getElementById('ms_qty')?.value);
+
+    if(!year || !month || !vendor || !name || isNaN(qty) || qty <= 0){
+      alert('월초발주 입력값을 확인해주세요.');
+      return;
+    }
+    monthStartOrders.push({ id:idv(), year, month, vendor, name, spec:spec||'', qty });
+    syncRefs();
+    save();
+    try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+    renderMonthStartOrders();
+    ['ms_name','ms_spec','ms_qty'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  };
+
+  window.addMidOrder = function(){
+    syncRefs();
+    let year = '', month = '', vendor = '';
+    if(midLockedContext){
+      year = midLockedContext.year;
+      month = midLockedContext.month;
+      vendor = midLockedContext.vendor;
+    }else{
+      year = asYear(document.getElementById('mid_year')?.value);
+      month = asMonth(document.getElementById('mid_month')?.value);
+      vendor = document.getElementById('mid_vendor')?.value || '';
+      const yEl = document.getElementById('mid_year');
+      const mEl = document.getElementById('mid_month');
+      if(yEl) yEl.value = year;
+      if(mEl) mEl.value = month;
+    }
+    const name = asUpper(document.getElementById('mid_name')?.value);
+    const spec = asUpper(document.getElementById('mid_spec')?.value);
+    const qty = Number(document.getElementById('mid_qty')?.value);
+
+    if(!year || !month || !vendor || !name || isNaN(qty) || qty <= 0){
+      alert('중간발주 입력값을 확인해주세요.');
+      return;
+    }
+    midOrders.push({ id:idv(), year, month, vendor, name, spec:spec||'', qty });
+    syncRefs();
+    save();
+    try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+    renderMidOrders();
+    ['mid_name','mid_spec','mid_qty'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  };
+
+  window.delMonthStartOrder = function(id){
+    monthStartOrders = monthStartOrders.filter(i => i.id !== id);
+    syncRefs(); save(); renderMonthStartOrders();
+  };
+  window.delMidOrder = function(id){
+    midOrders = midOrders.filter(i => i.id !== id);
+    syncRefs(); save(); renderMidOrders();
+  };
+
+  window.renderMonthStartOrders = function(){
+    syncRefs();
+    const tbody = document.getElementById('monthStartOrderList');
+    const countEl = document.getElementById('monthStartOrderCount');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    let filtered = [...monthStartOrders];
+    if(monthStartLockedContext){
+      filtered = filtered.filter(i =>
+        i.year === monthStartLockedContext.year &&
+        i.month === monthStartLockedContext.month &&
+        i.vendor === monthStartLockedContext.vendor
+      );
+    }
+
+    filtered.sort((a,b) => {
+      if(String(a.year||'') !== String(b.year||'')) return String(b.year||'').localeCompare(String(a.year||''));
+      if(String(a.month||'') !== String(b.month||'')) return String(b.month||'').localeCompare(String(a.month||''));
+      if(String(a.vendor||'') !== String(b.vendor||'')) return String(a.vendor||'').localeCompare(String(b.vendor||''));
+      return String(a.name||'').localeCompare(String(b.name||''));
     });
 
-    if(typeof toast==='function') toast('재고가 등록되었습니다.');
-    else alert('재고가 등록되었습니다.');
+    if(countEl) countEl.textContent = `${filtered.length}건`;
+
+    if(!filtered.length){
+      tbody.innerHTML = '<tr><td colspan="7" class="emptyRow">등록된 월초발주 내역이 없습니다.</td></tr>';
+      return;
+    }
+
+    let currentGroup = '';
+    filtered.forEach(i => {
+      const groupKey = `${i.year}-${i.month}-${i.vendor}`;
+      if(currentGroup !== groupKey){
+        currentGroup = groupKey;
+        tbody.insertAdjacentHTML('beforeend', `<tr class="groupHeader"><td colspan="7">📁 ${esc(i.year)}년 ${esc(i.month)}월 / ${esc(i.vendor)}</td></tr>`);
+      }
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${esc(i.year)}</td>
+          <td>${esc(i.month)}</td>
+          <td>${esc(i.vendor)}</td>
+          <td>${esc(i.name)}</td>
+          <td>${esc(i.spec || '')}</td>
+          <td>${Number(i.qty || 0)}</td>
+          <td><button class="btnSub" onclick="delMonthStartOrder(${i.id})">삭제</button></td>
+        </tr>
+      `);
+    });
   };
 
-  const originalRefresh = window.refreshList;
+  window.renderMidOrders = function(){
+    syncRefs();
+    const tbody = document.getElementById('midOrderList');
+    const countEl = document.getElementById('midOrderCount');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    let filtered = [...midOrders];
+    if(midLockedContext){
+      filtered = filtered.filter(i =>
+        i.year === midLockedContext.year &&
+        i.month === midLockedContext.month &&
+        i.vendor === midLockedContext.vendor
+      );
+    }
+
+    filtered.sort((a,b) => {
+      if(String(a.year||'') !== String(b.year||'')) return String(b.year||'').localeCompare(String(a.year||''));
+      if(String(a.month||'') !== String(b.month||'')) return String(b.month||'').localeCompare(String(a.month||''));
+      if(String(a.vendor||'') !== String(b.vendor||'')) return String(a.vendor||'').localeCompare(String(b.vendor||''));
+      return String(a.name||'').localeCompare(String(b.name||''));
+    });
+
+    if(countEl) countEl.textContent = `${filtered.length}건`;
+
+    if(!filtered.length){
+      tbody.innerHTML = '<tr><td colspan="7" class="emptyRow">등록된 중간발주 내역이 없습니다.</td></tr>';
+      return;
+    }
+
+    let currentGroup = '';
+    filtered.forEach(i => {
+      const groupKey = `${i.year}-${i.month}-${i.vendor}`;
+      if(currentGroup !== groupKey){
+        currentGroup = groupKey;
+        tbody.insertAdjacentHTML('beforeend', `<tr class="groupHeader"><td colspan="7">📁 ${esc(i.year)}년 ${esc(i.month)}월 / ${esc(i.vendor)}</td></tr>`);
+      }
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${esc(i.year)}</td>
+          <td>${esc(i.month)}</td>
+          <td>${esc(i.vendor)}</td>
+          <td>${esc(i.name)}</td>
+          <td>${esc(i.spec || '')}</td>
+          <td>${Number(i.qty || 0)}</td>
+          <td><button class="btnSub" onclick="delMidOrder(${i.id})">삭제</button></td>
+        </tr>
+      `);
+    });
+  };
+
+  window.addDeliveryRecord = function(){
+    syncRefs();
+    const hospital = document.getElementById('d_hospital')?.value || firstHospitalSafe();
+    const year = asYear(document.getElementById('d_year')?.value);
+    const month = document.getElementById('d_month')?.value || '';
+    const name = asUpper(document.getElementById('d_name')?.value);
+    const qty = Number(document.getElementById('d_qty')?.value);
+    const note = asNote(document.getElementById('d_note')?.value);
+    const yEl = document.getElementById('d_year');
+    if(yEl) yEl.value = year;
+
+    if(!hospital || !year || !month || !name || isNaN(qty) || qty <= 0){
+      alert('납품 입력값을 확인해주세요.');
+      return;
+    }
+
+    const existing = deliveryRecords.find(i =>
+      i.hospital === hospital &&
+      i.year === year &&
+      i.month === month &&
+      asUpper(i.name) === name &&
+      asNote(i.note) === note
+    );
+
+    if(existing){
+      existing.qty = Number(existing.qty || 0) + qty;
+    }else{
+      deliveryRecords.push({ id:idv(), hospital, year, month, name, qty, note });
+    }
+
+    syncRefs();
+    save();
+    try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+    renderDeliveryList();
+    renderDeliveryMatrix();
+
+    ['d_name','d_qty','d_note'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  };
+
+  window.updateDeliveryRecord = function(id, key, value){
+    syncRefs();
+    const item = deliveryRecords.find(i => i.id === id);
+    if(!item) return;
+    if(key === 'name') value = asUpper(value);
+    if(key === 'note') value = asNote(value);
+    if(key === 'year') value = asYear(value);
+    if(key === 'month') value = asMonth(value);
+    if(key === 'qty'){
+      value = Number(value);
+      if(isNaN(value) || value < 0) value = 0;
+    }
+    item[key] = value;
+    syncRefs();
+    save();
+    renderDeliveryList();
+    renderDeliveryMatrix();
+  };
+
+  window.delDeliveryRecord = function(id){
+    deliveryRecords = deliveryRecords.filter(i => i.id !== id);
+    syncRefs(); save(); renderDeliveryList(); renderDeliveryMatrix();
+  };
+
+  window.renderDeliveryList = function(){
+    syncRefs();
+    const tbody = document.getElementById('deliveryList');
+    const countEl = document.getElementById('deliveryDetailCount');
+    const topCountEl = document.getElementById('deliveryCount');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    const hospitalFilter = (typeof getCurrentHospitalFilter === 'function') ? getCurrentHospitalFilter('delivery') : 'all';
+    const rows = [...deliveryRecords]
+      .filter(i => hospitalFilter === 'all' || i.hospital === hospitalFilter)
+      .sort((a,b) => {
+        if(String(a.year||'') !== String(b.year||'')) return String(b.year||'').localeCompare(String(a.year||''));
+        if(String(a.month||'') !== String(b.month||'')) return String(a.month||'').localeCompare(String(b.month||''));
+        if(String(a.hospital||'') !== String(b.hospital||'')) return String(a.hospital||'').localeCompare(String(b.hospital||''));
+        return String(a.name||'').localeCompare(String(b.name||''));
+      });
+
+    if(countEl) countEl.textContent = `${rows.length}건`;
+    if(topCountEl) topCountEl.textContent = `${rows.length}건`;
+
+    if(!rows.length){
+      tbody.innerHTML = '<tr><td colspan="7" class="emptyRow">등록된 납품 내역이 없습니다.</td></tr>';
+      return;
+    }
+
+    rows.forEach(i => {
+      const options = (Array.isArray(HOSPITALS) ? HOSPITALS : []).map(h => `<option value="${esc(h)}" ${i.hospital===h?'selected':''}>${esc(h)}</option>`).join('');
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td><input value="${esc(i.year)}" onchange="updateDeliveryRecord(${i.id}, 'year', this.value)"></td>
+          <td><input value="${esc(i.month)}" onchange="updateDeliveryRecord(${i.id}, 'month', this.value)"></td>
+          <td><select onchange="updateDeliveryRecord(${i.id}, 'hospital', this.value)">${options}</select></td>
+          <td><input list="reagentMasterList" value="${esc(i.name)}" onchange="updateDeliveryRecord(${i.id}, 'name', this.value)"></td>
+          <td><input type="number" value="${Number(i.qty||0)}" onchange="updateDeliveryRecord(${i.id}, 'qty', this.value)"></td>
+          <td><input class="noteInput" value="${esc(i.note || '')}" onchange="updateDeliveryRecord(${i.id}, 'note', this.value)"></td>
+          <td><button class="btnSub" onclick="delDeliveryRecord(${i.id})">삭제</button></td>
+        </tr>
+      `);
+    });
+  };
+
+  window.renderDeliveryMatrix = function(){
+    syncRefs();
+    const deliveryHospitalFilter = document.getElementById('deliveryHospitalFilter');
+    const yearFilterEl = document.getElementById('deliveryYearFilter');
+    const head = document.getElementById('deliveryMatrixHead');
+    const body = document.getElementById('deliveryMatrixBody');
+    if(!head || !body) return;
+
+    const hospitalFilter = deliveryHospitalFilter ? deliveryHospitalFilter.value : ((typeof getCurrentHospitalFilter === 'function') ? getCurrentHospitalFilter('delivery') : 'all');
+    const yearVal = yearFilterEl ? yearFilterEl.value : 'all';
+
+    head.innerHTML = `
+      <tr>
+        <th class="matrixSticky">거래처 / 시약명</th>
+        <th>1월</th><th>2월</th><th>3월</th><th>4월</th><th>5월</th><th>6월</th>
+        <th>7월</th><th>8월</th><th>9월</th><th>10월</th><th>11월</th><th>12월</th>
+        <th>합계</th>
+      </tr>
+    `;
+    body.innerHTML = '';
+
+    const source = (typeof getCombinedDeliverySource === 'function') ? getCombinedDeliverySource() : [];
+    const filtered = source.filter(r => {
+      if(hospitalFilter !== 'all' && r.hospital !== hospitalFilter) return false;
+      if(yearVal !== 'all' && r.year !== yearVal) return false;
+      return true;
+    });
+
+    if(!filtered.length){
+      body.innerHTML = '<tr><td colspan="14" class="emptyRow">표시할 납품 데이터가 없습니다.</td></tr>';
+      return;
+    }
+
+    const grouped = {};
+    filtered.forEach(r => {
+      const key = `${r.hospital}||${asUpper(r.name)}`;
+      if(!grouped[key]){
+        grouped[key] = { hospital:r.hospital, name:asUpper(r.name), months:Array(12).fill(0) };
+      }
+      const idx = Math.max(0, Math.min(11, Number(r.month)-1));
+      grouped[key].months[idx] += Number(r.qty || 0);
+    });
+
+    Object.values(grouped)
+      .sort((a,b) => {
+        if(a.hospital !== b.hospital) return String(a.hospital).localeCompare(String(b.hospital));
+        return String(a.name).localeCompare(String(b.name));
+      })
+      .forEach(row => {
+        const total = row.months.reduce((s,n)=>s+n,0);
+        body.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td class="matrixSticky">${esc(row.hospital)} / ${esc(row.name)}</td>
+            ${row.months.map(v => `<td>${v || ''}</td>`).join('')}
+            <td><strong>${total}</strong></td>
+          </tr>
+        `);
+      });
+  };
+
   window.refreshList = function(){
-    if(typeof originalRefresh === 'function') {
-      try { originalRefresh(); } catch(e) { console.error(e); }
-    }
-    renderInventoryFixed();
+    load();
+    try{ if(typeof checkMonthRollover === 'function') checkMonthRollover(); }catch(e){}
+    try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+    try{ if(typeof renderMonthStartLockState === 'function') renderMonthStartLockState(); }catch(e){}
+    try{ if(typeof renderMidLockState === 'function') renderMidLockState(); }catch(e){}
+    try{ render(); }catch(e){}
+    try{ renderMonthStartOrders(); }catch(e){}
+    try{ renderMidOrders(); }catch(e){}
+    try{ if(typeof renderPrepaid === 'function') renderPrepaid(); }catch(e){}
+    try{ if(typeof renderBacklog === 'function') renderBacklog(); }catch(e){}
+    try{ renderDeliveryList(); }catch(e){}
+    try{ renderDeliveryMatrix(); }catch(e){}
+    try{ if(typeof renderBoardList === 'function') renderBoardList(1); }catch(e){}
   };
 
-  const originalApplyFilter = window.applyFilter;
-  window.applyFilter = function(){
-    if(typeof originalApplyFilter === 'function') {
-      try { originalApplyFilter(); } catch(e) { console.error(e); }
+  function rerenderForPage(pageId){
+    if(pageId === 'inventoryPage'){ try{ render(); }catch(e){} }
+    if(pageId === 'compensationPage'){
+      try{ if(typeof renderPrepaid === 'function') renderPrepaid(); }catch(e){}
+      try{ if(typeof renderBacklog === 'function') renderBacklog(); }catch(e){}
     }
-    renderInventoryFixed();
-  };
-
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(function(){
-      try{ window.items = arr(); }catch(e){}
-      renderInventoryFixed();
-    }, 200);
-  });
-})();
-</script>
-
-
-<script>
-/* ===== DELIVERY / ORDER VISIBILITY HOTFIX ===== */
-(function(){
-  function rerenderDeliveryPanels(){
-    try{ if(typeof renderMonthStartLockState==='function') renderMonthStartLockState(); }catch(e){}
-    try{ if(typeof renderMidLockState==='function') renderMidLockState(); }catch(e){}
-    try{ if(typeof renderMonthStartOrders==='function') renderMonthStartOrders(); }catch(e){}
-    try{ if(typeof renderMidOrders==='function') renderMidOrders(); }catch(e){}
-    try{ if(typeof renderPrepaid==='function') renderPrepaid(); }catch(e){}
-    try{ if(typeof renderBacklog==='function') renderBacklog(); }catch(e){}
-    try{ if(typeof renderDeliveryList==='function') renderDeliveryList(); }catch(e){}
-    try{ if(typeof renderDeliveryMatrix==='function') renderDeliveryMatrix(); }catch(e){}
+    if(pageId === 'deliveryPage'){
+      try{ renderDeliveryList(); }catch(e){}
+      try{ renderDeliveryMatrix(); }catch(e){}
+      try{ renderMonthStartOrders(); }catch(e){}
+      try{ renderMidOrders(); }catch(e){}
+      try{ if(typeof renderMonthStartLockState === 'function') renderMonthStartLockState(); }catch(e){}
+      try{ if(typeof renderMidLockState === 'function') renderMidLockState(); }catch(e){}
+    }
+    if(pageId === 'boardPage'){ try{ if(typeof renderBoardList === 'function') renderBoardList(1); }catch(e){} }
   }
 
-  const originalSwitchPage = window.switchPage;
   window.switchPage = function(pageId){
-    if(typeof originalSwitchPage === 'function') originalSwitchPage(pageId);
-    if(pageId === 'deliveryPage' || pageId === 'compensationPage'){
-      setTimeout(rerenderDeliveryPanels, 0);
-      setTimeout(rerenderDeliveryPanels, 120);
-    }
+    const r = baseSwitchPage ? baseSwitchPage.apply(this, arguments) : undefined;
+    syncRefs();
+    setTimeout(() => rerenderForPage(pageId), 20);
+    return r;
   };
 
-  const originalCheckLoginState = window.checkLoginState;
-  window.checkLoginState = function(){
-    if(typeof originalCheckLoginState === 'function') originalCheckLoginState();
-    setTimeout(rerenderDeliveryPanels, 200);
-    setTimeout(rerenderDeliveryPanels, 700);
+  window.initializeApp = function(){
+    const r = baseInit ? baseInit.apply(this, arguments) : undefined;
+    syncRefs();
+    setTimeout(() => {
+      try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+      try{ if(typeof renderPageHospitalTabs === 'function') renderPageHospitalTabs(); }catch(e){}
+      try{ if(typeof renderHospitalSelects === 'function') renderHospitalSelects(); }catch(e){}
+      try{ if(typeof renderMonthStartLockState === 'function') renderMonthStartLockState(); }catch(e){}
+      try{ if(typeof renderMidLockState === 'function') renderMidLockState(); }catch(e){}
+      try{ render(); }catch(e){}
+      try{ renderMonthStartOrders(); }catch(e){}
+      try{ renderMidOrders(); }catch(e){}
+      try{ renderDeliveryList(); }catch(e){}
+      try{ renderDeliveryMatrix(); }catch(e){}
+      try{ if(typeof renderPrepaid === 'function') renderPrepaid(); }catch(e){}
+      try{ if(typeof renderBacklog === 'function') renderBacklog(); }catch(e){}
+    }, 30);
+    return r;
   };
+
+  function boot(){
+    try{ syncRefs(); }catch(e){}
+    try{ if(typeof initYearFilter === 'function') initYearFilter(); }catch(e){}
+    try{ if(typeof renderPageHospitalTabs === 'function') renderPageHospitalTabs(); }catch(e){}
+    try{ if(typeof renderHospitalSelects === 'function') renderHospitalSelects(); }catch(e){}
+    try{ if(typeof renderMonthStartLockState === 'function') renderMonthStartLockState(); }catch(e){}
+    try{ if(typeof renderMidLockState === 'function') renderMidLockState(); }catch(e){}
+    try{ render(); }catch(e){}
+    try{ renderMonthStartOrders(); }catch(e){}
+    try{ renderMidOrders(); }catch(e){}
+    try{ renderDeliveryList(); }catch(e){}
+    try{ renderDeliveryMatrix(); }catch(e){}
+  }
 
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){
-      setTimeout(rerenderDeliveryPanels, 200);
-      setTimeout(rerenderDeliveryPanels, 700);
-    });
+    document.addEventListener('DOMContentLoaded', boot);
   }else{
-    setTimeout(rerenderDeliveryPanels, 200);
-    setTimeout(rerenderDeliveryPanels, 700);
+    boot();
   }
+  setTimeout(boot, 120);
+  setTimeout(boot, 600);
 })();
 </script>
+
+
 </body>
 </html>

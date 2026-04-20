@@ -6697,5 +6697,47 @@ body, button, input, select, textarea{font-family:"Pretendard Variable","Pretend
 })();
 </script>
 
+
+<script>
+/* ===== DELIVERY / ORDER VISIBILITY HOTFIX ===== */
+(function(){
+  function rerenderDeliveryPanels(){
+    try{ if(typeof renderMonthStartLockState==='function') renderMonthStartLockState(); }catch(e){}
+    try{ if(typeof renderMidLockState==='function') renderMidLockState(); }catch(e){}
+    try{ if(typeof renderMonthStartOrders==='function') renderMonthStartOrders(); }catch(e){}
+    try{ if(typeof renderMidOrders==='function') renderMidOrders(); }catch(e){}
+    try{ if(typeof renderPrepaid==='function') renderPrepaid(); }catch(e){}
+    try{ if(typeof renderBacklog==='function') renderBacklog(); }catch(e){}
+    try{ if(typeof renderDeliveryList==='function') renderDeliveryList(); }catch(e){}
+    try{ if(typeof renderDeliveryMatrix==='function') renderDeliveryMatrix(); }catch(e){}
+  }
+
+  const originalSwitchPage = window.switchPage;
+  window.switchPage = function(pageId){
+    if(typeof originalSwitchPage === 'function') originalSwitchPage(pageId);
+    if(pageId === 'deliveryPage' || pageId === 'compensationPage'){
+      setTimeout(rerenderDeliveryPanels, 0);
+      setTimeout(rerenderDeliveryPanels, 120);
+    }
+  };
+
+  const originalCheckLoginState = window.checkLoginState;
+  window.checkLoginState = function(){
+    if(typeof originalCheckLoginState === 'function') originalCheckLoginState();
+    setTimeout(rerenderDeliveryPanels, 200);
+    setTimeout(rerenderDeliveryPanels, 700);
+  };
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      setTimeout(rerenderDeliveryPanels, 200);
+      setTimeout(rerenderDeliveryPanels, 700);
+    });
+  }else{
+    setTimeout(rerenderDeliveryPanels, 200);
+    setTimeout(rerenderDeliveryPanels, 700);
+  }
+})();
+</script>
 </body>
 </html>

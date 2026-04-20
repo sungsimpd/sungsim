@@ -6538,5 +6538,164 @@ body, button, input, select, textarea{font-family:"Pretendard Variable","Pretend
 })();
 </script>
 
+
+
+<script id="final-inventory-fix">
+(function(){
+  function arr(){ try { return items; } catch(e){ return window.items || []; } }
+  function saveSafe(){ try{ if(typeof save==='function') save(); }catch(e){ console.error(e); } }
+  function renderInventoryFixed(){
+    const tbody = document.getElementById('list');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    const hospitalFilter = (typeof getCurrentHospitalFilter==='function') ? getCurrentHospitalFilter('inventory') : 'all';
+    const rows = [...arr()].filter(i=>{
+      const parts = String(i.period || '').split('-');
+      const y = parts[0] || '';
+      const m = parts[1] || '';
+      if(hospitalFilter !== 'all' && i.hospital !== hospitalFilter) return false;
+      if(typeof yearFilter !== 'undefined' && yearFilter !== 'all' && y !== yearFilter) return false;
+      if(typeof monthFilter !== 'undefined' && monthFilter !== 'all' && m !== monthFilter) return false;
+      return true;
+    }).sort((a,b)=>{
+      if(String(a.period||'') !== String(b.period||'')) return String(b.period||'').localeCompare(String(a.period||''));
+      if(String(a.hospital||'') !== String(b.hospital||'')) return String(a.hospital||'').localeCompare(String(b.hospital||''));
+      return String(a.name||'').localeCompare(String(b.name||''));
+    });
+
+    if(!rows.length){
+      tbody.innerHTML = '<tr><td colspan="8" class="emptyRow">표시할 재고가 없습니다.</td></tr>';
+      return;
+    }
+
+    rows.forEach(i=>{
+      const hospitalOptions = (Array.isArray(HOSPITALS) ? HOSPITALS : []).map(h =>
+        `<option value="${escapeHtml(h)}" ${i.hospital===h?'selected':''}>${escapeHtml(h)}</option>`
+      ).join('');
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${escapeHtml(i.period||'-')}</td>
+          <td><select onchange="updateInventoryField(${i.id}, 'hospital', this.value)">${hospitalOptions}</select></td>
+          <td><input list="reagentMasterList" value="${escapeHtml(i.name||'')}" onchange="updateInventoryField(${i.id}, 'name', this.value)"></td>
+          <td><input type="number" value="${Number(i.qty||0)}" onchange="updateInventoryField(${i.id}, 'qty', this.value)"></td>
+          <td><input value="${escapeHtml(i.exp||'')}" placeholder="YYYY-MM-DD" onchange="updateInventoryField(${i.id}, 'exp', this.value)"></td>
+          <td><input value="${escapeHtml(i.lot||'')}" onchange="updateInventoryField(${i.id}, 'lot', this.value)"></td>
+          <td><input class="noteInput" value="${escapeHtml(i.note||'')}" onchange="updateInventoryField(${i.id}, 'note', this.value)"></td>
+          <td><button class="btnSub" onclick="del(${i.id})">삭제</button></td>
+        </tr>`);
+    });
+  }
+
+  window.updateInventoryField = function(id, key, value){
+    const item = arr().find(i => i.id === id);
+    if(!item) return;
+    if(key === 'name' || key === 'lot') value = normalizeUpper(value);
+    if(key === 'note') value = sanitizeNote(value);
+    if(key === 'qty'){
+      value = Number(value);
+      if(isNaN(value) || value < 0) value = 0;
+    }
+    if(key === 'exp') value = value ? formatYmdString(value) : '';
+    if(key === 'hospital' && !value) value = (Array.isArray(HOSPITALS) && HOSPITALS[0]) ? HOSPITALS[0] : '';
+    item[key] = value;
+    saveSafe();
+    renderInventoryFixed();
+  };
+
+  window.update = window.updateInventoryField;
+
+  window.del = function(id){
+    try {
+      items = arr().filter(i => i.id !== id);
+      window.items = items;
+    } catch(e) {
+      window.items = (window.items || []).filter(i => i.id !== id);
+    }
+    saveSafe();
+    renderInventoryFixed();
+  };
+
+  window.addItem = function(){
+    try{ if(typeof ensureRegistrationDefaults==='function') ensureRegistrationDefaults(); }catch(e){}
+    try{ if(typeof formatDateInputParts==='function') formatDateInputParts(); }catch(e){}
+
+    const hospital = document.getElementById('hospital')?.value || ((Array.isArray(HOSPITALS) && HOSPITALS[0]) ? HOSPITALS[0] : '');
+    const name = normalizeUpper(document.getElementById('reagentName')?.value);
+    const qty = Number(document.getElementById('qty')?.value);
+    const year = formatYear(document.getElementById('year')?.value);
+    const month = formatMonth(document.getElementById('month')?.value);
+    const day = formatDay(document.getElementById('day')?.value);
+    const lot = normalizeUpper(document.getElementById('lot')?.value);
+    const note = sanitizeNote(document.getElementById('note')?.value);
+
+    if(!hospital || !name || isNaN(qty) || qty <= 0 || year.length !== 4 || !month || !day){
+      alert('재고 등록값을 정확히 입력해주세요.');
+      return;
+    }
+
+    const exp = `${year}-${month}-${day}`;
+    const period = (typeof getCurrentPeriod === 'function') ? getCurrentPeriod() : `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
+    const list = arr();
+
+    let target = list.find(i =>
+      String(i.period||'') === String(period) &&
+      String(i.hospital||'') === String(hospital) &&
+      normalizeUpper(i.name) === name &&
+      String(i.exp||'') === exp &&
+      normalizeUpper(i.lot) === lot
+    );
+
+    if(target){
+      target.qty = Number(target.qty || 0) + qty;
+      if(note) target.note = target.note ? `${target.note} / ${note}` : note;
+    } else {
+      list.push({
+        id: (typeof makeId==='function') ? makeId() : Date.now()+Math.floor(Math.random()*100000),
+        hospital, name, qty, exp, lot, note,
+        createdAt: new Date().toISOString().split('T')[0],
+        period
+      });
+    }
+
+    try { items = list; } catch(e) {}
+    window.items = list;
+    saveSafe();
+    try{ if(typeof initYearFilter==='function') initYearFilter(); }catch(e){}
+    renderInventoryFixed();
+
+    ['reagentName','qty','year','month','day','lot','note'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.value='';
+    });
+
+    if(typeof toast==='function') toast('재고가 등록되었습니다.');
+    else alert('재고가 등록되었습니다.');
+  };
+
+  const originalRefresh = window.refreshList;
+  window.refreshList = function(){
+    if(typeof originalRefresh === 'function') {
+      try { originalRefresh(); } catch(e) { console.error(e); }
+    }
+    renderInventoryFixed();
+  };
+
+  const originalApplyFilter = window.applyFilter;
+  window.applyFilter = function(){
+    if(typeof originalApplyFilter === 'function') {
+      try { originalApplyFilter(); } catch(e) { console.error(e); }
+    }
+    renderInventoryFixed();
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(function(){
+      try{ window.items = arr(); }catch(e){}
+      renderInventoryFixed();
+    }, 200);
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -6412,5 +6412,131 @@ body, button, input, select, textarea{font-family:"Pretendard Variable","Pretend
 })();
 </script>
 
+
+<style id="v17-board-refresh">
+/* v17 board + registration sync */
+#boardPage .pageHero,
+#boardPage .boardHero,
+#boardPage .box:first-child{background:#f7faf8 !important; border:1px solid #dce7e1 !important; box-shadow:none !important;}
+#boardPage .box,
+#boardPage .boardPanel,
+#boardPage .boardDetailCard,
+#boardPage .boardWriteCard{border-radius:18px !important; border:1px solid #dfe7e3 !important; box-shadow:0 12px 32px rgba(14,30,20,.06) !important; background:#fff !important;}
+#boardPage .filterRow, #boardPage .boardToolbarRow, #boardPage .boardSearchBar{background:#f8fbf9 !important; border:1px solid #e0e8e4 !important; border-radius:14px !important;}
+#boardPage .badge, #boardPage .metaBadge, #boardPage .authorBadge, #boardPage .statusBadge{border-radius:10px !important; background:#f3f7f5 !important; color:#425448 !important; border:1px solid #dce6e0 !important;}
+#boardPage button, #boardPage .btn, #boardPage .btnSub, #boardPage .btnRefresh{border-radius:12px !important; box-shadow:none !important;}
+#boardPage .btnSub{background:#f4f7f5 !important; color:#223126 !important; border:1px solid #dce5df !important;}
+#boardPage .panelTitle h3, #boardPage h3, #boardPage h2{letter-spacing:-0.02em !important;}
+#boardPage .boardDetailContent, #boardPage .boardArticleBody, #boardPage .boardContent{padding:28px 30px !important; line-height:1.8 !important; border:1px solid #e3ebe7 !important; border-radius:14px !important; background:#fcfdfc !important; min-height:260px !important;}
+#boardPage .boardEditorWrap, #boardPage .editorShell{border-radius:16px !important; border:1px solid #dfe7e2 !important; background:#fff !important; overflow:hidden !important;}
+#boardPage #boardEditor{min-height:340px !important; padding:22px 24px !important; line-height:1.8 !important; font-size:15px !important;}
+#boardPage .boardToolbar, #boardPage .editorToolbar{display:flex !important; flex-wrap:wrap !important; gap:8px !important; padding:14px !important; background:#f7faf8 !important; border-bottom:1px solid #e2ebe6 !important;}
+#boardPage .boardToolbar button, #boardPage .boardToolbar select, #boardPage .editorToolbar button, #boardPage .editorToolbar select{min-height:38px !important; padding:8px 12px !important; background:#fff !important; color:#203125 !important; border:1px solid #d7e3dc !important; border-radius:10px !important;}
+#boardPage .boardListTable, #boardPage table{border-radius:14px !important; overflow:hidden !important;}
+#boardPage .boardListTable thead th, #boardPage table thead th{background:#f7faf8 !important; color:#415346 !important;}
+#boardPage .boardListTable tbody tr:hover, #boardPage table tbody tr:hover{background:#fbfcfb !important;}
+#boardPage .boardListTable tbody td, #boardPage table tbody td{padding-top:14px !important; padding-bottom:14px !important;}
+#boardPage .boardTitleLink{font-weight:800 !important; color:#17271d !important; text-decoration:none !important;}
+#boardPage .boardTitleLink:hover{text-decoration:underline !important;}
+#boardPage .boardSectionHeader{display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:14px;}
+#boardPage .boardSectionHeader p{margin:0; color:#76857b; font-size:13px;}
+</style>
+
+<script id="v17-sync-patch">
+(function(){
+  function syncRefs(){
+    try{ if(typeof items!=='undefined'){ window.items = items; } }catch(e){}
+    try{ if(typeof backlog!=='undefined'){ window.backlog = backlog; } }catch(e){}
+    try{ if(typeof prepaid!=='undefined'){ window.prepaid = prepaid; } }catch(e){}
+    try{ if(typeof monthStartOrders!=='undefined'){ window.monthStartOrders = monthStartOrders; } }catch(e){}
+    try{ if(typeof midOrders!=='undefined'){ window.midOrders = midOrders; } }catch(e){}
+    try{ if(typeof deliveryRecords!=='undefined'){ window.deliveryRecords = deliveryRecords; } }catch(e){}
+    try{ if(typeof boardPosts!=='undefined'){ window.boardPosts = boardPosts; } }catch(e){}
+  }
+
+  const _load = window.load;
+  window.load = function(){ const r = typeof _load==='function' ? _load.apply(this, arguments) : undefined; syncRefs(); return r; };
+  const _init = window.initializeApp;
+  window.initializeApp = function(){ syncRefs(); const r = typeof _init==='function' ? _init.apply(this, arguments) : undefined; syncRefs(); return r; };
+  const _save = window.save;
+  window.save = function(){ syncRefs(); return typeof _save==='function' ? _save.apply(this, arguments) : undefined; };
+
+  function redrawAll(){
+    try{ if(typeof render==='function') render(); }catch(e){}
+    try{ if(typeof renderPrepaid==='function') renderPrepaid(); }catch(e){}
+    try{ if(typeof renderBacklog==='function') renderBacklog(); }catch(e){}
+    try{ if(typeof renderDeliveryList==='function') renderDeliveryList(); }catch(e){}
+    try{ if(typeof renderDeliveryMatrix==='function') renderDeliveryMatrix(); }catch(e){}
+    try{ if(typeof renderMonthStartOrders==='function') renderMonthStartOrders(); }catch(e){}
+    try{ if(typeof renderMidOrders==='function') renderMidOrders(); }catch(e){}
+    try{ if(typeof renderBoardList==='function') renderBoardList(1); }catch(e){}
+  }
+
+  const _toast = window.toast || function(msg){ alert(msg); };
+  window.toast = function(msg){ return _toast(msg); };
+
+  // hard-fix registrations so saved rows actually render in the tables
+  window.addPrepaid = function(){
+    syncRefs();
+    const hospital=(document.getElementById('p_hospital')?.value)||((window.HOSPITALS||[])[0]||'');
+    const name=String(document.getElementById('p_name')?.value||'').trim().toUpperCase();
+    const qty=Number(document.getElementById('p_qty')?.value);
+    const lot=String(document.getElementById('p_lot')?.value||'').trim().toUpperCase();
+    const raw=String(document.getElementById('p_date')?.value||'').trim();
+    const date=raw?(typeof formatYmdString==='function'?formatYmdString(raw):raw):'';
+    if(!name || !(qty>0)){ alert('선납 시약명과 수량을 확인해주세요.'); return; }
+    if(raw && !date){ alert('날짜 형식을 확인해주세요.'); return; }
+    const row={id:Date.now()+Math.floor(Math.random()*1000), hospital, name, qty, lot, date};
+    try{ prepaid.push(row); }catch(e){ window.prepaid = window.prepaid||[]; window.prepaid.push(row); }
+    syncRefs();
+    try{ localStorage.setItem('prepaid', JSON.stringify(window.prepaid||prepaid||[])); }catch(e){}
+    if(typeof renderPrepaid==='function') renderPrepaid();
+    ['p_name','p_qty','p_lot','p_date'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    window.toast('선납 내역이 등록되었습니다.');
+  };
+
+  window.addBacklog = function(){
+    syncRefs();
+    const hospital=(document.getElementById('b_hospital')?.value)||((window.HOSPITALS||[])[0]||'');
+    const type=(document.getElementById('b_type')?.value)||'보상';
+    const name=String(document.getElementById('b_name')?.value||'').trim().toUpperCase();
+    const qty=Number(document.getElementById('b_qty')?.value);
+    const lot=String(document.getElementById('b_lot')?.value||'').trim().toUpperCase();
+    const raw=String(document.getElementById('b_exp')?.value||'').trim();
+    const exp=raw?(typeof formatYmdString==='function'?formatYmdString(raw):raw):'';
+    const note=String(document.getElementById('b_note')?.value||'').trim();
+    if(!name || !(qty>0)){ alert('보상 · 미납 시약명과 수량을 확인해주세요.'); return; }
+    if(raw && !exp){ alert('유효기간 형식을 확인해주세요.'); return; }
+    const row={id:Date.now()+Math.floor(Math.random()*1000), hospital, type, name, qty, lot, exp, note};
+    try{ backlog.push(row); }catch(e){ window.backlog=window.backlog||[]; window.backlog.push(row); }
+    syncRefs();
+    try{ localStorage.setItem('backlog', JSON.stringify(window.backlog||backlog||[])); }catch(e){}
+    if(typeof renderBacklog==='function') renderBacklog();
+    ['b_name','b_qty','b_lot','b_exp','b_note'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    window.toast('보상 · 미납 내역이 등록되었습니다.');
+  };
+
+  function upgradeBoardChrome(){
+    const page=document.getElementById('boardPage'); if(!page) return;
+    const hero=page.querySelector('.box');
+    if(hero && !hero.querySelector('.boardSectionHeader')){
+      const h=hero.querySelector('h2, h3');
+      if(h){
+        const wrap=document.createElement('div'); wrap.className='boardSectionHeader';
+        const info=document.createElement('p'); info.textContent='사내 커뮤니티처럼 읽기 쉽고 정돈된 게시판으로 정리했습니다.';
+        h.parentNode.insertBefore(wrap,h);
+        wrap.appendChild(h); wrap.appendChild(info);
+      }
+    }
+    page.querySelectorAll('.badge,.metaBadge,.authorBadge,.statusBadge').forEach(el=>el.style.borderRadius='10px');
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    try{ syncRefs(); }catch(e){}
+    setTimeout(function(){ syncRefs(); redrawAll(); upgradeBoardChrome(); }, 120);
+  });
+})();
+</script>
+
 </body>
 </html>
